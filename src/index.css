@@ -1,4 +1,6 @@
-:root {
-  
-}
+@import "tailwindcss";
 
+body {
+  background-color: #fdf6e3; /* Light warm background color */
+  font-family: 'Georgia', serif; /* Storybook feel */
+}
