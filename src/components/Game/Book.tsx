@@ -158,6 +158,7 @@ export const Book = () => {
                             key={scene.id}
                             scene={scene}
                             isActive={false} // maybe highlight if active?
+                            levelItems={currentLevel.availableItems}
                         />
                     ))}
                 </div>

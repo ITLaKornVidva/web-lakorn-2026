@@ -1,13 +1,14 @@
-import type { Scene as SceneType } from '../../types';
+import type { Scene as SceneType, Item } from '../../types';
 import { Slot } from './Slot';
 import clsx from 'clsx';
 
 interface SceneProps {
     scene: SceneType;
     isActive: boolean;
+    levelItems: Item[];
 }
 
-export const Scene = ({ scene, isActive }: SceneProps) => {
+export const Scene = ({ scene, isActive, levelItems }: SceneProps) => {
     // Can drop anywhere in the scene? Or just slots?
     // If we want the scene to accept items and auto-place in first slot, we could make it droppable.
     // For now, let's keep it simple: drop only on slots.
@@ -27,16 +28,7 @@ export const Scene = ({ scene, isActive }: SceneProps) => {
                         key={slot.id}
                         id={slot.id}
                         placedItem={slot.placedItemId ?
-                            // We need to resolve the item object. 
-                            // In a real app we might pass full items down or have a lookup.
-                            // For MVP let's assume parent passes looked-up items or we need a hook?
-                            // Let's hack it: Store only has IDs. We need the lookup.
-                            // Let's pass a helper to lookup item? 
-                            // Actually, let's refactor this to accept resolved items or use context?
-                            // Simple solution: parent (Book) passes full objects?
-                            // OR: we import ITEMS from levels? No, that's circular or messy.
-                            // Better: Helper function or Hook.
-                            undefined // Temporarily undefined until we fix data flow
+                            levelItems.find(i => i.id === slot.placedItemId)
                             : undefined
                         }
                         allowedTypes={slot.allowedTypes}
