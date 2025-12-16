@@ -117,26 +117,7 @@ export const Book = () => {
                 if (toScene && droppedItem && isDropValid(droppedItem, over.data.current, toSlotId)) {
                     moveItem(fromScene.id, fromSlotId, toScene.id, toSlotId);
                 } else {
-                    // If invalid drop, maybe we return to tray? Or just snap back?
-                    // Standard behavior in many games: snap back to original slot if invalid move.
-                    // But user code structure logic: 
-                    // "Dropped outside (Remove/Return to tray)" is the else block.
-                    // If we are over a slot BUT it's invalid, we probably shouldn't return to tray immediately,
-                    // we should just do nothing (snap back to original start).
-
-                    // current logic falling through to else? NO.
-                    // The original code had:
-                    // if (over && slot) { move }
-                    // else { return }
-
-                    // If we add a check inside the if:
-                    // if (over && slot) { 
-                    //    if (valid) move
-                    //    else ?? 
-                    // }
-
-                    // If I don't else here, it does nothing, which effectively is "snap back to start".
-                    // This seems correct for "invalid move attempt".
+                    // Do nothing
                 }
             }
             // Case 2.2: Dropped outside (Remove/Return to tray)
