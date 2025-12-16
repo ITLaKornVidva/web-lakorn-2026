@@ -1,4 +1,4 @@
-export type ItemType = 'character' | 'setting' | 'object';
+export type ItemType = 'character' | 'setting' | 'object' | 'action';
 
 export interface Item {
     id: string;
