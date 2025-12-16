@@ -64,8 +64,8 @@ export const levels: Level[] = [
         goal: 'Tragedy: Romeo and Juliet die',
         availableItems: [ITEMS.romeo, ITEMS.juliet, ITEMS.poison, ITEMS.grave],
         scenes: [
-            { id: 'scene-2-1', slots: [{ id: 's2-1-1', allowedTypes: ['character'], placedItemId: null }, { id: 's2-1-2', allowedTypes: ['object'], placedItemId: null }], description: 'Romeo drinks poison' },
-            { id: 'scene-2-2', slots: [{ id: 's2-2-1', allowedTypes: ['character'], placedItemId: null }, { id: 's2-2-2', allowedTypes: ['object'], placedItemId: null }], description: 'Juliet finds Romeo' }
+            { id: 'scene-2-1', slots: [{ id: 'slot-2-1-1', allowedTypes: ['character'], placedItemId: null }, { id: 'slot-2-1-2', allowedTypes: ['object'], placedItemId: null }], description: 'Romeo drinks poison' },
+            { id: 'scene-2-2', slots: [{ id: 'slot-2-2-1', allowedTypes: ['character'], placedItemId: null }, { id: 'slot-2-2-2', allowedTypes: ['object'], placedItemId: null }], description: 'Juliet finds Romeo' }
         ],
         validate: (scenes: Scene[]) => {
             const results: Record<string, boolean> = {};

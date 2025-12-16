@@ -13,6 +13,7 @@ export const Book = () => {
         currentLevelId,
         currentScenes,
         availableItems,
+        trayCounts,
         placeItemFromTray,
         moveItem,
         returnItemToTray,
@@ -178,7 +179,7 @@ export const Book = () => {
                 </div>
 
                 {/* Next Level Button */}
-                <div className={`fixed bottom-8 right-8 transition-opacity duration-1000 ${isLevelSolved ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
+                <div className={`fixed bottom-8 right-8 transition-opacity duration-1000 ${isLevelSolved ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'} z-60`}>
                     <button
                         onClick={handleNextLevel}
                         className="bg-emerald-600 hover:bg-emerald-700 text-white font-serif text-xl px-8 py-3 rounded-full shadow-lg transform hover:scale-105 transition-all flex items-center gap-2"
@@ -188,7 +189,7 @@ export const Book = () => {
                     </button>
                 </div>
 
-                <Tray items={availableItems} />
+                <Tray items={availableItems} counts={trayCounts} />
 
                 <DragOverlay>
                     {activeDragItem ? (
