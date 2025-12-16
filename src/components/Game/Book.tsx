@@ -17,7 +17,8 @@ export const Book = () => {
         moveItem,
         returnItemToTray,
         loadLevel,
-        isLevelSolved
+        isLevelSolved,
+        sceneSolvedStatus
     } = useGameStore();
 
     const [activeDragItem, setActiveDragItem] = useState<Item | null>(null);
@@ -36,6 +37,10 @@ export const Book = () => {
     );
 
     const currentLevel = levels.find(l => l.id === currentLevelId);
+
+    // Find next level logic
+    const currentLevelIndex = levels.findIndex(l => l.id === currentLevelId);
+    const nextLevelId = levels[currentLevelIndex + 1]?.id;
 
     if (!currentLevel) return <div>Loading Level...</div>;
 
@@ -140,13 +145,21 @@ export const Book = () => {
         }
     };
 
+    const handleNextLevel = () => {
+        if (nextLevelId) {
+            loadLevel(nextLevelId);
+        } else {
+            alert("No more levels! Thanks for playing.");
+        }
+    };
+
     return (
         <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
             <div className="min-h-screen bg-[#fdf6e3] flex flex-col items-center py-8 pb-32">
                 <header className="mb-6 text-center">
                     <h1 className="text-4xl font-serif text-slate-800 mb-2">My Storyteller</h1>
                     <div className="bg-white border text-xl px-8 py-2 rounded-lg shadow-sm">
-                        <span className="font-bold text-slate-500 mr-2">Level 1:</span>
+                        <span className="font-bold text-slate-500 mr-2">Level {currentLevelIndex + 1}:</span>
                         <span className="font-serif italic">{currentLevel.title}</span>
                         <div className="text-base text-slate-600 mt-1">{currentLevel.goal}</div>
                     </div>
@@ -159,18 +172,21 @@ export const Book = () => {
                             scene={scene}
                             isActive={false} // maybe highlight if active?
                             levelItems={currentLevel.availableItems}
+                            isSolved={!!sceneSolvedStatus[scene.id]}
                         />
                     ))}
                 </div>
 
-                {isLevelSolved && (
-                    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 pointer-events-none">
-                        <div className="bg-white p-8 rounded-lg shadow-2xl text-center transform scale-125 animate-bounce">
-                            <h2 className="text-3xl font-bold text-green-600 mb-2">Level Solved!</h2>
-                            <p className="text-slate-600">Great job!</p>
-                        </div>
-                    </div>
-                )}
+                {/* Next Level Button */}
+                <div className={`fixed bottom-8 right-8 transition-opacity duration-1000 ${isLevelSolved ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
+                    <button
+                        onClick={handleNextLevel}
+                        className="bg-emerald-600 hover:bg-emerald-700 text-white font-serif text-xl px-8 py-3 rounded-full shadow-lg transform hover:scale-105 transition-all flex items-center gap-2"
+                    >
+                        <span>Next Level</span>
+                        <span>→</span>
+                    </button>
+                </div>
 
                 <Tray items={availableItems} />
 

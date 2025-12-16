@@ -18,7 +18,7 @@ export const levels: Level[] = [
         id: 'level-1',
         title: 'Level 1',
         goal: 'Adam Meets Eve',
-        availableItems: [ITEMS.adam, ITEMS.eve, ITEMS.tree],
+        availableItems: [ITEMS.adam, ITEMS.eve, ITEMS.tree, ITEMS.adam, ITEMS.eve],
         scenes: [
             {
                 id: 'scene-1-1',
@@ -27,7 +27,7 @@ export const levels: Level[] = [
                     { id: 'slot-1-1-2', allowedTypes: ['character'], placedItemId: null },
                     { id: 'slot-1-1-3', allowedTypes: ['setting'], placedItemId: null },
                 ],
-                description: '...'
+                description: 'The Garden of Eden'
             },
             {
                 id: 'scene-1-2',
@@ -35,14 +35,27 @@ export const levels: Level[] = [
                     { id: 'slot-1-2-1', allowedTypes: ['character'], placedItemId: null },
                     { id: 'slot-1-2-2', allowedTypes: ['character'], placedItemId: null },
                 ],
-                description: '...'
+                description: 'First Meeting'
             }
         ],
-        checkSolution: (scenes: Scene[]) => {
-            // Win if Scene 1 contains Adam and Eve (in either order)
-            const s1 = scenes[0];
-            const items = s1.slots.map(s => s.placedItemId);
-            return items.includes('adam') && items.includes('eve') && items.includes('tree');
+        validate: (scenes: Scene[]) => {
+            const results: Record<string, boolean> = {};
+
+            // Scene 1: Needs Adam, Eve, and Tree
+            const s1 = scenes.find(s => s.id === 'scene-1-1');
+            if (s1) {
+                const items = s1.slots.map(s => s.placedItemId);
+                results[s1.id] = items.includes('adam') && items.includes('eve') && items.includes('tree');
+            }
+
+            // Scene 2: Needs Adam and Eve
+            const s2 = scenes.find(s => s.id === 'scene-1-2');
+            if (s2) {
+                const items = s2.slots.map(s => s.placedItemId);
+                results[s2.id] = items.includes('adam') && items.includes('eve');
+            }
+
+            return results;
         }
     },
     {
@@ -51,16 +64,27 @@ export const levels: Level[] = [
         goal: 'Tragedy: Romeo and Juliet die',
         availableItems: [ITEMS.romeo, ITEMS.juliet, ITEMS.poison, ITEMS.grave],
         scenes: [
-            { id: 'scene-2-1', slots: [{ id: 's2-1-1', allowedTypes: ['character'], placedItemId: null }, { id: 's2-1-2', allowedTypes: ['object'], placedItemId: null }], description: 'Intro' },
-            { id: 'scene-2-2', slots: [{ id: 's2-2-1', allowedTypes: ['character'], placedItemId: null }], description: 'The End' }
+            { id: 'scene-2-1', slots: [{ id: 's2-1-1', allowedTypes: ['character'], placedItemId: null }, { id: 's2-1-2', allowedTypes: ['object'], placedItemId: null }], description: 'Romeo drinks poison' },
+            { id: 'scene-2-2', slots: [{ id: 's2-2-1', allowedTypes: ['character'], placedItemId: null }, { id: 's2-2-2', allowedTypes: ['object'], placedItemId: null }], description: 'Juliet finds Romeo' }
         ],
-        checkSolution: (scenes: Scene[]) => {
-            // Very simple logic: Scene 2 must contain a grave.
-            // In reality, logic would be complex state tracking (who is alive?).
-            // For MVP, just checking if "Grave" is in the last scene slots.
-            const lastScene = scenes[scenes.length - 1];
-            const items = lastScene.slots.map(s => s.placedItemId);
-            return items.includes('grave');
+        validate: (scenes: Scene[]) => {
+            const results: Record<string, boolean> = {};
+
+            // Scene 1: Romeo + Poison
+            const s1 = scenes.find(s => s.id === 'scene-2-1');
+            if (s1) {
+                const items = s1.slots.map(s => s.placedItemId);
+                results[s1.id] = items.includes('romeo') && items.includes('poison');
+            }
+
+            // Scene 2: Juliet + Grave (representing death/tragedy)
+            const s2 = scenes.find(s => s.id === 'scene-2-2');
+            if (s2) {
+                const items = s2.slots.map(s => s.placedItemId);
+                results[s2.id] = items.includes('juliet') && items.includes('grave');
+            }
+
+            return results;
         }
     },
 ];

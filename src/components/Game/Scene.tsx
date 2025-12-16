@@ -6,9 +6,10 @@ interface SceneProps {
     scene: SceneType;
     isActive: boolean;
     levelItems: Item[];
+    isSolved: boolean;
 }
 
-export const Scene = ({ scene, isActive, levelItems }: SceneProps) => {
+export const Scene = ({ scene, isActive, levelItems, isSolved }: SceneProps) => {
     // Can drop anywhere in the scene? Or just slots?
     // If we want the scene to accept items and auto-place in first slot, we could make it droppable.
     // For now, let's keep it simple: drop only on slots.
@@ -36,7 +37,10 @@ export const Scene = ({ scene, isActive, levelItems }: SceneProps) => {
                 ))}
             </div>
             {scene.description && (
-                <div className="text-center font-serif text-sm italic border-t pt-1 border-slate-100">
+                <div className={clsx(
+                    "text-center font-serif text-sm italic border-t pt-1 border-slate-100 transition-opacity duration-700 ease-in-out",
+                    isSolved ? "opacity-100" : "opacity-0"
+                )}>
                     {scene.description}
                 </div>
             )}

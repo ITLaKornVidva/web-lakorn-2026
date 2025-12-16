@@ -30,5 +30,6 @@ export interface Level {
     // For simplicity, we might store the check logic function in the level object itself 
     // (though functions in state can be tricky with some persist middleware, 
     // but fine for just structure).
-    checkSolution: (scenes: Scene[]) => boolean;
+    // Returns a map of sceneId -> isSolved
+    validate: (scenes: Scene[]) => Record<string, boolean>;
 }

@@ -5,7 +5,9 @@ import { levels } from '../data/levels';
 interface GameState {
     currentLevelId: string;
     currentScenes: Scene[];
-    availableItems: Item[];
+    availableItems: Item[]; // Logic change: This now holds UNIQUE types for the level
+    trayCounts: Record<string, number>; // New: distinct counts for items
+    sceneSolvedStatus: Record<string, boolean>;
     isLevelSolved: boolean;
 
     // Actions
@@ -28,6 +30,8 @@ export const useGameStore = create<GameState>((set, get) => ({
     currentLevelId: 'level-1',
     currentScenes: [],
     availableItems: [],
+    trayCounts: {},
+    sceneSolvedStatus: {},
     isLevelSolved: false,
 
     loadLevel: (levelId: string) => {
@@ -35,10 +39,25 @@ export const useGameStore = create<GameState>((set, get) => ({
         if (level) {
             // Deep copy scenes to reset them
             const initialScenes = JSON.parse(JSON.stringify(level.scenes));
+
+            // Calculate initial counts from level.availableItems (which may contain duplicates)
+            const counts: Record<string, number> = {};
+            const uniqueItems: Item[] = [];
+
+            level.availableItems.forEach(item => {
+                if (!counts[item.id]) {
+                    counts[item.id] = 0;
+                    uniqueItems.push(item);
+                }
+                counts[item.id]++;
+            });
+
             set({
                 currentLevelId: levelId,
                 currentScenes: initialScenes,
-                availableItems: [...level.availableItems], // Copy available items
+                availableItems: uniqueItems,
+                trayCounts: counts,
+                sceneSolvedStatus: {},
                 isLevelSolved: false
             });
         }
@@ -46,11 +65,12 @@ export const useGameStore = create<GameState>((set, get) => ({
 
     placeItemFromTray: (sceneId, slotId, itemId) => {
         set((state) => {
-            const itemToPlace = state.availableItems.find(i => i.id === itemId);
-            if (!itemToPlace) return state;
+            // Check if we have stock
+            if ((state.trayCounts[itemId] || 0) <= 0) return state;
 
-            // Remove from available items
-            const newAvailableItems = state.availableItems.filter(i => i.id !== itemId);
+            // Decrement count
+            const newCounts = { ...state.trayCounts };
+            newCounts[itemId]--;
 
             // Add to slot
             const newScenes = state.currentScenes.map((scene) => {
@@ -60,23 +80,18 @@ export const useGameStore = create<GameState>((set, get) => ({
                     ...scene,
                     slots: scene.slots.map((slot) => {
                         if (slot.id !== slotId) return slot;
-                        // If slot already has an item, return it to tray? 
-                        // For now assuming empty slot or overwrite -> ideally we should swap or return existing first.
-                        // Impl plan simplified: just place. But let's be safe: return existing if any.
+                        // If slot already has an item, return it to tray
+                        if (slot.placedItemId) {
+                            newCounts[slot.placedItemId] = (newCounts[slot.placedItemId] || 0) + 1;
+                        }
                         return { ...slot, placedItemId: itemId };
                     }),
                 };
             });
 
-            // Note: If we overwrite, we lost the old item. Ideally we should check if slot is full.
-            // But UI shouldn't allow drop if full usually, or we swap. 
-            // Let's keep it simple: drop overwrites (but we should probably put the old one back in tray if strictly following conservation of mass).
-            // Re-reading usage: We check `placedItem` in Slot. If we drop on top, likely valid replacement?
-            // User request: "ถ้าเอาไปวาง ... และลบออกจาก available". "ถ้าวางไม่ได้ ... กลับไป available".
-
             return {
                 currentScenes: newScenes,
-                availableItems: newAvailableItems
+                trayCounts: newCounts
             };
         });
         get().checkWinCondition();
@@ -101,22 +116,12 @@ export const useGameStore = create<GameState>((set, get) => ({
 
             if (!itemToReturnId) return state;
 
-            // Find item object from level data to put back (or we need a master list of items)
-            // `availableItems` only has current. We need to look up valid items.
-            // The level has the master list? `state.currentScenes` only has IDs.
-            // Let's assume `levels` lookup is safe.
-            const level = levels.find(l => l.id === state.currentLevelId);
-            const originalItem = level?.availableItems.find(i => i.id === itemToReturnId);
-
-            if (!originalItem) {
-                // Fallback if not found in level availableItems (maybe it was a special item?)
-                // For now, assume it's there.
-                return { currentScenes: newScenes };
-            }
+            const newCounts = { ...state.trayCounts };
+            newCounts[itemToReturnId] = (newCounts[itemToReturnId] || 0) + 1;
 
             return {
                 currentScenes: newScenes,
-                availableItems: [...state.availableItems, originalItem]
+                trayCounts: newCounts
             };
         });
         get().checkWinCondition();
@@ -125,6 +130,7 @@ export const useGameStore = create<GameState>((set, get) => ({
     moveItem: (fromSceneId, fromSlotId, toSceneId, toSlotId) => {
         set((state) => {
             let movedItemId: string | null = null;
+            let displacedItemId: string | null = null;
 
             // Remove from source
             const intermediateScenes = state.currentScenes.map((scene) => {
@@ -148,12 +154,26 @@ export const useGameStore = create<GameState>((set, get) => ({
                     ...scene,
                     slots: scene.slots.map((slot) => {
                         if (slot.id !== toSlotId) return slot;
+
+                        // If destination has an item, return to tray (swap logic implicitly)
+                        if (slot.placedItemId) {
+                            displacedItemId = slot.placedItemId;
+                        }
+
                         return { ...slot, placedItemId: movedItemId };
                     }),
                 };
             });
 
-            return { currentScenes: finalScenes };
+            const newCounts = { ...state.trayCounts };
+            if (displacedItemId) {
+                newCounts[displacedItemId] = (newCounts[displacedItemId] || 0) + 1;
+            }
+
+            return {
+                currentScenes: finalScenes,
+                trayCounts: newCounts
+            };
         });
         get().checkWinCondition();
     },
@@ -161,13 +181,18 @@ export const useGameStore = create<GameState>((set, get) => ({
     checkWinCondition: () => {
         const state = get();
         const level = levels.find(l => l.id === state.currentLevelId);
-        if (!level) return;
+        if (!level || !level.validate) return;
 
-        if (level.checkSolution(state.currentScenes)) {
-            set({ isLevelSolved: true });
+        const results = level.validate(state.currentScenes);
+        const allSolved = state.currentScenes.every(scene => results[scene.id]);
+
+        set({
+            sceneSolvedStatus: results,
+            isLevelSolved: allSolved
+        });
+
+        if (allSolved) {
             console.log("Level Solved!");
-        } else {
-            set({ isLevelSolved: false });
         }
     },
 
