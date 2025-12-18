@@ -1,6 +1,27 @@
 @import "tailwindcss";
 
 body {
-  background-color: #fdf6e3; /* Light warm background color */
-  font-family: 'Georgia', serif; /* Storybook feel */
+  background-color: #fdf6e3;
+  /* Light warm background color */
+  font-family: 'Georgia', serif;
+  /* Storybook feel */
+}
+
+/* Custom Scrollbar for horizontal scrolling */
+.custom-scrollbar::-webkit-scrollbar {
+  height: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
 }
