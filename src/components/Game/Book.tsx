@@ -9,6 +9,7 @@ import { useState, useEffect } from 'react';
 import type { Item } from '../../types';
 import { levels } from '../../data/levels';
 
+
 export const Book = () => {
     const {
         currentLevelId,
@@ -142,6 +143,7 @@ export const Book = () => {
 
     return (
         <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+
             {/* Portrait Warning Overlay */}
             <div className="fixed inset-0 z-50 bg-slate-900 text-white flex flex-col items-center justify-center p-8 text-center landscape:hidden">
                 <div className="text-6xl mb-4 animate-pulse">↻</div>
@@ -151,7 +153,17 @@ export const Book = () => {
 
             {/* Main Game Content - Landscape Only */}
             <div className="min-h-screen bg-[#fdf6e3] flex-col items-center py-4 pb-32 hidden landscape:flex">
-                <header className="mb-4 text-center shrink-0">
+                <header className="mb-4 text-center shrink-0 w-full relative">
+                    {/* Settings Button */}
+                    <button
+                        onClick={() => setIsSettingsOpen(true)}
+                        className="fixed top-4 right-4 z-50 bg-slate-700 hover:bg-slate-800 text-white px-4 py-2 rounded-lg transition-colors shadow-md flex items-center gap-2"
+                        title="Settings"
+                    >
+                        <span>⚙️</span>
+                        <span className="hidden md:inline">Settings</span>
+                    </button>
+
                     <h1 className="text-3xl font-serif text-slate-800 mb-1">My Storyteller</h1>
                     <div className="bg-white border text-lg px-6 py-1 rounded-lg shadow-sm inline-block">
                         <span className="font-bold text-slate-500 mr-2">Level {currentLevelIndex + 1}:</span>
@@ -177,7 +189,7 @@ export const Book = () => {
                 </div>
 
                 {/* Next Level Button */}
-                <div className={`fixed bottom-8 right-8 transition-opacity duration-1000 ${isLevelSolved ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'} z-50`}>
+                <div className={`fixed bottom-8 right-8 transition-opacity duration-1000 ${isLevelSolved ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'} z-[60]`}>
                     <button
                         onClick={handleNextLevel}
                         className="bg-emerald-600 hover:bg-emerald-700 text-white font-serif text-xl px-8 py-3 rounded-full shadow-lg transform hover:scale-105 transition-all flex items-center gap-2"
