@@ -4,7 +4,7 @@ import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
 import { useGameStore } from '../../store/gameStore';
 import { Scene } from './Scene';
 import { Tray } from './Tray';
-import { DraggableItem } from './DraggableItem';
+import { ItemVisual } from './DraggableItem';
 import { SettingsModal } from '../UI/SettingsModal';
 import type { Item } from '../../types';
 import { levels } from '../../data/levels';
@@ -146,7 +146,7 @@ export const Book = () => {
         <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
 
             {/* Portrait Warning Overlay */}
-            <div className="fixed inset-0 z-50 bg-slate-900 text-white flex flex-col items-center justify-center p-8 text-center landscape:hidden">
+            <div className="fixed inset-0 z-50 bg-slate-900 text-white flex flex-col items-center justify-center p-8 text-center landscape:hidden w-screen h-screen">
                 <div className="text-6xl mb-4 animate-pulse">↻</div>
                 <h2 className="text-3xl font-serif mb-2">Please Rotate Device</h2>
                 <p className="text-slate-300 font-serif">The story unfolds in landscape mode.</p>
@@ -155,8 +155,8 @@ export const Book = () => {
             {/* Main Game Content - Landscape Only */}
             <div className="fixed inset-0 overflow-hidden hidden landscape:flex flex-col">
                 {/* Back Arrow */}
-                <button className="absolute top-8 left-8 text-[#2c1810]/60 hover:text-[#2c1810] transition-colors z-20">
-                    <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
+                <button className="absolute top-4 md:top-8 left-0 bg-[#f5e6d3]/80 hover:bg-[#f5e6d3] text-[#2c1810]/70 hover:text-[#2c1810] transition-all z-20 px-2 md:px-3 py-2 md:py-3 rounded-r-lg shadow-md">
+                    <svg style={{ width: 'clamp(24px, 4vw, 40px)', height: 'clamp(24px, 4vw, 40px)' }} viewBox="0 0 24 24" fill="currentColor">
                         <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
                     </svg>
                 </button>
@@ -164,28 +164,28 @@ export const Book = () => {
                 {/* Settings Button */}
                 <button
                     onClick={() => setIsSettingsOpen(true)}
-                    className="absolute top-8 right-8 text-[#2c1810]/60 hover:text-[#2c1810] transition-colors z-20 flex items-center gap-2"
+                    className="absolute top-4 md:top-8 right-0 bg-[#f5e6d3]/80 hover:bg-[#f5e6d3] text-[#2c1810]/70 hover:text-[#2c1810] transition-all z-20 px-2 md:px-3 py-2 md:py-3 rounded-l-lg shadow-md"
                     title="Settings"
                 >
-                    <span>⚙️</span>
-                    <span className="hidden md:inline text-sm font-serif">Settings</span>
+                    <svg style={{ width: 'clamp(24px, 4vw, 40px)', height: 'clamp(24px, 4vw, 40px)' }} viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z" />
+                    </svg>
                 </button>
 
                 {/* Section 1: Story Background / Intro (Top) */}
-                <div className="h-[16.67vh] w-full flex items-center justify-center px-6 md:px-12 text-center">
-                    <div className="max-w-4xl">
-                        <h2 className="text-[#2c1810] font-serif-bold leading-tight animate-fade-in uppercase tracking-widest text-balance" style={{ fontSize: 'clamp(1rem, 3vw, 2.5rem)' }}>
+                <div className="min-h-[20vh] h-full w-full flex items-center justify-center text-center">
+                    <div className="max-w-4xl flex flex-col items-center">
+                        <h2 className="text-[#2c1810] font-serif-bold leading-tight animate-fade-in uppercase tracking-widest text-balance" style={{ fontSize: 'clamp(0.75rem, 2.3vw, 2rem)' }}>
                             {currentLevel.goal}
                         </h2>
-                        <div className="h-[2px] w-32 bg-[#2c1810]/20 mx-auto mt-3 md:mt-6 rounded-full"></div>
                     </div>
                 </div>
 
                 {/* Section 2: Playing Field / Scenes (Middle) */}
-                <div className="h-[66.67vh] w-full flex items-center overflow-x-auto overflow-y-hidden px-6 md:px-10 gap-5 custom-scrollbar flex-nowrap">
-                    <div className="flex flex-nowrap gap-8 md:gap-16 py-4 md:py-8 min-w-max mx-auto items-start">
+                <div className="h-full w-full">
+                    <div className="h-full w-full flex flex-nowrap gap-4 md:gap-2 min-w-max mx-auto items-center justify-center">
                         {currentScenes.map((scene) => (
-                            <div key={scene.id} className="w-[45vh] flex-shrink-0">
+                            <div key={scene.id} className="w-[30vw] flex-shrink-0">
                                 <Scene
                                     scene={scene}
                                     isActive={false}
@@ -198,8 +198,8 @@ export const Book = () => {
                 </div>
 
                 {/* Section 3: Interaction Tray (Bottom) */}
-                <div className="h-[16.67vh] w-full relative flex items-center justify-center">
-                    <div className="py-2 md:py-4 px-6 md:px-12">
+                <div className="h-full w-full relative flex items-center justify-center">
+                    <div className="py-2 md:px-12">
                         <Tray items={availableItems} counts={trayCounts} />
                     </div>
 
@@ -218,8 +218,9 @@ export const Book = () => {
 
                 <DragOverlay dropAnimation={null}>
                     {activeDragItem ? (
-                        <div className="cursor-grabbing scale-125 rotate-3 transition-transform shadow-2xl">
-                            <DraggableItem item={activeDragItem} id={`overlay-${activeDragItem.id}`} />
+                        <div className="cursor-grabbing rotate-3 transition-transform shadow-2xl">
+                            {/* Use Visual component solely! No dragging logic here */}
+                            <ItemVisual item={activeDragItem} />
                         </div>
                     ) : null}
                 </DragOverlay>

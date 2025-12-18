@@ -31,13 +31,13 @@ export const Scene = ({ scene, isActive, levelItems, isSolved }: SceneProps) => 
     }, []);
 
     return (
-        <div className="flex flex-col items-center gap-4 w-full">
+        <div className="flex flex-col items-center w-full">
             <div className={clsx(
                 "h-8 transition-all duration-1000 ease-out",
                 isSolved ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"
             )}>
                 {scene.title && (
-                    <h3 className="font-serif-bold text-[#2c1810]/80 text-center uppercase tracking-widest" style={{ fontSize: 'clamp(0.75rem, 2vw, 1.25rem)' }}>
+                    <h3 className="font-serif-bold text-[#2c1810]/80 text-center uppercase tracking-widest" style={{ fontSize: 'clamp(0.75rem, 1.3vw, 1rem)' }}>
                         {scene.title}
                     </h3>
                 )}
@@ -45,7 +45,7 @@ export const Scene = ({ scene, isActive, levelItems, isSolved }: SceneProps) => 
             <div
                 ref={containerRef}
                 className={clsx(
-                    "bg-white border-2 border-[#2c1810] rounded-sm overflow-hidden flex flex-col shadow-lg transition-all duration-500",
+                    "bg-white border-2 border-[#2c1810] overflow-hidden flex flex-col shadow-lg transition-all duration-500",
                     "aspect-[4/3] w-full relative",
                     isActive ? "ring-4 ring-amber-400 scale-[1.02]" : ""
                 )}

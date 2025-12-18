@@ -28,7 +28,7 @@ export const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
     return (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={onClose}>
             <div
-                className="max-w-2xl w-full bg-white border-4 border-slate-800 rounded-lg shadow-2xl p-8 max-h-[90vh] overflow-y-auto"
+                className="max-w-2xl w-full bg-white border-4 border-slate-800 rounded-lg shadow-2xl p-8 max-h-[90vh] overflow-y-auto touch-pan-y overscroll-contain"
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* Header with Close Button */}

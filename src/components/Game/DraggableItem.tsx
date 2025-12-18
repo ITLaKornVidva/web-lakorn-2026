@@ -1,6 +1,5 @@
 import { useDraggable } from '@dnd-kit/core';
 import type { Item } from '../../types';
-import { CSS } from '@dnd-kit/utilities';
 import clsx from 'clsx';
 
 interface DraggableItemProps {
@@ -9,32 +8,18 @@ interface DraggableItemProps {
     disabled?: boolean;
 }
 
-export const DraggableItem = ({ item, id, disabled }: DraggableItemProps) => {
-    const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
-        id: id,
-        data: { item },
-        disabled: disabled,
-    });
-
-    const style = {
-        transform: CSS.Translate.toString(transform),
-        opacity: isDragging ? 0.5 : 1,
-        cursor: disabled ? 'not-allowed' : 'grab',
-        touchAction: 'none',
-    };
-
+// Visual component for consistency between original and overlay
+export const ItemVisual = ({ item, disabled, isDragging, className }: { item: Item, disabled?: boolean, isDragging?: boolean, className?: string }) => {
     const isImageIcon = item.icon.startsWith('/') || item.icon.startsWith('http');
 
     return (
         <div
-            ref={setNodeRef}
-            style={style}
-            {...listeners}
-            {...attributes}
             className={clsx(
-                "w-20 h-20 flex items-center justify-center transition-all duration-300",
+                "w-16 h-16 flex items-center justify-center transition-all duration-300",
                 !isImageIcon && "text-5xl bg-[url('/assets/parchment_bg.png')] bg-cover border border-[#2c1810]/40 rounded-sm shadow-md",
-                disabled ? "opacity-30 grayscale cursor-not-allowed" : "cursor-grab active:cursor-grabbing hover:scale-105"
+                disabled ? "opacity-30 grayscale cursor-not-allowed" : "cursor-grab",
+                !disabled && !isDragging && "active:cursor-grabbing hover:scale-105",
+                className
             )}
             title={item.name}
         >
@@ -43,6 +28,32 @@ export const DraggableItem = ({ item, id, disabled }: DraggableItemProps) => {
             ) : (
                 <span className="drop-shadow-sm">{item.icon}</span>
             )}
+        </div>
+    );
+};
+
+export const DraggableItem = ({ item, id, disabled }: DraggableItemProps) => {
+    const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
+        id: id,
+        data: { item },
+        disabled: disabled,
+    });
+
+    const style = {
+        // transform: CSS.Translate.toString(transform), // REMOVE transform to prevent ghost movement
+        opacity: isDragging ? 0.3 : 1, // Fade out original, don't move it
+        cursor: disabled ? 'not-allowed' : 'grab',
+        touchAction: 'none',
+    };
+
+    return (
+        <div
+            ref={setNodeRef}
+            style={style}
+            {...listeners}
+            {...attributes}
+        >
+            <ItemVisual item={item} disabled={disabled} isDragging={isDragging} />
         </div>
     );
 };
