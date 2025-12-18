@@ -1,5 +1,6 @@
 import { useSettingsStore } from '../../store/settingsStore';
 import { useGameStore } from '../../store/gameStore';
+import { useFullscreen } from '../../hooks/useFullscreen';
 
 interface SettingsModalProps {
     isOpen: boolean;
@@ -9,6 +10,7 @@ interface SettingsModalProps {
 export const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
     const { bgmVolume, sfxVolume, setBgmVolume, setSfxVolume, resetSettings } = useSettingsStore();
     const { resetProgress } = useGameStore();
+    const { isFullscreen, toggleFullscreen, isEnabled: isFullscreenEnabled } = useFullscreen();
 
     if (!isOpen) return null;
 
@@ -90,6 +92,28 @@ export const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
                                 <span>Max</span>
                             </div>
                         </div>
+                    </div>
+                </section>
+
+                {/* Display & App Section */}
+                <section className="mb-8 border-t-2 border-slate-300 pt-6">
+                    <h2 className="text-2xl font-serif text-slate-700 mb-4 flex items-center gap-2">
+                        📱 Display
+                    </h2>
+                    <div className="space-y-4">
+                        {isFullscreenEnabled && (
+                            <button
+                                onClick={toggleFullscreen}
+                                className="w-full px-6 py-3 bg-slate-100 text-slate-800 font-bold rounded-lg hover:bg-slate-200 transition-colors border border-slate-300 flex items-center justify-center gap-2"
+                            >
+                                <span>{isFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}</span>
+                                <span>{isFullscreen ? '↙️' : '↗️'}</span>
+                            </button>
+                        )}
+
+                        {!isFullscreenEnabled && (
+                            <p className="text-slate-500 italic text-center">No additional display options available for this device.</p>
+                        )}
                     </div>
                 </section>
 

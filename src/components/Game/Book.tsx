@@ -173,7 +173,7 @@ export const Book = () => {
                 </button>
 
                 {/* Section 1: Story Background / Intro (Top) */}
-                <div className="min-h-[20vh] h-full w-full flex items-center justify-center text-center">
+                <div className="h-full w-full flex items-center justify-center text-center">
                     <div className="max-w-4xl flex flex-col items-center">
                         <h2 className="text-[#2c1810] font-serif-bold leading-tight animate-fade-in uppercase tracking-widest text-balance" style={{ fontSize: 'clamp(0.75rem, 2.3vw, 2rem)' }}>
                             {currentLevel.goal}
@@ -185,7 +185,7 @@ export const Book = () => {
                 <div className="h-full w-full">
                     <div className="h-full w-full flex flex-nowrap gap-4 md:gap-2 min-w-max mx-auto items-center justify-center">
                         {currentScenes.map((scene) => (
-                            <div key={scene.id} className="w-[30vw] flex-shrink-0">
+                            <div key={scene.id} className="w-[28vw] flex-shrink-0">
                                 <Scene
                                     scene={scene}
                                     isActive={false}

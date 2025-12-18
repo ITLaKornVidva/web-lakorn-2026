@@ -33,7 +33,7 @@ export const Scene = ({ scene, isActive, levelItems, isSolved }: SceneProps) => 
     return (
         <div className="flex flex-col items-center w-full">
             <div className={clsx(
-                "h-8 transition-all duration-1000 ease-out",
+                "h-5 lg:h-8 transition-all duration-1000 ease-out",
                 isSolved ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"
             )}>
                 {scene.title && (

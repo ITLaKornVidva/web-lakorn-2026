@@ -1,0 +1,21 @@
+{
+    "name": "Lakorn Vidva 2026",
+    "short_name": "Lakorn2026",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#fdf6e3",
+    "theme_color": "#2c1810",
+    "orientation": "landscape",
+    "icons": [
+        {
+            "src": "favicon.ico",
+            "sizes": "64x64 32x32 24x24 16x16",
+            "type": "image/x-icon"
+        },
+        {
+            "src": "/vite.svg",
+            "type": "image/svg+xml",
+            "sizes": "512x512"
+        }
+    ]
+}
