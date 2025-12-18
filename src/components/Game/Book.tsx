@@ -5,8 +5,10 @@ import { useGameStore } from '../../store/gameStore';
 import { Scene } from './Scene';
 import { Tray } from './Tray';
 import { DraggableItem } from './DraggableItem';
+import { SettingsModal } from '../UI/SettingsModal';
 import type { Item } from '../../types';
 import { levels } from '../../data/levels';
+
 
 export const Book = () => {
     const {
@@ -23,11 +25,15 @@ export const Book = () => {
     } = useGameStore();
 
     const [activeDragItem, setActiveDragItem] = useState<Item | null>(null);
+    const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
-    // Load level on mount
+    // Load level on mount or when needed
     useEffect(() => {
-        loadLevel('level-1');
-    }, [loadLevel]);
+        // Only load if scenes are empty (e.g. after refresh) to rely on persisted currentLevelId
+        if (currentScenes.length === 0) {
+            loadLevel(currentLevelId);
+        }
+    }, [loadLevel, currentLevelId, currentScenes.length]);
 
     const sensors = useSensors(
         useSensor(PointerSensor, {
@@ -138,6 +144,7 @@ export const Book = () => {
 
     return (
         <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+
             {/* Portrait Warning Overlay */}
             <div className="fixed inset-0 z-50 bg-slate-900 text-white flex flex-col items-center justify-center p-8 text-center landscape:hidden">
                 <div className="text-6xl mb-4 animate-pulse">↻</div>
@@ -152,6 +159,16 @@ export const Book = () => {
                     <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
                     </svg>
+                </button>
+
+                {/* Settings Button */}
+                <button
+                    onClick={() => setIsSettingsOpen(true)}
+                    className="absolute top-8 right-8 text-[#2c1810]/60 hover:text-[#2c1810] transition-colors z-20 flex items-center gap-2"
+                    title="Settings"
+                >
+                    <span>⚙️</span>
+                    <span className="hidden md:inline text-sm font-serif">Settings</span>
                 </button>
 
                 {/* Section 1: Story Background / Intro (Top) */}
@@ -206,6 +223,10 @@ export const Book = () => {
                         </div>
                     ) : null}
                 </DragOverlay>
+
+                {/* Settings Modal */}
+                <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
+
             </div>
         </DndContext>
     );
