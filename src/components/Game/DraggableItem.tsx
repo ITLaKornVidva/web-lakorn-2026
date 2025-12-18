@@ -19,6 +19,7 @@ export const DraggableItem = ({ item, id, disabled }: DraggableItemProps) => {
         transform: CSS.Translate.toString(transform),
         opacity: isDragging ? 0.5 : 1,
         cursor: disabled ? 'not-allowed' : 'grab',
+        touchAction: 'none',
     };
 
     return (
