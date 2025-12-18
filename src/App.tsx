@@ -1,8 +1,12 @@
 import { Book } from './components/Game/Book'
+import { AudioController } from './components/UI/AudioController'
 
 function App() {
   return (
-    <Book />
+    <>
+      <AudioController bgmSrc="" />
+      <Book />
+    </>
   )
 }
 

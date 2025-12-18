@@ -4,6 +4,7 @@ import { useGameStore } from '../../store/gameStore';
 import { Scene } from './Scene';
 import { Tray } from './Tray';
 import { DraggableItem } from './DraggableItem';
+import { SettingsModal } from '../UI/SettingsModal';
 import { useState, useEffect } from 'react';
 import type { Item } from '../../types';
 import { levels } from '../../data/levels';
@@ -23,11 +24,15 @@ export const Book = () => {
     } = useGameStore();
 
     const [activeDragItem, setActiveDragItem] = useState<Item | null>(null);
+    const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
-    // Load level on mount
+    // Load level on mount or when needed
     useEffect(() => {
-        loadLevel('level-1');
-    }, [loadLevel]);
+        // Only load if scenes are empty (e.g. after refresh) to rely on persisted currentLevelId
+        if (currentScenes.length === 0) {
+            loadLevel(currentLevelId);
+        }
+    }, [loadLevel, currentLevelId, currentScenes.length]);
 
     const sensors = useSensors(
         useSensor(PointerSensor, {
@@ -138,7 +143,17 @@ export const Book = () => {
     return (
         <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
             <div className="min-h-screen bg-[#fdf6e3] flex flex-col items-center py-8 pb-32">
-                <header className="mb-6 text-center">
+                <header className="mb-6 text-center relative w-full max-w-4xl">
+                    {/* Settings Button */}
+                    <button
+                        onClick={() => setIsSettingsOpen(true)}
+                        className="fixed top-4 right-4 z-50 bg-slate-700 hover:bg-slate-800 text-white px-4 py-2 rounded-lg transition-colors shadow-md flex items-center gap-2"
+                        title="Settings"
+                    >
+                        <span>⚙️</span>
+                        <span className="hidden md:inline">Settings</span>
+                    </button>
+
                     <h1 className="text-4xl font-serif text-slate-800 mb-2">My Storyteller</h1>
                     <div className="bg-white border text-xl px-8 py-2 rounded-lg shadow-sm">
                         <span className="font-bold text-slate-500 mr-2">Level {currentLevelIndex + 1}:</span>
@@ -179,6 +194,9 @@ export const Book = () => {
                         </div>
                     ) : null}
                 </DragOverlay>
+
+                {/* Settings Modal */}
+                <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
 
             </div>
         </DndContext>
