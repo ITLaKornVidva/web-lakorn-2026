@@ -11,9 +11,9 @@ const ITEMS: Record<string, Item> = {
     romeo: { id: 'romeo', name: 'Romeo', type: 'character', icon: '🤵' },
     juliet: { id: 'juliet', name: 'Juliet', type: 'character', icon: '👰' },
     poison: { id: 'poison', name: 'Poison', type: 'object', icon: '☠️' },
-    you: { id: 'you', name: 'You', type: 'character', icon: '👨' },
-    book: { id: 'book', name: 'Book', type: 'object', icon: '📖' },
-    open: { id: 'open', name: 'Open', type: 'action', icon: '🔓' },
+    you: { id: 'you', name: 'You', type: 'character', icon: '/assets/you.png' },
+    book: { id: 'book', name: 'Book', type: 'object', icon: '/assets/book.png' },
+    open: { id: 'open', name: 'Open', type: 'action', icon: '/assets/open_book.png' },
 };
 
 export const levels: Level[] = [
@@ -25,27 +25,33 @@ export const levels: Level[] = [
         scenes: [
             {
                 id: 'scene-1-1',
+                title: 'YOU FOUND A BOOK',
                 slots: [
-                    { id: 'slot-1-1-1', allowedTypes: ['character'], placedItemId: null },
-                    { id: 'slot-1-1-2', allowedTypes: ['object'], placedItemId: null },
+                    { id: 'slot-1-1-1', allowedTypes: ['character'], placedItemId: null, shape: 'ellipse', x: 600, y: 420, scale: 2 },
+                    { id: 'slot-1-1-2', allowedTypes: ['object'], placedItemId: null, shape: 'ellipse', x: 320, y: 330, scale: 3 },
                 ],
-                description: 'You found a book'
+                description: 'You found a book',
+                backgroundImage: '/assets/scene1_bg.png'
             },
             {
                 id: 'scene-1-2',
+                title: 'YOU OPENED A BOOK',
                 slots: [
-                    { id: 'slot-1-2-1', allowedTypes: ['character'], placedItemId: null },
-                    { id: 'slot-1-2-2', allowedTypes: ['action'], placedItemId: null },
-                    { id: 'slot-1-2-3', allowedTypes: ['object'], placedItemId: null },
+                    { id: 'slot-1-2-1', allowedTypes: ['character'], placedItemId: null, shape: 'ellipse', x: 200, y: 420, scale: 2 },
+                    { id: 'slot-1-2-2', allowedTypes: ['action'], placedItemId: null, shape: 'rectangle', x: 400, y: 300, scale: 2 },
+                    { id: 'slot-1-2-3', allowedTypes: ['object'], placedItemId: null, shape: 'ellipse', x: 600, y: 420, scale: 2 },
                 ],
-                description: 'You opened a book'
+                description: 'You opened a book',
+                backgroundImage: '/assets/scene1_bg.png'
             },
             {
                 id: 'scene-1-3',
+                title: 'YOU TRAVELED INTO THE PAST',
                 slots: [
-                    { id: 'slot-1-3-1', allowedTypes: ['character'], placedItemId: null },
+                    { id: 'slot-1-3-1', allowedTypes: ['character'], placedItemId: null, shape: 'ellipse', x: 400, y: 420, scale: 2 },
                 ],
-                description: 'You traveled into the past'
+                description: 'You traveled into the past',
+                backgroundImage: '/assets/scene1_bg.png'
             }
         ],
         validate: (scenes: Scene[]) => {
@@ -78,8 +84,8 @@ export const levels: Level[] = [
         goal: 'Tragedy: Romeo and Juliet die',
         availableItems: [ITEMS.romeo, ITEMS.juliet, ITEMS.poison, ITEMS.grave],
         scenes: [
-            { id: 'scene-2-1', slots: [{ id: 'slot-2-1-1', allowedTypes: ['character'], placedItemId: null }, { id: 'slot-2-1-2', allowedTypes: ['object'], placedItemId: null }], description: 'Romeo drinks poison' },
-            { id: 'scene-2-2', slots: [{ id: 'slot-2-2-1', allowedTypes: ['character'], placedItemId: null }, { id: 'slot-2-2-2', allowedTypes: ['object'], placedItemId: null }], description: 'Juliet finds Romeo' }
+            { id: 'scene-2-1', slots: [{ id: 'slot-2-1-1', allowedTypes: ['character'], placedItemId: null, x: 240, y: 420 }, { id: 'slot-2-1-2', allowedTypes: ['object'], placedItemId: null, x: 560, y: 420 }], description: 'Romeo drinks poison' },
+            { id: 'scene-2-2', slots: [{ id: 'slot-2-2-1', allowedTypes: ['character'], placedItemId: null, x: 240, y: 420 }, { id: 'slot-2-2-2', allowedTypes: ['object'], placedItemId: null, x: 560, y: 420 }], description: 'Juliet finds Romeo' }
         ],
         validate: (scenes: Scene[]) => {
             const results: Record<string, boolean> = {};

@@ -1,5 +1,7 @@
 import type { Scene as SceneType, Item } from '../../types';
+import { SCENE_BASE_WIDTH, SCENE_BASE_HEIGHT } from '../../types';
 import { Slot } from './Slot';
+import { useRef, useState, useEffect } from 'react';
 import clsx from 'clsx';
 
 interface SceneProps {
@@ -10,40 +12,77 @@ interface SceneProps {
 }
 
 export const Scene = ({ scene, isActive, levelItems, isSolved }: SceneProps) => {
-    // Can drop anywhere in the scene? Or just slots?
-    // If we want the scene to accept items and auto-place in first slot, we could make it droppable.
-    // For now, let's keep it simple: drop only on slots.
+    const containerRef = useRef<HTMLDivElement>(null);
+    const [scale, setScale] = useState(1);
 
-    // However, maybe dragging an item *over* a scene but not a slot should show highlight?
-    // Let's stick to slot dropping for MVP.
+    useEffect(() => {
+        const updateScale = () => {
+            if (containerRef.current) {
+                const width = containerRef.current.offsetWidth;
+                setScale(width / SCENE_BASE_WIDTH);
+            }
+        };
+
+        const observer = new ResizeObserver(updateScale);
+        if (containerRef.current) observer.observe(containerRef.current);
+
+        updateScale();
+        return () => observer.disconnect();
+    }, []);
 
     return (
-        <div className={clsx(
-            "bg-white border-2 border-slate-800 rounded-sm p-2 flex flex-col gap-2 shadow-sm min-h-[160px]",
-            isActive ? "ring-2 ring-amber-400" : ""
-        )}>
-            <div className="flex-1 bg-sky-100 rounded border border-slate-200 relative flex justify-around items-end pb-4">
-                {/* This mimics the "stage" */}
-                {scene.slots.map(slot => (
-                    <Slot
-                        key={slot.id}
-                        id={slot.id}
-                        placedItem={slot.placedItemId ?
-                            levelItems.find(i => i.id === slot.placedItemId)
-                            : undefined
-                        }
-                        allowedTypes={slot.allowedTypes}
-                    />
-                ))}
+        <div className="flex flex-col items-center gap-4 w-full">
+            <div className={clsx(
+                "h-8 transition-all duration-1000 ease-out",
+                isSolved ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"
+            )}>
+                {scene.title && (
+                    <h3 className="font-serif-bold text-[#2c1810]/80 text-center uppercase tracking-widest" style={{ fontSize: 'clamp(0.75rem, 2vw, 1.25rem)' }}>
+                        {scene.title}
+                    </h3>
+                )}
             </div>
-            {scene.description && (
-                <div className={clsx(
-                    "text-center font-serif text-sm italic border-t pt-1 border-slate-100 transition-opacity duration-700 ease-in-out",
-                    isSolved ? "opacity-100" : "opacity-0"
-                )}>
-                    {scene.description}
+            <div
+                ref={containerRef}
+                className={clsx(
+                    "bg-white border-2 border-[#2c1810] rounded-sm overflow-hidden flex flex-col shadow-lg transition-all duration-500",
+                    "aspect-[4/3] w-full relative",
+                    isActive ? "ring-4 ring-amber-400 scale-[1.02]" : ""
+                )}
+            >
+                {/* Scaling Wrapper */}
+                <div
+                    className="absolute top-0 left-0 origin-top-left"
+                    style={{
+                        width: SCENE_BASE_WIDTH,
+                        height: SCENE_BASE_HEIGHT,
+                        transform: `scale(${scale})`,
+                    }}
+                >
+                    <div
+                        className="w-full h-full relative bg-cover bg-center grayscale-[0.2] sepia-[0.2]"
+                        style={scene.backgroundImage ? { backgroundImage: `url(${scene.backgroundImage})` } : { backgroundColor: '#fdf6e3' }}
+                    >
+                        {/* This mimics the "stage" */}
+                        <div className="absolute inset-0 bg-[#2c1810]/5 pointer-events-none" />
+                        {scene.slots.map(slot => (
+                            <Slot
+                                key={slot.id}
+                                id={slot.id}
+                                x={slot.x}
+                                y={slot.y}
+                                scale={slot.scale}
+                                shape={slot.shape}
+                                placedItem={slot.placedItemId ?
+                                    levelItems.find(i => i.id === slot.placedItemId)
+                                    : undefined
+                                }
+                                allowedTypes={slot.allowedTypes}
+                            />
+                        ))}
+                    </div>
                 </div>
-            )}
+            </div>
         </div>
     );
 };
