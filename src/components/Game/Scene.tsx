@@ -1,19 +1,25 @@
+import { useRef, useState, useEffect } from 'react';
+import clsx from 'clsx';
+import { useGameStore } from '../../store/gameStore';
 import type { Scene as SceneType, Item } from '../../types';
 import { SCENE_BASE_WIDTH, SCENE_BASE_HEIGHT } from '../../types';
 import { Slot } from './Slot';
-import { useRef, useState, useEffect } from 'react';
-import clsx from 'clsx';
 
 interface SceneProps {
     scene: SceneType;
     isActive: boolean;
     levelItems: Item[];
-    isSolved: boolean;
 }
 
-export const Scene = ({ scene, isActive, levelItems, isSolved }: SceneProps) => {
+export const Scene = ({ scene, isActive, levelItems }: SceneProps) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const [scale, setScale] = useState(1);
+
+    // Subscribe to active outcomes
+    const activeOutcomes = useGameStore(state => state.activeOutcomes);
+    const activeOutcome = activeOutcomes[scene.id];
+
+    const displayTitle = activeOutcome?.title;
 
     useEffect(() => {
         const updateScale = () => {
@@ -31,17 +37,17 @@ export const Scene = ({ scene, isActive, levelItems, isSolved }: SceneProps) => 
     }, []);
 
     return (
-        <div className="flex flex-col items-center w-full">
-            <div className={clsx(
-                "h-5 lg:h-8 transition-all duration-1000 ease-out",
-                isSolved ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"
-            )}>
-                {scene.title && (
-                    <h3 className="font-serif-bold text-[#2c1810]/80 text-center uppercase tracking-widest" style={{ fontSize: 'clamp(0.75rem, 1.3vw, 1rem)' }}>
-                        {scene.title}
+        <div className="flex flex-col items-center w-full space-y-4">
+            {/* Title Section */}
+            <div className="h-12 flex items-center justify-center w-full transition-all duration-300">
+                {displayTitle && (
+                    <h3 className="font-serif-bold text-[#2c1810]/90 text-center uppercase tracking-widest animate-fade-in"
+                        style={{ fontSize: 'clamp(0.85rem, 1vw, 1.2rem)' }}>
+                        {displayTitle}
                     </h3>
                 )}
             </div>
+
             <div
                 ref={containerRef}
                 className={clsx(
@@ -83,6 +89,9 @@ export const Scene = ({ scene, isActive, levelItems, isSolved }: SceneProps) => 
                     </div>
                 </div>
             </div>
+
+
+            {/* Description Section */}
         </div>
     );
 };

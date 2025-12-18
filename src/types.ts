@@ -20,12 +20,21 @@ export interface Slot {
     scale?: number; // scale multiplier for the item in this slot (default: 1)
 }
 
+export interface Outcome {
+    id: string;
+    itemIds: string[]; // IDs of items in slots (order matters? or set? Usually set for this game logic based on previous turns)
+    title: string;
+    isSolved: boolean;
+    endingImage?: string;
+}
+
 export interface Scene {
     id: string;
     slots: Slot[];
     title?: string; // Appears above scene
     description?: string; // Appears below scene/dialogue
     backgroundImage?: string;
+    outcomes?: Outcome[]; // Possible results for this scene
 }
 
 export interface Level {
@@ -34,11 +43,6 @@ export interface Level {
     goal: string;
     scenes: Scene[];
     availableItems: Item[];
-    // Logic to check if level is solved triggers in store, 
-    // but we can attach a validation function here or in a separate logic file.
-    // For simplicity, we might store the check logic function in the level object itself 
-    // (though functions in state can be tricky with some persist middleware, 
-    // but fine for just structure).
-    // Returns a map of sceneId -> isSolved
-    validate: (scenes: Scene[]) => Record<string, boolean>;
+    // Legacy validation or global level validation
+    validate?: (scenes: Scene[]) => Record<string, boolean>;
 }

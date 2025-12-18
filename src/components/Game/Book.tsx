@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { DndContext, DragOverlay, useSensor, useSensors, PointerSensor } from '@dnd-kit/core';
 import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
 import { useGameStore } from '../../store/gameStore';
@@ -11,6 +12,7 @@ import { levels } from '../../data/levels';
 
 
 export const Book = () => {
+    const navigate = useNavigate();
     const {
         currentLevelId,
         currentScenes,
@@ -21,7 +23,7 @@ export const Book = () => {
         returnItemToTray,
         loadLevel,
         isLevelSolved,
-        sceneSolvedStatus
+        unlockLevel
     } = useGameStore();
 
     const [activeDragItem, setActiveDragItem] = useState<Item | null>(null);
@@ -69,7 +71,7 @@ export const Book = () => {
             currentScenes.find(s => s.slots.some(slot => slot.id === slotId));
 
         // Helper to check if drop is valid
-        const isDropValid = (draggedItem: Item, targetData: any, targetSlotId?: string) => {
+        const isDropValid = (draggedItem: Item, targetData: any) => {
             const allowedTypes = targetData?.allowedTypes as string[] | undefined;
 
             // Check 1: Allowed Types
@@ -77,14 +79,8 @@ export const Book = () => {
                 return false;
             }
 
-            // Check 2: Slot is empty
-            if (targetSlotId) {
-                const scene = findSceneBySlotId(targetSlotId);
-                const slot = scene?.slots.find(s => s.id === targetSlotId);
-                if (slot && slot.placedItemId) {
-                    return false;
-                }
-            }
+            // Check 2: (Removed) Slot occupation check removed to allow swapping/replacement
+            // The store handles returning to tray or swapping if occupied.
 
             return true;
         };
@@ -100,7 +96,7 @@ export const Book = () => {
                 const slotId = over.id as string;
                 const scene = findSceneBySlotId(slotId);
 
-                if (scene && droppedItem && isDropValid(droppedItem, over.data.current, slotId)) {
+                if (scene && droppedItem && isDropValid(droppedItem, over.data.current)) {
                     placeItemFromTray(scene.id, slotId, itemId);
                 }
             }
@@ -120,11 +116,35 @@ export const Book = () => {
             if (over && over.id.toString().startsWith('slot-')) {
                 const toSlotId = over.id as string;
                 const toScene = findSceneBySlotId(toSlotId);
+                const toSlot = toScene?.slots.find(s => s.id === toSlotId);
+                const fromSlot = fromScene.slots.find(s => s.id === fromSlotId);
 
-                if (toScene && droppedItem && isDropValid(droppedItem, over.data.current, toSlotId)) {
-                    moveItem(fromScene.id, fromSlotId, toScene.id, toSlotId);
-                } else {
-                    // Do nothing
+                // Validation Logic
+                if (toScene && droppedItem && fromSlot) {
+                    // Check 1: Is Dragged Item allowed in Target Slot?
+                    const isDraggedAllowed = isDropValid(droppedItem, over.data.current);
+
+                    // Check 2: If occupied, is Target Item allowed in Source Slot?
+                    let isSwapAllowed = true;
+                    if (toSlot && toSlot.placedItemId) {
+                        // We need the Item object for the target item to check its type.
+                        // But we only have the ID. We can find it in availableItems or levels data.
+                        // Since availableItems in store has everything, we can look there.
+                        const targetItem = availableItems.find(i => i.id === toSlot.placedItemId);
+
+                        if (targetItem) {
+                            // Construct targetData mock for isDropValid or just check types directly
+                            // fromSlot has allowedTypes.
+                            const sourceAllowedTypes = fromSlot.allowedTypes;
+                            if (!sourceAllowedTypes.includes(targetItem.type)) {
+                                isSwapAllowed = false;
+                            }
+                        }
+                    }
+
+                    if (isDraggedAllowed && isSwapAllowed) {
+                        moveItem(fromScene.id, fromSlotId, toScene.id, toSlotId);
+                    }
                 }
             }
             // Case 2.2: Dropped outside (Remove/Return to tray)
@@ -136,7 +156,9 @@ export const Book = () => {
 
     const handleNextLevel = () => {
         if (nextLevelId) {
+            unlockLevel(nextLevelId);
             loadLevel(nextLevelId);
+            navigate(`/game/${nextLevelId}`);
         } else {
             alert("No more levels! Thanks for playing.");
         }
@@ -155,7 +177,10 @@ export const Book = () => {
             {/* Main Game Content - Landscape Only */}
             <div className="fixed inset-0 overflow-hidden hidden landscape:flex flex-col">
                 {/* Back Arrow */}
-                <button className="absolute top-4 md:top-8 left-0 bg-[#f5e6d3]/80 hover:bg-[#f5e6d3] text-[#2c1810]/70 hover:text-[#2c1810] transition-all z-20 px-2 md:px-3 py-2 md:py-3 rounded-r-lg shadow-md">
+                <button
+                    onClick={() => navigate('/')}
+                    className="absolute top-4 md:top-8 left-0 bg-[#f5e6d3]/80 hover:bg-[#f5e6d3] text-[#2c1810]/70 hover:text-[#2c1810] transition-all z-20 px-2 md:px-3 py-2 md:py-3 rounded-r-lg shadow-md"
+                >
                     <svg style={{ width: 'clamp(24px, 4vw, 40px)', height: 'clamp(24px, 4vw, 40px)' }} viewBox="0 0 24 24" fill="currentColor">
                         <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
                     </svg>
@@ -190,7 +215,6 @@ export const Book = () => {
                                     scene={scene}
                                     isActive={false}
                                     levelItems={currentLevel.availableItems}
-                                    isSolved={!!sceneSolvedStatus[scene.id]}
                                 />
                             </div>
                         ))}

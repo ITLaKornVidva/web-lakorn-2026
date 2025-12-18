@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { Scene, Item } from '../types';
+import type { Scene, Item, Outcome } from '../types';
 import { levels } from '../data/levels';
 
 interface GameState {
@@ -16,7 +16,9 @@ interface GameState {
     availableItems: Item[];
     trayCounts: Record<string, number>;
     sceneSolvedStatus: Record<string, boolean>;
+    activeOutcomes: Record<string, Outcome | null>;
     isLevelSolved: boolean;
+    lastOutcome: Outcome | null;
 
     // Actions
     setPlayerName: (name: string) => void;
@@ -49,8 +51,12 @@ const defaultGameState = {
     availableItems: [],
     trayCounts: {},
     sceneSolvedStatus: {},
+    activeOutcomes: {},
     isLevelSolved: false,
+    lastOutcome: null,
 };
+
+
 
 export const useGameStore = create<GameState>()(
     persist(
@@ -99,7 +105,9 @@ export const useGameStore = create<GameState>()(
                         availableItems: uniqueItems,
                         trayCounts: counts,
                         sceneSolvedStatus: {},
-                        isLevelSolved: false
+                        activeOutcomes: {},
+                        isLevelSolved: false,
+                        lastOutcome: null
                     });
                 }
             },
@@ -170,50 +178,45 @@ export const useGameStore = create<GameState>()(
 
             moveItem: (fromSceneId, fromSlotId, toSceneId, toSlotId) => {
                 set((state) => {
-                    let movedItemId: string | null = null;
-                    let displacedItemId: string | null = null;
+                    // 1. Identify items involved
+                    let movingItemId: string | null = null;
+                    let targetItemId: string | null = null;
 
-                    // Remove from source
-                    const intermediateScenes = state.currentScenes.map((scene) => {
-                        if (scene.id !== fromSceneId) return scene;
-                        return {
-                            ...scene,
-                            slots: scene.slots.map((slot) => {
-                                if (slot.id !== fromSlotId) return slot;
-                                movedItemId = slot.placedItemId;
-                                return { ...slot, placedItemId: null };
-                            }),
-                        };
+                    // Locate items without mutating yet
+                    state.currentScenes.forEach(scene => {
+                        scene.slots.forEach(slot => {
+                            if (scene.id === fromSceneId && slot.id === fromSlotId) {
+                                movingItemId = slot.placedItemId;
+                            }
+                            if (scene.id === toSceneId && slot.id === toSlotId) {
+                                targetItemId = slot.placedItemId;
+                            }
+                        });
                     });
 
-                    if (!movedItemId) return state;
+                    if (!movingItemId) return state; // Nothing to move
 
-                    // Add to destination
-                    const finalScenes = intermediateScenes.map((scene) => {
-                        if (scene.id !== toSceneId) return scene;
+                    // 2. Perform the swap
+                    const finalScenes = state.currentScenes.map((scene) => {
                         return {
                             ...scene,
                             slots: scene.slots.map((slot) => {
-                                if (slot.id !== toSlotId) return slot;
-
-                                // If destination has an item, return to tray (swap logic implicitly)
-                                if (slot.placedItemId) {
-                                    displacedItemId = slot.placedItemId;
+                                // Destination Slot: Receives the moving item
+                                if (scene.id === toSceneId && slot.id === toSlotId) {
+                                    return { ...slot, placedItemId: movingItemId };
                                 }
-
-                                return { ...slot, placedItemId: movedItemId };
+                                // Origin Slot: Receives the target item (if any), effectively swapping
+                                if (scene.id === fromSceneId && slot.id === fromSlotId) {
+                                    return { ...slot, placedItemId: targetItemId };
+                                }
+                                return slot;
                             }),
                         };
                     });
 
-                    const newCounts = { ...state.trayCounts };
-                    if (displacedItemId) {
-                        newCounts[displacedItemId] = (newCounts[displacedItemId] || 0) + 1;
-                    }
-
+                    // 3. Update state (Tray counts are unaffected by swapping)
                     return {
                         currentScenes: finalScenes,
-                        trayCounts: newCounts
                     };
                 });
                 get().checkWinCondition();
@@ -222,15 +225,51 @@ export const useGameStore = create<GameState>()(
             checkWinCondition: () => {
                 const state = get();
                 const level = levels.find(l => l.id === state.currentLevelId);
-                if (!level || !level.validate) return;
+                if (!level) return;
+                const results: Record<string, boolean> = {};
+                const activeOutcomes: Record<string, Outcome | null> = {};
+                let foundOutcome: Outcome | null = null;
 
-                const results = level.validate(state.currentScenes);
+                // Phase 1: Check `outcomes` for per-scene UI feedback and initial status
+                state.currentScenes.forEach(scene => {
+                    // Default to no outcome/not solved
+                    results[scene.id] = false;
+                    activeOutcomes[scene.id] = null;
+
+                    if (scene.outcomes && scene.outcomes.length > 0) {
+                        const placedItems = scene.slots.map(s => s.placedItemId);
+
+                        // Match using JSON.stringify for strict equality (position matters)
+                        const match = scene.outcomes.find(outcome =>
+                            JSON.stringify(placedItems) === JSON.stringify(outcome.itemIds)
+                        );
+
+                        if (match) {
+                            results[scene.id] = match.isSolved;
+                            activeOutcomes[scene.id] = match;
+
+                            if (match.isSolved) {
+                                foundOutcome = match;
+                            }
+                        }
+                    }
+                });
+
+                // Phase 2: Apply legacy `validate` function (Global/Complex Logic Overrides)
+                if (level.validate) {
+                    const legacyResults = level.validate(state.currentScenes);
+                    Object.assign(results, legacyResults);
+                }
+
                 const allSolved = state.currentScenes.every(scene => results[scene.id]);
 
-                set({
+                set((current) => ({
                     sceneSolvedStatus: results,
-                    isLevelSolved: allSolved
-                });
+                    activeOutcomes: activeOutcomes,
+                    isLevelSolved: allSolved,
+                    // Persist last solved outcome if found
+                    lastOutcome: foundOutcome || current.lastOutcome
+                }));
 
                 if (allSolved) {
                     console.log("Level Solved!");
