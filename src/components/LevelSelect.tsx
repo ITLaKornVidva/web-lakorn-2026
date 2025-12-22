@@ -60,9 +60,6 @@ export const LevelSelect = () => {
                                             </div>
                                         )}
                                     </div>
-                                    <span className={`text-sm font-bold truncate w-full text-center ${isCompleted ? '' : 'opacity-0'}`}>
-                                        {scene.title || '???'}
-                                    </span>
                                 </div>
                             );
                         })}
