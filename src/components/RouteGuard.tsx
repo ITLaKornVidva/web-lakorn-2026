@@ -1,5 +1,6 @@
 import { Navigate, useParams } from 'react-router-dom';
 import { useGameStore } from '../store/gameStore';
+import { levels } from '../data/levels';
 
 interface RouteGuardProps {
     children: React.ReactNode;
@@ -7,11 +8,8 @@ interface RouteGuardProps {
 
 export const RouteGuard: React.FC<RouteGuardProps> = ({ children }) => {
     const { levelId } = useParams();
-    const { unlockedLevels } = useGameStore();
+    const { solvedLevels } = useGameStore();
 
-    // Default to level-1 if no ID provided (though route structure usually enforces it)
-    // If levelId is undefined, let the child handle it or redirect? 
-    // The route is /game/:levelId, so levelId should be present.
     if (!levelId) {
         return <Navigate to="/" replace />;
     }
@@ -21,8 +19,18 @@ export const RouteGuard: React.FC<RouteGuardProps> = ({ children }) => {
         return <>{children}</>;
     }
 
-    // Check if the level is in the unlocked list
-    if (unlockedLevels.includes(levelId)) {
+    // Find level index
+    const levelIndex = levels.findIndex(l => l.id === levelId);
+
+    // If level not found, redirect
+    if (levelIndex === -1) {
+        return <Navigate to="/" replace />;
+    }
+
+    const prevLevel = levels[levelIndex - 1];
+
+    // Check if the PREVIOUS level is in the solved list
+    if (prevLevel && solvedLevels.includes(prevLevel.id)) {
         return <>{children}</>;
     }
 

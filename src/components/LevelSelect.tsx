@@ -5,7 +5,7 @@ import { MiniScene } from './MiniScene';
 
 export const LevelSelect = () => {
     const navigate = useNavigate();
-    const { unlockedLevels, completedScenes, levelPlacements, solvedLevels } = useGameStore();
+    const { completedScenes, levelPlacements, solvedLevels } = useGameStore();
 
     const handleLevelClick = (levelId: string) => {
         // Accessible check is done on render, so if clicked it implies accessible? 
@@ -13,8 +13,8 @@ export const LevelSelect = () => {
         const levelIndex = levels.findIndex(l => l.id === levelId);
         const prevLevel = levels[levelIndex - 1];
         // Logic: Unlocked explicitly OR Previous level solved OR First level
+        // Logic: Unlocked strictly if previous level is solved or it's the first level
         const isAccessible =
-            unlockedLevels.includes(levelId) ||
             levelIndex === 0 ||
             (prevLevel && solvedLevels.includes(prevLevel.id));
 
@@ -76,10 +76,9 @@ export const LevelSelect = () => {
                         {levels.map((level, index) => {
                             // Logic: Unlocked explicitly OR Previous level solved OR First level
                             const prevLevelId = levels[index - 1]?.id;
-                            const isUnlocked = unlockedLevels.includes(level.id);
+                            // Logic: Unlocked strictly if previous level is solved or it's the first level
                             const prevLevelSolved = prevLevelId ? solvedLevels.includes(prevLevelId) : false;
-
-                            const accessible = index === 0 || isUnlocked || prevLevelSolved;
+                            const accessible = index === 0 || prevLevelSolved;
 
                             return (
                                 <button

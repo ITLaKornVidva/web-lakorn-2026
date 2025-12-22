@@ -7,7 +7,8 @@ interface GameState {
     // Persistent fields
     playerName: string;
     characterId: string;
-    unlockedLevels: string[];
+    // unlockedLevels removed
+
     completedScenes: string[];
     levelPlacements: Record<string, Scene[]>;
     solvedLevels: string[];
@@ -25,7 +26,8 @@ interface GameState {
     // Actions
     setPlayerName: (name: string) => void;
     setCharacterId: (id: string) => void;
-    unlockLevel: (levelId: string) => void;
+    // unlockLevel action removed
+
     markSceneCompleted: (sceneId: string) => void;
     loadLevel: (levelId: string) => void;
 
@@ -46,7 +48,8 @@ interface GameState {
 const defaultGameState = {
     playerName: '',
     characterId: '',
-    unlockedLevels: ['level-1'], // Level 1 unlocked by default
+    // unlockedLevels removed
+
     completedScenes: [],
     levelPlacements: {},
     solvedLevels: [],
@@ -71,12 +74,8 @@ export const useGameStore = create<GameState>()(
 
             setCharacterId: (id: string) => set({ characterId: id }),
 
-            unlockLevel: (levelId: string) => {
-                const { unlockedLevels } = get();
-                if (!unlockedLevels.includes(levelId)) {
-                    set({ unlockedLevels: [...unlockedLevels, levelId] });
-                }
-            },
+            // unlockLevel action removed
+
 
             markSceneCompleted: (sceneId: string) => {
                 const { completedScenes } = get();
@@ -356,7 +355,8 @@ export const useGameStore = create<GameState>()(
                 set({
                     playerName: '',
                     characterId: '',
-                    unlockedLevels: ['level-1'],
+                    // unlockedLevels removed
+
                     completedScenes: [],
                     levelPlacements: {},
                     solvedLevels: [],
@@ -374,7 +374,8 @@ export const useGameStore = create<GameState>()(
             partialize: (state) => ({
                 playerName: state.playerName,
                 characterId: state.characterId,
-                unlockedLevels: state.unlockedLevels,
+                // unlockedLevels removed
+
                 completedScenes: state.completedScenes,
                 currentLevelId: state.currentLevelId,
                 levelPlacements: state.levelPlacements,

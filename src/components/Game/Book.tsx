@@ -23,7 +23,6 @@ export const Book = () => {
         returnItemToTray,
         loadLevel,
         isLevelSolved,
-        unlockLevel,
         solvedLevels
     } = useGameStore();
 
@@ -157,7 +156,7 @@ export const Book = () => {
 
     const handleNextLevel = () => {
         if (nextLevelId) {
-            unlockLevel(nextLevelId);
+            // unlockLevel(nextLevelId); // Removed as automatic
             loadLevel(nextLevelId);
             navigate(`/game/${nextLevelId}`);
         } else {
