@@ -1,13 +1,24 @@
 import { useNavigate } from 'react-router-dom';
 import { useGameStore } from '../store/gameStore';
 import { levels } from '../data/levels';
+import { MiniScene } from './MiniScene';
 
 export const LevelSelect = () => {
     const navigate = useNavigate();
-    const { unlockedLevels, completedScenes } = useGameStore();
+    const { unlockedLevels, completedScenes, levelPlacements, solvedLevels } = useGameStore();
 
     const handleLevelClick = (levelId: string) => {
-        if (unlockedLevels.includes(levelId)) {
+        // Accessible check is done on render, so if clicked it implies accessible? 
+        // But good to double check.
+        const levelIndex = levels.findIndex(l => l.id === levelId);
+        const prevLevel = levels[levelIndex - 1];
+        // Logic: Unlocked explicitly OR Previous level solved OR First level
+        const isAccessible =
+            unlockedLevels.includes(levelId) ||
+            levelIndex === 0 ||
+            (prevLevel && solvedLevels.includes(prevLevel.id));
+
+        if (isAccessible) {
             navigate(`/game/${levelId}`);
         }
     };
@@ -28,21 +39,24 @@ export const LevelSelect = () => {
                     </h2>
 
                     <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 overflow-y-auto pr-2 max-h-[60vh] custom-scrollbar">
-                        {levels.flatMap(l => l.scenes).map(scene => {
+                        {levels.flatMap(level => level.scenes.map(scene => ({ scene, level }))).map(({ scene, level }) => {
                             const isCompleted = completedScenes.includes(scene.id);
+
+                            // Find saved placement if exists
+                            const savedLevelScenes = levelPlacements[level.id];
+                            const savedScene = savedLevelScenes?.find(s => s.id === scene.id) || scene;
 
                             return (
                                 <div key={scene.id} className={`p-3 rounded border flex flex-col items-center gap-2 transition-all ${isCompleted ? 'bg-white/80 border-[#2c1810]/20 shadow-sm hover:scale-105' : 'bg-[#e6d5bc] border-[#2c1810]/5 opacity-60'}`}>
-                                    <div className="w-full aspect-video rounded overflow-hidden relative bg-[#dccfb9]">
-                                        {isCompleted && scene.backgroundImage ? (
-                                            <img src={scene.backgroundImage} alt={scene.id} className="w-full h-full object-cover" />
+                                    <div className="w-full aspect-[4/3] rounded overflow-hidden relative bg-[#dccfb9]">
+                                        {isCompleted ? (
+                                            <MiniScene
+                                                scene={savedScene}
+                                                levelItems={level.availableItems}
+                                            />
                                         ) : (
                                             <div className="w-full h-full flex items-center justify-center">
-                                                {isCompleted ? (
-                                                    <span className="text-2xl">✓</span>
-                                                ) : (
-                                                    <span className="text-2xl opacity-20">?</span>
-                                                )}
+                                                <span className="text-2xl opacity-20">?</span>
                                             </div>
                                         )}
                                     </div>
@@ -63,9 +77,12 @@ export const LevelSelect = () => {
 
                     <div className="flex flex-col gap-4">
                         {levels.map((level, index) => {
+                            // Logic: Unlocked explicitly OR Previous level solved OR First level
+                            const prevLevelId = levels[index - 1]?.id;
                             const isUnlocked = unlockedLevels.includes(level.id);
-                            // Level 1 (index 0) is always accessible if unlocks fail, but store should handle it.
-                            const accessible = isUnlocked || index === 0;
+                            const prevLevelSolved = prevLevelId ? solvedLevels.includes(prevLevelId) : false;
+
+                            const accessible = index === 0 || isUnlocked || prevLevelSolved;
 
                             return (
                                 <button
@@ -96,6 +113,7 @@ export const LevelSelect = () => {
                                         </div>
                                     </div>
 
+                                    {/* Progress Bar (green or some color) */}
                                     {accessible && (
                                         <div className="absolute bottom-0 left-0 h-1 bg-[#2c1810]/10 w-full rounded-b-lg overflow-hidden">
                                             <div
@@ -104,6 +122,12 @@ export const LevelSelect = () => {
                                                     width: `${(level.scenes.filter(s => completedScenes.includes(s.id)).length / level.scenes.length) * 100}%`
                                                 }}
                                             />
+                                        </div>
+                                    )}
+                                    {/* Solved Indicator */}
+                                    {solvedLevels.includes(level.id) && (
+                                        <div className="absolute top-2 right-2 text-green-700 bg-white/50 rounded-full p-1" title="Level Complete">
+                                            ✓
                                         </div>
                                     )}
                                 </button>

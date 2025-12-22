@@ -23,7 +23,8 @@ export const Book = () => {
         returnItemToTray,
         loadLevel,
         isLevelSolved,
-        unlockLevel
+        unlockLevel,
+        solvedLevels
     } = useGameStore();
 
     const [activeDragItem, setActiveDragItem] = useState<Item | null>(null);
@@ -228,7 +229,7 @@ export const Book = () => {
                     </div>
 
                     {/* Level Progress Indicator / Next Button */}
-                    <div className={`absolute bottom-4 md:bottom-8 right-6 md:right-12 transition-all duration-700 ${isLevelSolved ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'} z-[60]`}>
+                    <div className={`absolute bottom-4 md:bottom-8 right-6 md:right-12 transition-all duration-700 ${isLevelSolved || solvedLevels.includes(currentLevelId) ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'} z-[60]`}>
                         <button
                             onClick={handleNextLevel}
                             className="group bg-[#4a2c2a] hover:bg-[#5d3a37] text-amber-100 font-serif-bold px-6 md:px-12 py-3 md:py-5 rounded-sm shadow-xl transform hover:scale-105 transition-all flex items-center gap-2 md:gap-4 border border-amber-900/20"

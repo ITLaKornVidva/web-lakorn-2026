@@ -9,6 +9,8 @@ interface GameState {
     characterId: string;
     unlockedLevels: string[];
     completedScenes: string[];
+    levelPlacements: Record<string, Scene[]>;
+    solvedLevels: string[];
 
     // Game session state
     currentLevelId: string;
@@ -46,6 +48,8 @@ const defaultGameState = {
     characterId: '',
     unlockedLevels: ['level-1'], // Level 1 unlocked by default
     completedScenes: [],
+    levelPlacements: {},
+    solvedLevels: [],
     currentLevelId: 'level-1',
     currentScenes: [],
     availableItems: [],
@@ -83,20 +87,43 @@ export const useGameStore = create<GameState>()(
 
             loadLevel: (levelId: string) => {
                 const level = levels.find(l => l.id === levelId);
-                if (level) {
-                    // Deep copy scenes to reset them
-                    const initialScenes = JSON.parse(JSON.stringify(level.scenes));
+                const { levelPlacements } = get();
 
-                    // Calculate initial counts from level.availableItems (which may contain duplicates)
+                if (level) {
+                    // 1. Try to load from saved placements
+                    let initialScenes: Scene[];
+                    const savedScenes = levelPlacements[levelId];
+
+                    if (savedScenes) {
+                        initialScenes = JSON.parse(JSON.stringify(savedScenes));
+                    } else {
+                        // 2. Fallback to default
+                        initialScenes = JSON.parse(JSON.stringify(level.scenes));
+                    }
+
+                    // 3. Calculate initial counts
                     const counts: Record<string, number> = {};
                     const uniqueItems: Item[] = [];
 
+                    // Initialize max stock
                     level.availableItems.forEach(item => {
                         if (!counts[item.id]) {
                             counts[item.id] = 0;
                             uniqueItems.push(item);
                         }
                         counts[item.id]++;
+                    });
+
+                    // Subtract placed items if they were loaded from storage
+                    // Ideally we should always subtract placed items to be safe
+                    initialScenes.forEach(scene => {
+                        scene.slots.forEach(slot => {
+                            if (slot.placedItemId) {
+                                if (counts[slot.placedItemId] !== undefined) {
+                                    counts[slot.placedItemId] = Math.max(0, counts[slot.placedItemId] - 1);
+                                }
+                            }
+                        });
                     });
 
                     set({
@@ -109,6 +136,8 @@ export const useGameStore = create<GameState>()(
                         isLevelSolved: false,
                         lastOutcome: null
                     });
+
+                    get().checkWinCondition();
                 }
             },
 
@@ -138,9 +167,16 @@ export const useGameStore = create<GameState>()(
                         };
                     });
 
+                    // Sync to persistent storage
+                    const newLevelPlacements = {
+                        ...state.levelPlacements,
+                        [state.currentLevelId]: newScenes
+                    };
+
                     return {
                         currentScenes: newScenes,
-                        trayCounts: newCounts
+                        trayCounts: newCounts,
+                        levelPlacements: newLevelPlacements
                     };
                 });
                 get().checkWinCondition();
@@ -168,9 +204,16 @@ export const useGameStore = create<GameState>()(
                     const newCounts = { ...state.trayCounts };
                     newCounts[itemToReturnId] = (newCounts[itemToReturnId] || 0) + 1;
 
+                    // Sync to persistent storage
+                    const newLevelPlacements = {
+                        ...state.levelPlacements,
+                        [state.currentLevelId]: newScenes
+                    };
+
                     return {
                         currentScenes: newScenes,
-                        trayCounts: newCounts
+                        trayCounts: newCounts,
+                        levelPlacements: newLevelPlacements
                     };
                 });
                 get().checkWinCondition();
@@ -215,8 +258,15 @@ export const useGameStore = create<GameState>()(
                     });
 
                     // 3. Update state (Tray counts are unaffected by swapping)
+                    // Sync to persistent storage
+                    const newLevelPlacements = {
+                        ...state.levelPlacements,
+                        [state.currentLevelId]: finalScenes
+                    };
+
                     return {
                         currentScenes: finalScenes,
+                        levelPlacements: newLevelPlacements,
                     };
                 });
                 get().checkWinCondition();
@@ -263,12 +313,34 @@ export const useGameStore = create<GameState>()(
 
                 const allSolved = state.currentScenes.every(scene => results[scene.id]);
 
+                // Update completedScenes (dynamic list of CURRENTLY solved scenes)
+                // Filter out current level scenes first to avoid duplicates or stale state
+                const newCompletedScenes = state.completedScenes.filter(id => {
+                    const isCurrentLevelScene = state.currentScenes.some(s => s.id === id);
+                    return !isCurrentLevelScene;
+                });
+
+                // Add back currently solved scenes
+                state.currentScenes.forEach(scene => {
+                    if (results[scene.id]) {
+                        newCompletedScenes.push(scene.id);
+                    }
+                });
+
+                // Update solvedLevels (Sticky progress)
+                let newSolvedLevels = [...state.solvedLevels];
+                if (allSolved && !newSolvedLevels.includes(state.currentLevelId)) {
+                    newSolvedLevels.push(state.currentLevelId);
+                }
+
                 set((current) => ({
                     sceneSolvedStatus: results,
                     activeOutcomes: activeOutcomes,
                     isLevelSolved: allSolved,
                     // Persist last solved outcome if found
-                    lastOutcome: foundOutcome || current.lastOutcome
+                    lastOutcome: foundOutcome || current.lastOutcome,
+                    completedScenes: newCompletedScenes,
+                    solvedLevels: newSolvedLevels
                 }));
 
                 if (allSolved) {
@@ -286,6 +358,8 @@ export const useGameStore = create<GameState>()(
                     characterId: '',
                     unlockedLevels: ['level-1'],
                     completedScenes: [],
+                    levelPlacements: {},
+                    solvedLevels: [],
                     currentLevelId: 'level-1',
                     currentScenes: [],
                     availableItems: [],
@@ -303,6 +377,8 @@ export const useGameStore = create<GameState>()(
                 unlockedLevels: state.unlockedLevels,
                 completedScenes: state.completedScenes,
                 currentLevelId: state.currentLevelId,
+                levelPlacements: state.levelPlacements,
+                solvedLevels: state.solvedLevels,
             }),
         }
     )
