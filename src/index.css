@@ -8,7 +8,9 @@ body,
   top: 0;
   left: 0;
   height: 100%;
+  height: 100dvh;
   width: 100%;
+  width: 100dvw;
   margin: 0;
   padding: 0;
   overflow: hidden;
@@ -69,4 +71,11 @@ body {
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* Utility for safe area spacing */
+.safe-padding {
+  padding-left: max(1rem, env(safe-area-inset-left));
+  padding-right: max(1rem, env(safe-area-inset-right));
+  padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
 }

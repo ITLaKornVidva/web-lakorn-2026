@@ -37,61 +37,59 @@ export const Scene = ({ scene, isActive, levelItems }: SceneProps) => {
     }, []);
 
     return (
-        <div className="flex flex-col items-center w-full space-y-4">
-            {/* Title Section */}
-            <div className="h-12 flex items-center justify-center w-full transition-all duration-300">
-                {displayTitle && (
-                    <h3 className="font-serif-bold text-[#2c1810]/90 text-center uppercase tracking-widest animate-fade-in"
-                        style={{ fontSize: 'clamp(0.85rem, 1vw, 1.2rem)' }}>
-                        {displayTitle}
-                    </h3>
-                )}
-            </div>
 
+        <div
+            ref={containerRef}
+            className={clsx(
+                "bg-white border-2 border-[#2c1810] overflow-hidden flex flex-col shadow-lg transition-all duration-500",
+                "aspect-[4/3] w-full relative",
+                isActive ? "ring-4 ring-amber-400 scale-[1.02]" : ""
+            )}
+        >
+            {/* Scaling Wrapper */}
             <div
-                ref={containerRef}
-                className={clsx(
-                    "bg-white border-2 border-[#2c1810] overflow-hidden flex flex-col shadow-lg transition-all duration-500",
-                    "aspect-[4/3] w-full relative",
-                    isActive ? "ring-4 ring-amber-400 scale-[1.02]" : ""
-                )}
+                className="absolute top-0 left-0 origin-top-left"
+                style={{
+                    width: SCENE_BASE_WIDTH,
+                    height: SCENE_BASE_HEIGHT,
+                    transform: `scale(${scale})`,
+                }}
             >
-                {/* Scaling Wrapper */}
                 <div
-                    className="absolute top-0 left-0 origin-top-left"
-                    style={{
-                        width: SCENE_BASE_WIDTH,
-                        height: SCENE_BASE_HEIGHT,
-                        transform: `scale(${scale})`,
-                    }}
+                    className="w-full h-full relative bg-cover bg-center grayscale-[0.2] sepia-[0.2]"
+                    style={scene.backgroundImage ? { backgroundImage: `url(${scene.backgroundImage})` } : { backgroundColor: '#fdf6e3' }}
                 >
-                    <div
-                        className="w-full h-full relative bg-cover bg-center grayscale-[0.2] sepia-[0.2]"
-                        style={scene.backgroundImage ? { backgroundImage: `url(${scene.backgroundImage})` } : { backgroundColor: '#fdf6e3' }}
-                    >
-                        {/* This mimics the "stage" */}
-                        <div className="absolute inset-0 bg-[#2c1810]/5 pointer-events-none" />
-                        {scene.slots.map(slot => (
-                            <Slot
-                                key={slot.id}
-                                id={slot.id}
-                                x={slot.x}
-                                y={slot.y}
-                                scale={slot.scale}
-                                shape={slot.shape}
-                                placedItem={slot.placedItemId ?
-                                    levelItems.find(i => i.id === slot.placedItemId)
-                                    : undefined
-                                }
-                                allowedTypes={slot.allowedTypes}
-                            />
-                        ))}
-                    </div>
+                    {/* This mimics the "stage" */}
+                    <div className="absolute inset-0 bg-[#2c1810]/5 pointer-events-none" />
+                    {scene.slots.map(slot => (
+                        <Slot
+                            key={slot.id}
+                            id={slot.id}
+                            x={slot.x}
+                            y={slot.y}
+                            scale={slot.scale}
+                            shape={slot.shape}
+                            placedItem={slot.placedItemId ?
+                                levelItems.find(i => i.id === slot.placedItemId)
+                                : undefined
+                            }
+                            allowedTypes={slot.allowedTypes}
+                        />
+                    ))}
+
+                    {/* Title Overlay - Inside the scaled world or outside? 
+                        Inside puts it in context. 
+                    */}
+                    {displayTitle && (
+                        <div className="absolute top-4 left-0 w-full flex justify-center pointer-events-none z-10">
+                            <h3 className="font-serif-bold text-[#2c1810] bg-white/80 px-4 py-1 rounded-full text-center uppercase tracking-widest animate-fade-in shadow-sm backdrop-blur-sm"
+                                style={{ fontSize: '1.5rem' }}>
+                                {displayTitle}
+                            </h3>
+                        </div>
+                    )}
                 </div>
             </div>
-
-
-            {/* Description Section */}
         </div>
     );
 };

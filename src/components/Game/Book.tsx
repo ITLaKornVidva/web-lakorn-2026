@@ -176,13 +176,15 @@ export const Book = () => {
             </div>
 
             {/* Main Game Content - Landscape Only */}
-            <div className="fixed inset-0 overflow-hidden hidden landscape:flex flex-col">
+            <div className="fixed inset-0 overflow-hidden hidden landscape:flex flex-col h-[100dvh] w-[100dvw] bg-[#f5e6d3] safe-padding">
+
                 {/* Back Arrow */}
                 <button
                     onClick={() => navigate('/')}
-                    className="absolute top-4 md:top-8 left-0 bg-[#f5e6d3]/80 hover:bg-[#f5e6d3] text-[#2c1810]/70 hover:text-[#2c1810] transition-all z-20 px-2 md:px-3 py-2 md:py-3 rounded-r-lg shadow-md"
+                    className="absolute top-2 left-safe-offset bg-[#f5e6d3]/80 hover:bg-[#f5e6d3] text-[#2c1810]/70 hover:text-[#2c1810] transition-all z-20 px-2 py-2 rounded-br-lg shadow-sm"
+                    style={{ left: 'max(0px, env(safe-area-inset-left))' }}
                 >
-                    <svg style={{ width: 'clamp(24px, 4vw, 40px)', height: 'clamp(24px, 4vw, 40px)' }} viewBox="0 0 24 24" fill="currentColor">
+                    <svg style={{ width: 'clamp(20px, 3vh, 32px)', height: 'clamp(20px, 3vh, 32px)' }} viewBox="0 0 24 24" fill="currentColor">
                         <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
                     </svg>
                 </button>
@@ -190,28 +192,32 @@ export const Book = () => {
                 {/* Settings Button */}
                 <button
                     onClick={() => setIsSettingsOpen(true)}
-                    className="absolute top-4 md:top-8 right-0 bg-[#f5e6d3]/80 hover:bg-[#f5e6d3] text-[#2c1810]/70 hover:text-[#2c1810] transition-all z-20 px-2 md:px-3 py-2 md:py-3 rounded-l-lg shadow-md"
+                    className="absolute top-2 right-safe-offset bg-[#f5e6d3]/80 hover:bg-[#f5e6d3] text-[#2c1810]/70 hover:text-[#2c1810] transition-all z-20 px-2 py-2 rounded-bl-lg shadow-sm"
                     title="Settings"
+                    style={{ right: 'max(0px, env(safe-area-inset-right))' }}
                 >
-                    <svg style={{ width: 'clamp(24px, 4vw, 40px)', height: 'clamp(24px, 4vw, 40px)' }} viewBox="0 0 24 24" fill="currentColor">
+                    <svg style={{ width: 'clamp(20px, 3vh, 32px)', height: 'clamp(20px, 3vh, 32px)' }} viewBox="0 0 24 24" fill="currentColor">
                         <path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z" />
                     </svg>
                 </button>
 
                 {/* Section 1: Story Background / Intro (Top) */}
-                <div className="h-full w-full flex items-center justify-center text-center">
-                    <div className="max-w-4xl flex flex-col items-center">
-                        <h2 className="text-[#2c1810] font-serif-bold leading-tight animate-fade-in uppercase tracking-widest text-balance" style={{ fontSize: 'clamp(0.75rem, 2.3vw, 2rem)' }}>
+                <div className="flex-none h-[15%] min-h-[30px] w-full flex items-center justify-center text-center relative z-10">
+                    <div className="max-w-4xl flex flex-col items-center px-12">
+                        <h2 className="text-[#2c1810] font-serif-bold leading-none animate-fade-in uppercase tracking-widest text-balance drop-shadow-sm" style={{ fontSize: 'clamp(0.65rem, 4vh, 1.5rem)' }}>
                             {currentLevel.goal}
                         </h2>
                     </div>
                 </div>
 
                 {/* Section 2: Playing Field / Scenes (Middle) */}
-                <div className="h-full w-full">
-                    <div className="h-full w-full flex flex-nowrap gap-4 md:gap-2 min-w-max mx-auto items-center justify-center">
+                {/* This section grows to fill available space, respecting min-h to prevent crushing */}
+                <div className="flex-1 min-h-0 w-full flex items-center justify-center py-1">
+                    <div className="h-full flex flex-nowrap gap-2 md:gap-4 items-center justify-center">
                         {currentScenes.map((scene) => (
-                            <div key={scene.id} className="w-[28vw] flex-shrink-0">
+                            // CRITICAL: Height-based sizing to ensure it fits vertically
+                            // w-auto + aspect-ratio + h-full = scaling by height
+                            <div key={scene.id} className="h-full aspect-[4/3] w-auto max-w-[32vw] relative">
                                 <Scene
                                     scene={scene}
                                     isActive={false}
@@ -223,19 +229,21 @@ export const Book = () => {
                 </div>
 
                 {/* Section 3: Interaction Tray (Bottom) */}
-                <div className="h-full w-full relative flex items-center justify-center">
-                    <div className="py-2 md:px-12">
+                <div className="flex-none h-[25%] min-h-[70px] w-full relative flex items-center justify-center bg-[#2c1810]/5">
+                    <div className="w-full h-full flex items-center justify-center px-4 md:px-12 py-1">
                         <Tray items={availableItems} counts={trayCounts} />
                     </div>
 
                     {/* Level Progress Indicator / Next Button */}
-                    <div className={`absolute bottom-4 md:bottom-8 right-6 md:right-12 transition-all duration-700 ${isLevelSolved || solvedLevels.includes(currentLevelId) ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'} z-[60]`}>
+                    <div className={`absolute bottom-2 right-safe-offset transition-all duration-700 ${isLevelSolved || solvedLevels.includes(currentLevelId) ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0 pointer-events-none'} z-[60]`}
+                        style={{ right: 'max(1rem, env(safe-area-inset-right))', bottom: 'max(0.5rem, env(safe-area-inset-bottom))' }}>
                         <button
                             onClick={handleNextLevel}
-                            className="group bg-[#4a2c2a] hover:bg-[#5d3a37] text-amber-100 font-serif-bold px-6 md:px-12 py-3 md:py-5 rounded-sm shadow-xl transform hover:scale-105 transition-all flex items-center gap-2 md:gap-4 border border-amber-900/20"
-                            style={{ fontSize: 'clamp(1rem, 2vw, 1.5rem)' }}
+                            disabled={!(isLevelSolved || solvedLevels.includes(currentLevelId))}
+                            className="group bg-[#4a2c2a] hover:bg-[#5d3a37] text-amber-100 font-serif-bold px-4 md:px-8 py-2 md:py-3 rounded-sm shadow-xl transform hover:scale-105 transition-all flex items-center gap-2 border border-amber-900/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                            style={{ fontSize: 'clamp(0.8rem, 2.5vh, 1.25rem)' }}
                         >
-                            <span className="uppercase tracking-widest">Next Chapter</span>
+                            <span className="uppercase tracking-widest">Next</span>
                             <span className="group-hover:translate-x-1 transition-transform">→</span>
                         </button>
                     </div>
