@@ -14,11 +14,11 @@ export const Tray = ({ items, counts }: TrayProps) => {
                 const isExhausted = count === 0;
 
                 return (
-                    <div key={item.id} className="flex flex-col items-center gap-2 transition-all duration-300">
+                    <div key={item.id} className="flex flex-col items-center justify-center gap-2 transition-all duration-300">
                         <div className="relative group">
                             <DraggableItem item={item} id={`tray-${item.id}`} disabled={isExhausted} />
                         </div>
-                        <span className="font-serif-bold text-[#2c1810] uppercase tracking-wider" style={{ fontSize: 'clamp(0.625rem, 1.5vw, 0.875rem)' }}>
+                        <span className="text-nowrap text-center font-serif-bold text-[#2c1810] uppercase tracking-wider" style={{ fontSize: 'clamp(0.625rem, 0.9vw, 0.875rem)' }}>
                             {item.name} (x{count})
                         </span>
                     </div>

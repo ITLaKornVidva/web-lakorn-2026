@@ -5,7 +5,7 @@ import { MiniScene } from './MiniScene';
 
 export const LevelSelect = () => {
     const navigate = useNavigate();
-    const { completedScenes, levelPlacements, solvedLevels } = useGameStore();
+    const { completedScenes, levelProgress, solvedLevels } = useGameStore();
 
     const handleLevelClick = (levelId: string) => {
         // Accessible check is done on render, so if clicked it implies accessible? 
@@ -42,9 +42,15 @@ export const LevelSelect = () => {
                         {levels.flatMap(level => level.scenes.map(scene => ({ scene, level }))).map(({ scene, level }) => {
                             const isCompleted = completedScenes.includes(scene.id);
 
-                            // Find saved placement if exists
-                            const savedLevelScenes = levelPlacements[level.id];
-                            const savedScene = savedLevelScenes?.find(s => s.id === scene.id) || scene;
+                            // Reconstruct scene with placements from levelProgress
+                            const progress = levelProgress[level.id];
+                            const savedScene = {
+                                ...scene,
+                                slots: scene.slots.map(slot => ({
+                                    ...slot,
+                                    placedItemId: progress?.placements?.[slot.id] || null
+                                }))
+                            };
 
                             return (
                                 <div key={scene.id} className={`p-1 lg:p-2 rounded border flex flex-col items-center gap-1 transition-all ${isCompleted ? 'bg-white/80 border-[#2c1810]/20 shadow-sm hover:scale-105' : 'bg-[#e6d5bc] border-[#2c1810]/5 opacity-60'}`}>

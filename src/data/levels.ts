@@ -7,7 +7,7 @@ const ITEMS: Record<string, Item> = {
     citizen_b: { id: 'citizen_b', name: 'Citizen B', type: 'character', icon: '👷' },
     citizen_c: { id: 'citizen_c', name: 'Citizen C', type: 'character', icon: '�‍🌾' },
     citizen_d: { id: 'citizen_d', name: 'Citizen D', type: 'character', icon: '👨‍🍳' },
-    group_citizens: { id: 'group_citizens', name: 'Group of Citizens', type: 'character', icon: '👥' },
+    group_citizens: { id: 'group_citizens', name: 'Citizens', type: 'character', icon: '👥' },
 
     // Objects
     book: { id: 'book', name: 'Book', type: 'object', icon: '/assets/book.png' },
@@ -184,19 +184,37 @@ export const levels: Level[] = [
                     {
                         id: 'outcome-3-1-b',
                         itemIds: ['citizen_b', 'work'],
-                        title: 'CITIZEN B IS WORKING',
+                        title: 'CITIZEN B WORKS VERY HARD',
                         isSolved: true
                     },
                     {
                         id: 'outcome-3-1-c',
                         itemIds: ['citizen_c', 'work'],
-                        title: 'CITIZEN C IS WORKING',
+                        title: 'CITIZEN C WORKS VERY HARD',
                         isSolved: true
                     },
                     {
                         id: 'outcome-3-1-d',
                         itemIds: ['citizen_d', 'work'],
-                        title: 'CITIZEN D IS WORKING',
+                        title: 'CITIZEN D WORKS VERY HARD',
+                        isSolved: true
+                    },
+                    {
+                        id: 'outcome-3-1-b-special',
+                        itemIds: ['citizen_b', 'special'],
+                        title: 'CITIZEN B IS DANCING',
+                        isSolved: true
+                    },
+                    {
+                        id: 'outcome-3-1-c-special',
+                        itemIds: ['citizen_c', 'special'],
+                        title: 'CITIZEN C IS DANCING',
+                        isSolved: true
+                    },
+                    {
+                        id: 'outcome-3-1-d-special',
+                        itemIds: ['citizen_d', 'special'],
+                        title: 'CITIZEN D IS DANCING',
                         isSolved: true
                     }
                 ]
@@ -212,19 +230,37 @@ export const levels: Level[] = [
                     {
                         id: 'outcome-3-2-b',
                         itemIds: ['citizen_b', 'work'],
-                        title: 'CITIZEN B IS WORKING',
+                        title: 'CITIZEN B WORKS VERY HARD',
                         isSolved: true
                     },
                     {
                         id: 'outcome-3-2-c',
                         itemIds: ['citizen_c', 'work'],
-                        title: 'CITIZEN C IS WORKING',
+                        title: 'CITIZEN C WORKS VERY HARD',
                         isSolved: true
                     },
                     {
                         id: 'outcome-3-2-d',
                         itemIds: ['citizen_d', 'work'],
-                        title: 'CITIZEN D IS WORKING',
+                        title: 'CITIZEN D WORKS VERY HARD',
+                        isSolved: true
+                    },
+                    {
+                        id: 'outcome-3-2-b-special',
+                        itemIds: ['citizen_b', 'special'],
+                        title: 'CITIZEN B IS DANCING',
+                        isSolved: true
+                    },
+                    {
+                        id: 'outcome-3-2-c-special',
+                        itemIds: ['citizen_c', 'special'],
+                        title: 'CITIZEN C IS DANCING',
+                        isSolved: true
+                    },
+                    {
+                        id: 'outcome-3-2-d-special',
+                        itemIds: ['citizen_d', 'special'],
+                        title: 'CITIZEN D IS DANCING',
                         isSolved: true
                     }
                 ]
@@ -240,19 +276,37 @@ export const levels: Level[] = [
                     {
                         id: 'outcome-3-3-b',
                         itemIds: ['citizen_b', 'work'],
-                        title: 'CITIZEN B IS WORKING',
+                        title: 'CITIZEN B WORKS VERY HARD',
                         isSolved: true
                     },
                     {
                         id: 'outcome-3-3-c',
                         itemIds: ['citizen_c', 'work'],
-                        title: 'CITIZEN C IS WORKING',
+                        title: 'CITIZEN C WORKS VERY HARD',
                         isSolved: true
                     },
                     {
                         id: 'outcome-3-3-d',
                         itemIds: ['citizen_d', 'work'],
-                        title: 'CITIZEN D IS WORKING',
+                        title: 'CITIZEN D WORKS VERY HARD',
+                        isSolved: true
+                    },
+                    {
+                        id: 'outcome-3-3-b-special',
+                        itemIds: ['citizen_b', 'special'],
+                        title: 'CITIZEN B IS DANCING',
+                        isSolved: true
+                    },
+                    {
+                        id: 'outcome-3-3-c-special',
+                        itemIds: ['citizen_c', 'special'],
+                        title: 'CITIZEN C IS DANCING',
+                        isSolved: true
+                    },
+                    {
+                        id: 'outcome-3-3-d-special',
+                        itemIds: ['citizen_d', 'special'],
+                        title: 'CITIZEN D IS DANCING',
                         isSolved: true
                     }
                 ]

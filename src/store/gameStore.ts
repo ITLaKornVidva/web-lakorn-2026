@@ -3,17 +3,23 @@ import { persist } from 'zustand/middleware';
 import type { Scene, Item, Outcome } from '../types';
 import { levels } from '../data/levels';
 
+interface LevelProgress {
+    placements: Record<string, string>; // slotId -> itemId
+    trayCounts: Record<string, number>; // itemId -> count
+}
+
 interface GameState {
-    // Persistent fields
+    // Persistent fields (via customization)
     playerName: string;
     characterId: string;
-    // unlockedLevels removed
 
+    // Minimal persistence state
+    levelProgress: Record<string, LevelProgress>; // levelId -> progress
+
+    // Game session state (Derived / Runtime)
     completedScenes: string[];
-    levelPlacements: Record<string, Scene[]>;
     solvedLevels: string[];
 
-    // Game session state
     currentLevelId: string;
     currentScenes: Scene[];
     availableItems: Item[];
@@ -26,9 +32,7 @@ interface GameState {
     // Actions
     setPlayerName: (name: string) => void;
     setCharacterId: (id: string) => void;
-    // unlockLevel action removed
 
-    markSceneCompleted: (sceneId: string) => void;
     loadLevel: (levelId: string) => void;
 
     // Place item from tray into a slot
@@ -41,6 +45,7 @@ interface GameState {
     moveItem: (fromSceneId: string, fromSlotId: string, toSceneId: string, toSlotId: string) => void;
 
     checkWinCondition: () => void;
+    recalculateAllProgress: () => void;
     resetLevel: () => void;
     resetProgress: () => void;
 }
@@ -48,11 +53,11 @@ interface GameState {
 const defaultGameState = {
     playerName: '',
     characterId: '',
-    // unlockedLevels removed
+    levelProgress: {},
 
     completedScenes: [],
-    levelPlacements: {},
     solvedLevels: [],
+
     currentLevelId: 'level-1',
     currentScenes: [],
     availableItems: [],
@@ -74,90 +79,72 @@ export const useGameStore = create<GameState>()(
 
             setCharacterId: (id: string) => set({ characterId: id }),
 
-            // unlockLevel action removed
-
-
-            markSceneCompleted: (sceneId: string) => {
-                const { completedScenes } = get();
-                if (!completedScenes.includes(sceneId)) {
-                    set({ completedScenes: [...completedScenes, sceneId] });
-                }
-            },
-
             loadLevel: (levelId: string) => {
                 const level = levels.find(l => l.id === levelId);
-                const { levelPlacements } = get();
+                if (!level) return;
 
-                if (level) {
-                    // 1. Try to load from saved placements
-                    let initialScenes: Scene[];
-                    const savedScenes = levelPlacements[levelId];
+                const { levelProgress } = get();
+                const savedProgress = levelProgress[levelId];
 
-                    if (savedScenes) {
-                        initialScenes = JSON.parse(JSON.stringify(savedScenes));
-                    } else {
-                        // 2. Fallback to default
-                        initialScenes = JSON.parse(JSON.stringify(level.scenes));
+                // 1. Clean verify/clone from definitive levels.ts
+                const initialScenes: Scene[] = JSON.parse(JSON.stringify(level.scenes));
+
+                // 2. Default Counts
+                let initialCounts: Record<string, number> = {};
+                const uniqueItems: Item[] = [];
+
+                level.availableItems.forEach(item => {
+                    if (!initialCounts[item.id]) {
+                        initialCounts[item.id] = 0;
+                        uniqueItems.push(item);
                     }
+                    initialCounts[item.id]++;
+                });
 
-                    // 3. Calculate initial counts
-                    const counts: Record<string, number> = {};
-                    const uniqueItems: Item[] = [];
-
-                    // Initialize max stock
-                    level.availableItems.forEach(item => {
-                        if (!counts[item.id]) {
-                            counts[item.id] = 0;
-                            uniqueItems.push(item);
-                        }
-                        counts[item.id]++;
-                    });
-
-                    // Subtract placed items if they were loaded from storage
-                    // Ideally we should always subtract placed items to be safe
+                // 3. Apply Saved State if exists
+                if (savedProgress) {
+                    // Apply Placements
                     initialScenes.forEach(scene => {
                         scene.slots.forEach(slot => {
-                            if (slot.placedItemId) {
-                                if (counts[slot.placedItemId] !== undefined) {
-                                    counts[slot.placedItemId] = Math.max(0, counts[slot.placedItemId] - 1);
-                                }
+                            const savedItemId = savedProgress.placements[slot.id];
+                            if (savedItemId) {
+                                slot.placedItemId = savedItemId;
                             }
                         });
                     });
 
-                    set({
-                        currentLevelId: levelId,
-                        currentScenes: initialScenes,
-                        availableItems: uniqueItems,
-                        trayCounts: counts,
-                        sceneSolvedStatus: {},
-                        activeOutcomes: {},
-                        isLevelSolved: false,
-                        lastOutcome: null
-                    });
-
-                    get().checkWinCondition();
+                    // Use Saved Tray Counts - CRITICAL: User requested explicit storage of tray counts
+                    initialCounts = { ...initialCounts, ...savedProgress.trayCounts };
                 }
+
+                set({
+                    currentLevelId: levelId,
+                    currentScenes: initialScenes,
+                    availableItems: uniqueItems,
+                    trayCounts: initialCounts,
+                    sceneSolvedStatus: {},
+                    activeOutcomes: {},
+                    isLevelSolved: false,
+                    lastOutcome: null
+                });
+
+                // 4. Check status immediately on load
+                get().checkWinCondition();
             },
 
             placeItemFromTray: (sceneId, slotId, itemId) => {
                 set((state) => {
-                    // Check if we have stock
                     if ((state.trayCounts[itemId] || 0) <= 0) return state;
 
-                    // Decrement count
                     const newCounts = { ...state.trayCounts };
                     newCounts[itemId]--;
 
-                    // Add to slot
                     const newScenes = state.currentScenes.map((scene) => {
                         if (scene.id !== sceneId) return scene;
-
                         return {
                             ...scene,
                             slots: scene.slots.map((slot) => {
                                 if (slot.id !== slotId) return slot;
-                                // If slot already has an item, return it to tray
                                 if (slot.placedItemId) {
                                     newCounts[slot.placedItemId] = (newCounts[slot.placedItemId] || 0) + 1;
                                 }
@@ -166,16 +153,22 @@ export const useGameStore = create<GameState>()(
                         };
                     });
 
-                    // Sync to persistent storage
-                    const newLevelPlacements = {
-                        ...state.levelPlacements,
-                        [state.currentLevelId]: newScenes
+                    // Update Persistence
+                    const currentPlacements = state.levelProgress[state.currentLevelId]?.placements || {};
+                    const newPlacements = { ...currentPlacements, [slotId]: itemId };
+
+                    const newLevelProgress = {
+                        ...state.levelProgress,
+                        [state.currentLevelId]: {
+                            placements: newPlacements,
+                            trayCounts: newCounts
+                        }
                     };
 
                     return {
                         currentScenes: newScenes,
                         trayCounts: newCounts,
-                        levelPlacements: newLevelPlacements
+                        levelProgress: newLevelProgress
                     };
                 });
                 get().checkWinCondition();
@@ -187,7 +180,6 @@ export const useGameStore = create<GameState>()(
 
                     const newScenes = state.currentScenes.map((scene) => {
                         if (scene.id !== sceneId) return scene;
-
                         return {
                             ...scene,
                             slots: scene.slots.map((slot) => {
@@ -203,16 +195,24 @@ export const useGameStore = create<GameState>()(
                     const newCounts = { ...state.trayCounts };
                     newCounts[itemToReturnId] = (newCounts[itemToReturnId] || 0) + 1;
 
-                    // Sync to persistent storage
-                    const newLevelPlacements = {
-                        ...state.levelPlacements,
-                        [state.currentLevelId]: newScenes
+                    // Update Persistence
+                    const currentPlacements = { ...state.levelProgress[state.currentLevelId]?.placements };
+                    if (currentPlacements) {
+                        delete currentPlacements[slotId];
+                    }
+
+                    const newLevelProgress = {
+                        ...state.levelProgress,
+                        [state.currentLevelId]: {
+                            placements: currentPlacements || {},
+                            trayCounts: newCounts
+                        }
                     };
 
                     return {
                         currentScenes: newScenes,
                         trayCounts: newCounts,
-                        levelPlacements: newLevelPlacements
+                        levelProgress: newLevelProgress
                     };
                 });
                 get().checkWinCondition();
@@ -220,52 +220,48 @@ export const useGameStore = create<GameState>()(
 
             moveItem: (fromSceneId, fromSlotId, toSceneId, toSlotId) => {
                 set((state) => {
-                    // 1. Identify items involved
                     let movingItemId: string | null = null;
                     let targetItemId: string | null = null;
 
-                    // Locate items without mutating yet
                     state.currentScenes.forEach(scene => {
                         scene.slots.forEach(slot => {
-                            if (scene.id === fromSceneId && slot.id === fromSlotId) {
-                                movingItemId = slot.placedItemId;
-                            }
-                            if (scene.id === toSceneId && slot.id === toSlotId) {
-                                targetItemId = slot.placedItemId;
-                            }
+                            if (scene.id === fromSceneId && slot.id === fromSlotId) movingItemId = slot.placedItemId;
+                            if (scene.id === toSceneId && slot.id === toSlotId) targetItemId = slot.placedItemId;
                         });
                     });
 
-                    if (!movingItemId) return state; // Nothing to move
+                    if (!movingItemId) return state;
 
-                    // 2. Perform the swap
-                    const finalScenes = state.currentScenes.map((scene) => {
-                        return {
-                            ...scene,
-                            slots: scene.slots.map((slot) => {
-                                // Destination Slot: Receives the moving item
-                                if (scene.id === toSceneId && slot.id === toSlotId) {
-                                    return { ...slot, placedItemId: movingItemId };
-                                }
-                                // Origin Slot: Receives the target item (if any), effectively swapping
-                                if (scene.id === fromSceneId && slot.id === fromSlotId) {
-                                    return { ...slot, placedItemId: targetItemId };
-                                }
-                                return slot;
-                            }),
-                        };
-                    });
+                    const newScenes = state.currentScenes.map((scene) => ({
+                        ...scene,
+                        slots: scene.slots.map((slot) => {
+                            if (scene.id === toSceneId && slot.id === toSlotId) return { ...slot, placedItemId: movingItemId };
+                            if (scene.id === fromSceneId && slot.id === fromSlotId) return { ...slot, placedItemId: targetItemId }; // swap
+                            return slot;
+                        }),
+                    }));
 
-                    // 3. Update state (Tray counts are unaffected by swapping)
-                    // Sync to persistent storage
-                    const newLevelPlacements = {
-                        ...state.levelPlacements,
-                        [state.currentLevelId]: finalScenes
+                    // Update Persistence
+                    const currentPlacements = { ...state.levelProgress[state.currentLevelId]?.placements || {} };
+                    if (movingItemId) currentPlacements[toSlotId] = movingItemId;
+                    // Handle swap (targetItemId moves to fromSlot)
+                    if (targetItemId) {
+                        currentPlacements[fromSlotId] = targetItemId;
+                    } else {
+                        delete currentPlacements[fromSlotId];
+                    }
+
+                    const newLevelProgress = {
+                        ...state.levelProgress,
+                        [state.currentLevelId]: {
+                            placements: currentPlacements,
+                            trayCounts: state.trayCounts // Tray counts don't change on move
+                        }
                     };
 
                     return {
-                        currentScenes: finalScenes,
-                        levelPlacements: newLevelPlacements,
+                        currentScenes: newScenes,
+                        levelProgress: newLevelProgress,
                     };
                 });
                 get().checkWinCondition();
@@ -275,58 +271,54 @@ export const useGameStore = create<GameState>()(
                 const state = get();
                 const level = levels.find(l => l.id === state.currentLevelId);
                 if (!level) return;
+
                 const results: Record<string, boolean> = {};
                 const activeOutcomes: Record<string, Outcome | null> = {};
                 let foundOutcome: Outcome | null = null;
 
-                // Phase 1: Check `outcomes` for per-scene UI feedback and initial status
-                state.currentScenes.forEach(scene => {
-                    // Default to no outcome/not solved
-                    results[scene.id] = false;
-                    activeOutcomes[scene.id] = null;
+                // Phase 1: Check `outcomes` from levels.ts
+                const levelScenesDef = level.scenes;
 
-                    if (scene.outcomes && scene.outcomes.length > 0) {
-                        const placedItems = scene.slots.map(s => s.placedItemId);
+                state.currentScenes.forEach((sceneState) => {
+                    // Start fresh
+                    results[sceneState.id] = false;
+                    activeOutcomes[sceneState.id] = null;
 
-                        // Match using JSON.stringify for strict equality (position matters)
-                        const match = scene.outcomes.find(outcome =>
+                    // Match with definition
+                    const sceneDef = levelScenesDef.find(s => s.id === sceneState.id);
+                    if (sceneDef && sceneDef.outcomes && sceneDef.outcomes.length > 0) {
+                        const placedItems = sceneState.slots.map(s => s.placedItemId); // Current State
+
+                        const match = sceneDef.outcomes.find(outcome =>
                             JSON.stringify(placedItems) === JSON.stringify(outcome.itemIds)
                         );
 
                         if (match) {
-                            results[scene.id] = match.isSolved;
-                            activeOutcomes[scene.id] = match;
-
-                            if (match.isSolved) {
-                                foundOutcome = match;
-                            }
+                            results[sceneState.id] = match.isSolved;
+                            activeOutcomes[sceneState.id] = match;
+                            if (match.isSolved) foundOutcome = match;
                         }
                     }
                 });
 
-                // Phase 2: Apply legacy `validate` function (Global/Complex Logic Overrides)
+                // Phase 2: Legacy validate
                 if (level.validate) {
-                    const legacyResults = level.validate(state.currentScenes);
+                    const legacyResults = level.validate(state.currentScenes); // Pass state scenes for slot content
                     Object.assign(results, legacyResults);
                 }
 
                 const allSolved = state.currentScenes.every(scene => results[scene.id]);
 
-                // Update completedScenes (dynamic list of CURRENTLY solved scenes)
-                // Filter out current level scenes first to avoid duplicates or stale state
+                // Update completedScenes (Derived)
                 const newCompletedScenes = state.completedScenes.filter(id => {
                     const isCurrentLevelScene = state.currentScenes.some(s => s.id === id);
                     return !isCurrentLevelScene;
                 });
-
-                // Add back currently solved scenes
                 state.currentScenes.forEach(scene => {
-                    if (results[scene.id]) {
-                        newCompletedScenes.push(scene.id);
-                    }
+                    if (results[scene.id]) newCompletedScenes.push(scene.id);
                 });
 
-                // Update solvedLevels (Sticky progress)
+                // Update solvedLevels
                 let newSolvedLevels = [...state.solvedLevels];
                 if (allSolved && !newSolvedLevels.includes(state.currentLevelId)) {
                     newSolvedLevels.push(state.currentLevelId);
@@ -336,7 +328,6 @@ export const useGameStore = create<GameState>()(
                     sceneSolvedStatus: results,
                     activeOutcomes: activeOutcomes,
                     isLevelSolved: allSolved,
-                    // Persist last solved outcome if found
                     lastOutcome: foundOutcome || current.lastOutcome,
                     completedScenes: newCompletedScenes,
                     solvedLevels: newSolvedLevels
@@ -348,6 +339,13 @@ export const useGameStore = create<GameState>()(
             },
 
             resetLevel: () => {
+                // Clear progress for this level
+                set((state) => {
+                    const newLevelProgress = { ...state.levelProgress };
+                    delete newLevelProgress[state.currentLevelId];
+                    return { levelProgress: newLevelProgress };
+                });
+                // Reload
                 get().loadLevel(get().currentLevelId);
             },
 
@@ -355,10 +353,9 @@ export const useGameStore = create<GameState>()(
                 set({
                     playerName: '',
                     characterId: '',
-                    // unlockedLevels removed
+                    levelProgress: {},
 
                     completedScenes: [],
-                    levelPlacements: {},
                     solvedLevels: [],
                     currentLevelId: 'level-1',
                     currentScenes: [],
@@ -366,6 +363,103 @@ export const useGameStore = create<GameState>()(
                     trayCounts: {},
                     sceneSolvedStatus: {},
                     isLevelSolved: false,
+                    lastOutcome: null,
+                });
+            },
+
+            recalculateAllProgress: () => {
+                const state = get();
+                const { levelProgress } = state;
+                const newCompletedScenes: string[] = [];
+                const newSolvedLevels: string[] = [];
+
+                levels.forEach(level => {
+                    const savedProgress = levelProgress[level.id];
+                    // Even if no saved progress, we might want to check if it's auto-solved? 
+                    // Unlikely for this game type, but let's stick to saved progress for now 
+                    // essentially if we have touched it.
+                    if (!savedProgress) return;
+
+                    // Reconstruct scenes for validation (lightweight)
+                    const reconstruction = level.scenes.map(sceneDef => {
+                        const savedScene = { ...sceneDef, slots: sceneDef.slots.map(s => ({ ...s })) }; // shallow clone structure needed
+                        savedScene.slots.forEach(slot => {
+                            const savedItemId = savedProgress.placements[sceneDef.id + "-" + slot.id.split('-').slice(1).join('-')] || savedProgress.placements[slot.id];
+                            // Note: slot.id in levels.ts might be generic, but saved placements key is usually full id.
+                            // Actually, in gameStore placeItemFromTray: `[slotId]: itemId`. slotId comes from the component.
+                            // In Tray.tsx / Scene.tsx, slot.id is used.
+                            // Let's verify how slot keys are stored. 
+                            // In loadLevel: `savedProgress.placements[slot.id]`.
+                            // So keys matches.
+                            if (savedProgress.placements[slot.id]) {
+                                savedScene.slots.forEach(s => {
+                                    if (s.id === slot.id) s.placedItemId = savedProgress.placements[slot.id];
+                                });
+                            }
+                        });
+                        // Actually the loop above is slightly wrong on the find.
+                        // Let's do it cleaner:
+
+                        const activeSlots = savedScene.slots.map(slot => ({
+                            ...slot,
+                            placedItemId: savedProgress.placements[slot.id] || null
+                        }));
+                        return { ...savedScene, slots: activeSlots };
+                    });
+
+                    // Validate
+                    let allScenesSolved = true;
+
+                    reconstruction.forEach(sceneState => {
+                        let isSceneSolved = false;
+
+                        // Phase 1: Outcomes
+                        if (sceneState.outcomes && sceneState.outcomes.length > 0) {
+                            const placedItems = sceneState.slots.map(s => s.placedItemId);
+                            const match = sceneState.outcomes.find(outcome =>
+                                JSON.stringify(placedItems) === JSON.stringify(outcome.itemIds)
+                            );
+                            if (match && match.isSolved) isSceneSolved = true;
+                        }
+
+                        // Phase 2: Legacy
+                        // level.validate expects State scenes. 
+                        // Note: level.validate might depend on cross-scene state.
+
+                        if (isSceneSolved) {
+                            if (!newCompletedScenes.includes(sceneState.id)) newCompletedScenes.push(sceneState.id);
+                        } else {
+                            // Only fail if not solved by legacy either.
+                        }
+                    });
+
+                    // For legacy validate function which returns Record<sceneId, boolean>
+                    if (level.validate) {
+                        // It expects `Scene[]`. reconstruction is `Scene[]` (duck typed).
+                        // Need to cast or ensuring types match. `Scene` interface in types.ts.
+                        // `reconstruction` has slots with placedItemId. Matches.
+                        const legacyResults = level.validate(reconstruction as Scene[]);
+                        Object.entries(legacyResults).forEach(([sceneId, solved]) => {
+                            if (solved) {
+                                if (!newCompletedScenes.includes(sceneId)) newCompletedScenes.push(sceneId);
+                            }
+                        });
+                    }
+
+                    // Check if entire level is solved
+                    // Re-check all scenes in this level
+                    allScenesSolved = reconstruction.every(scene =>
+                        newCompletedScenes.includes(scene.id)
+                    );
+
+                    if (allScenesSolved) {
+                        newSolvedLevels.push(level.id);
+                    }
+                });
+
+                set({
+                    completedScenes: newCompletedScenes,
+                    solvedLevels: newSolvedLevels
                 });
             }
         }),
@@ -374,13 +468,11 @@ export const useGameStore = create<GameState>()(
             partialize: (state) => ({
                 playerName: state.playerName,
                 characterId: state.characterId,
-                // unlockedLevels removed
-
-                completedScenes: state.completedScenes,
-                currentLevelId: state.currentLevelId,
-                levelPlacements: state.levelPlacements,
-                solvedLevels: state.solvedLevels,
+                levelProgress: state.levelProgress,
             }),
+            onRehydrateStorage: () => (state) => {
+                state?.recalculateAllProgress();
+            },
         }
     )
 );
