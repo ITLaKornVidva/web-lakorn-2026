@@ -24,6 +24,13 @@ interface GameState {
 
     checkWinCondition: () => void;
     resetLevel: () => void;
+
+    // Game Completion
+    isGameCompleted: boolean;
+    userName: string;
+    userAvatar: string;
+    completeGame: () => void;
+    resetGame: () => void;
 }
 
 export const useGameStore = create<GameState>((set, get) => ({
@@ -33,6 +40,11 @@ export const useGameStore = create<GameState>((set, get) => ({
     trayCounts: {},
     sceneSolvedStatus: {},
     isLevelSolved: false,
+
+    // Default user info
+    isGameCompleted: false,
+    userName: 'Storyteller',
+    userAvatar: '🧙‍♂️',
 
     loadLevel: (levelId: string) => {
         const level = levels.find(l => l.id === levelId);
@@ -198,5 +210,14 @@ export const useGameStore = create<GameState>((set, get) => ({
 
     resetLevel: () => {
         get().loadLevel(get().currentLevelId);
+    },
+
+    completeGame: () => {
+        set({ isGameCompleted: true });
+    },
+
+    resetGame: () => {
+        set({ isGameCompleted: false });
+        get().loadLevel('level-1');
     }
 }));
