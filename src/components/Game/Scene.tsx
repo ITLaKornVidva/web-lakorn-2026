@@ -66,14 +66,15 @@ export const Scene = ({ scene, isActive, levelItems, overrideTitle, hideTitle, o
         <div
             ref={containerRef}
             className={clsx(
-                "overflow-hidden flex flex-col shadow-lg", // Removed transition-all duration-500
+                "overflow-hidden flex flex-col", // Removed shadow-lg to avoid oklab error
                 "aspect-[4/3] w-full relative",
                 isActive ? "scale-[1.02]" : ""
             )}
             style={{
                 backgroundColor: '#ffffff',
                 border: '2px solid #2c1810',
-                boxShadow: isActive ? '0 0 0 4px #fbbf24' : 'none' // Manual ring
+                // Use explicit RGBA for shadow to ensure html2canvas compatibility
+                boxShadow: isActive ? '0 0 0 4px #fbbf24' : '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)'
             }}
         >
             {/* Scaling Wrapper */}
@@ -131,13 +132,17 @@ export const Scene = ({ scene, isActive, levelItems, overrideTitle, hideTitle, o
                     {/* Title Overlay */}
                     {displayTitle && (
                         <div className="absolute top-4 left-0 w-full flex justify-center pointer-events-none z-10">
-                            <h3 className="font-serif-bold text-center uppercase tracking-widest animate-fade-in shadow-sm backdrop-blur-sm"
+                            <h3 className="scene-title font-serif-bold text-center uppercase tracking-widest animate-fade-in shadow-sm backdrop-blur-sm"
                                 style={{
                                     fontSize: '1.5rem',
                                     color: '#2c1810',
                                     backgroundColor: 'rgba(255, 255, 255, 0.8)',
                                     padding: '4px 16px',
-                                    borderRadius: '9999px'
+                                    borderRadius: '9999px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    textAlign: 'center',
                                 }}>
                                 {displayTitle}
                             </h3>
@@ -145,6 +150,16 @@ export const Scene = ({ scene, isActive, levelItems, overrideTitle, hideTitle, o
                     )}
                 </div>
             </div>
+
+            {/* Preload Animated Backgrounds to prevent flickering */}
+            {Array.isArray(scene.backgroundImage) && (
+                <div className="hidden">
+                    {scene.backgroundImage.map((src, idx) => (
+                        <img key={idx} src={src} alt="preload" />
+                    ))}
+                </div>
+            )}
         </div>
+
     );
 };

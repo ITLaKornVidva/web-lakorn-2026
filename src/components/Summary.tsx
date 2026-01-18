@@ -107,21 +107,19 @@ export const Summary = () => {
     const [shareImage, setShareImage] = useState<string | null>(null);
 
     const handleShare = async () => {
-        // Capture the entire main content area (Top + Middle + Footer)
         if (!captureRef.current) return;
+        if (isSharing) return;
 
         try {
             setIsSharing(true);
 
-            // 1. Capture FULL element first (High Res)
+            // 1. Capture FULL element (High Res)
             const fullCanvas = await html2canvas(captureRef.current, {
                 scale: 3,
                 backgroundColor: '#f5e6d3',
                 logging: false,
                 useCORS: true,
                 allowTaint: true,
-                scrollX: 0,
-                scrollY: 0,
                 onclone: (clonedDoc) => {
                     const sponsorRow = clonedDoc.getElementById('sponsorship-row');
                     if (sponsorRow) {
@@ -130,106 +128,120 @@ export const Summary = () => {
                         sponsorRow.style.paddingBottom = '20px';
                     }
 
+                    // Stop animations for static capture
                     const allElements = clonedDoc.querySelectorAll('*');
                     allElements.forEach((el: any) => {
                         el.style.animation = 'none';
                         el.style.transition = 'none';
+
+                        // SANITIZER: Robustly remove oklab/oklch from ALL color properties
+                        const style = window.getComputedStyle(el);
+                        const scrubProperty = (prop: string, fallback: string) => {
+                            const val = style.getPropertyValue(prop);
+                            if (val && (val.includes('oklab') || val.includes('oklch'))) {
+                                el.style[prop as any] = fallback;
+                            }
+                        };
+
+                        // Targeted scrubbing
+                        scrubProperty('box-shadow', 'none');
+                        scrubProperty('text-shadow', 'none');
+                        scrubProperty('filter', 'none'); // drop-shadow often lives here
+                        scrubProperty('color', '#000000'); // Fallback text to black
+                        scrubProperty('background-color', 'transparent'); // Fallback bg to transparent
+                        scrubProperty('border-color', 'transparent');
+                    });
+
+                    // FIX: Enforce centering for Action Items using ABSOLUTE POSITIONING (Geometric centering)
+                    const actionItems = clonedDoc.querySelectorAll('.action-item-container');
+                    actionItems.forEach((el: any) => {
+                        el.style.position = 'relative';
+                        el.style.display = 'inline-block';
+                        // Clear padding that might affect height calculation
+                        el.style.padding = '0';
+                        el.style.width = '64px'; // Enforce width/height if needed, but let's try dynamic
+                        el.style.height = '24px'; // Approximate height from padding
+                    });
+
+                    const actionTexts = clonedDoc.querySelectorAll('.action-item-text');
+                    actionTexts.forEach((el: any) => {
+                        el.style.display = 'flex';
+                        el.style.alignItems = 'center';
+                        el.style.justifyContent = 'center';
+                        el.style.whiteSpace = 'nowrap';
+                        el.style.padding = '0';
+                        el.style.margin = '0';
+                        el.style.lineHeight = '1';
+                    });
+
+                    // FIX: Scene Titles Alignment
+                    const sceneTitles = clonedDoc.querySelectorAll('.scene-title');
+                    sceneTitles.forEach((el: any) => {
+                        el.style.display = 'flex';
+                        el.style.alignItems = 'center';
+                        el.style.justifyContent = 'center';
+                        el.style.lineHeight = '1';
+                        // Manual tweak for font baseline if needed
+                        el.style.paddingBottom = '25px';
+                        el.style.paddingInline = '50px';
                     });
                 }
             });
 
-            // 2. Perform Centered Crop (Post-Process)
-            // We want a 16:9 Aspect Ratio based on the HEIGHT of the capture
-            // (or Width, whichever allows it to fit, but User logic was Height-based)
+            // 2. Perform Centered Crop (16:9)
             const sourceW = fullCanvas.width;
             const sourceH = fullCanvas.height;
-
-            // User requested 16:9.
-            // Let's ensure we find the largest 16:9 area that fits, OR strict height-based?
-            // User code: targetWidth = targetHeight * (16 / 9). 
-            // This assumes landscape phone (Height is limiting factor, Width > Height * 1.77 is not guaranteed).
-            // Actually, usually Phone Width > Height * 16/9 is FALSE. Phone is wide (19.5:9), 16:9 is narrower.
-            // So Height-based calculation is usually safe for "cutting sides".
-            // BUT, if on iPad (4:3), Height-based 16:9 is WIDER than screen.
-
             const targetRatio = 16 / 9;
-            let finalW, finalH;
+            const finalH = sourceH;
+            const finalW = sourceH * targetRatio;
 
-            // Strategy: Cover / Zoom-to-fill reasoning?
-            // If Source is wider than TargetRatio -> Height matches, Cut Width (Cinematic bars / Side Crop)
-            // If Source is taller than TargetRatio -> Width matches, Cut Height
-            // But User wants "Cut the side". This implies Source IS Wider.
-
-            // Let's stick to User's logic: Height is the anchor.
-            finalH = sourceH;
-            finalW = sourceH * targetRatio;
-
-            // Create final canvas
             const finalCanvas = document.createElement('canvas');
             finalCanvas.width = finalW;
             finalCanvas.height = finalH;
             const ctx = finalCanvas.getContext('2d');
-            if (!ctx) throw new Error("No 2d context");
 
-            // Fill background just in case
-            ctx.fillStyle = '#f5e6d3';
-            ctx.fillRect(0, 0, finalW, finalH);
+            if (ctx) {
+                ctx.fillStyle = '#f5e6d3';
+                ctx.fillRect(0, 0, finalW, finalH);
 
-            // Draw Centered
-            // sourceX = (sourceW - finalW) / 2
-            const sourceX = (sourceW - finalW) / 2;
-            const sourceY = 0; // We touch top/bottom if finalH == sourceH
+                const sourceX = (sourceW - finalW) / 2;
+                ctx.drawImage(fullCanvas, sourceX, 0, finalW, finalH, 0, 0, finalW, finalH);
+            }
 
-            // drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)
-            ctx.drawImage(
-                fullCanvas,
-                sourceX, sourceY, finalW, finalH, // Source Crop
-                0, 0, finalW, finalH              // Dest
-            );
-
-            // 3. Generate Blob from Final Canvas
+            // 3. Generate Image
             const imageBlob = await new Promise<Blob | null>(resolve =>
-                finalCanvas.toBlob(blob => resolve(blob), 'image/png')
+                finalCanvas.toBlob(blob => resolve(blob), 'image/jpeg', 0.9)
             );
 
             if (!imageBlob) throw new Error("Failed to generate image");
 
-            const file = new File([imageBlob], 'lakorn-story.png', { type: 'image/png' });
-            const shareData = {
-                title: 'Wonderful Story',
-                text: 'You’ve connected the pieces. But one truth remains untold.',
-                files: [file],
-            };
+            const file = new File([imageBlob], 'lakorn-story.jpg', { type: 'image/jpeg' });
 
-            // Attempt Native Share (System Sheet)
-            // We prioritize this for iOS/Android to get the "Share to IG/Save Image" menu
             if (navigator.share) {
                 try {
-                    // We skip strict canShare checks to treat navigator.share as the source of truth
-                    // If this fails, the catch block will handle it.
-                    await navigator.share(shareData);
-                } catch (shareError: any) {
-                    // Only alert if it's not a user cancellation
-                    if (shareError.name !== 'AbortError') {
-                        console.error("Share failed:", shareError);
-                        alert(`Unable to share: ${shareError.message}`);
+                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                        await navigator.share({
+                            title: 'Wonderful Story',
+                            text: 'My Lakorn Story Ending...',
+                            files: [file]
+                        });
+                        setIsSharing(false);
+                        return;
                     }
+                } catch (err) {
+                    console.warn("Share failed, falling back", err);
                 }
-                setIsSharing(false);
-                return; // STOP HERE. Do not fallback to download if share was attempted.
             }
 
-            // Fallback: Show Manual Save Modal (e.g. for Desktop or when Native Share is missing)
-            // We do NOT auto-download to prevent "unwanted saves" on mobile.
-            const imageUrl = URL.createObjectURL(imageBlob);
-            setShareImage(imageUrl);
+            // Fallback
+            const url = URL.createObjectURL(imageBlob);
+            setShareImage(url);
             setIsSharing(false);
 
         } catch (error) {
-            console.error("Error generating share image:", error);
+            console.error("Error generating image:", error);
             alert("Could not create image.");
-        } finally {
-            // setIsSharing(false); // Moved to specific success/failure paths
+            setIsSharing(false);
         }
     };
 
@@ -252,8 +264,8 @@ export const Summary = () => {
 
                 {/* 1. Header: WONDERFUL STORY */}
                 <div className="flex-none h-[12%] w-full flex items-center pb-2 justify-center text-center relative z-10">
-                    <h1 className="leading-none uppercase tracking-widest drop-shadow-sm"
-                        style={{ fontFamily: 'serif', fontSize: 'clamp(1.5rem, 6vh, 3rem)', color: '#2c1810' }}>
+                    <h1 className="leading-none uppercase tracking-widest"
+                        style={{ fontFamily: 'serif', fontSize: 'clamp(1.5rem, 6vh, 3rem)', color: '#2c1810', textShadow: '2px 2px 4px rgba(0,0,0,0.1)' }}>
                         WONDERFUL STORY
                     </h1>
                 </div>
@@ -293,36 +305,38 @@ export const Summary = () => {
                 {/* 3. Footer: Quote & Brand */}
                 <div className="flex-none h-[45%] w-full flex flex-col items-center justify-center pt-5 relative z-10">
                     {/* Divider Line */}
-                    <div className="w-[60%] h-px mt-[10px] mb-[5px] flex items-center justify-center" style={{ backgroundColor: 'rgba(44, 24, 16, 0.3)' }}>
+                    <div className="w-[50%] h-px mt-[20px] mb-[4px] flex items-center justify-center" style={{ backgroundColor: 'rgba(44, 24, 16, 0.3)' }}>
                         <div className="w-[5px] h-[5px]" style={{ backgroundColor: '#2c1810', transform: 'rotate(45deg)' }} />
                     </div>
 
                     <div className="flex flex-col items-center gap-1 text-center opacity-90 px-4 mb-3">
-                        <p className="uppercase tracking-widest font-bold text-[clamp(0.6rem,2vh,1rem)]" style={{ color: '#2c1810' }}>
+                        <p className="uppercase tracking-widest font-bold text-[clamp(0.4rem,1.5vh,0.8rem)]" style={{ color: '#2c1810' }}>
                             “You’ve connected the pieces.
                         </p>
-                        <p className="uppercase tracking-widest font-bold text-[clamp(0.6rem,2vh,1rem)]" style={{ color: '#2c1810' }}>
+                        <p className="uppercase tracking-widest font-bold text-[clamp(0.4rem,1.5vh,0.8rem)]" style={{ color: '#2c1810' }}>
                             But one truth remains untold.
                         </p>
-                        <p className="uppercase tracking-widest mt-1 text-[clamp(0.55rem,1.8vh,0.9rem)]" style={{ color: 'rgba(44, 24, 16, 0.7)' }}>
+                        <p className="uppercase tracking-widest mt-1 text-[clamp(0.4rem,1.5vh,0.8rem)]" style={{ color: 'rgba(44, 24, 16, 0.7)' }}>
                             Discover the final chapter — Only at <span className="font-black" style={{ color: '#8d2a2a' }}>LAKORNVIDVA</span>”
                         </p>
                     </div>
 
                     {/* Sponsorship Logos (Bottom Center) */}
                     {/* Hidden in UI, Visible in Share via onclone */}
-                    <div id="sponsorship-row" className="hidden items-center justify-center gap-6 opacity-80 mt-auto mb-4">
-                        <div className="h-8 md:h-12 w-auto aspect-video flex items-center justify-center border rounded-sm"
-                            style={{ backgroundColor: 'rgba(44, 24, 16, 0.1)', borderColor: 'rgba(44, 24, 16, 0.2)' }}>
-                            <span className="text-[0.5rem] md:text-xs uppercase px-2 font-bold" style={{ color: 'rgba(44, 24, 16, 0.5)' }}>Sponsor 1</span>
-                        </div>
-                        <div className="h-8 md:h-12 w-auto aspect-video flex items-center justify-center border rounded-sm"
-                            style={{ backgroundColor: 'rgba(44, 24, 16, 0.1)', borderColor: 'rgba(44, 24, 16, 0.2)' }}>
-                            <span className="text-[0.5rem] md:text-xs uppercase px-2 font-bold" style={{ color: 'rgba(44, 24, 16, 0.5)' }}>Sponsor 2</span>
-                        </div>
-                        <div className="h-8 md:h-12 w-auto aspect-video flex items-center justify-center border rounded-sm"
-                            style={{ backgroundColor: 'rgba(44, 24, 16, 0.1)', borderColor: 'rgba(44, 24, 16, 0.2)' }}>
-                            <span className="text-[0.5rem] md:text-xs uppercase px-2 font-bold" style={{ color: 'rgba(44, 24, 16, 0.5)' }}>Sponsor 3</span>
+                    {/* Sponsorship Logos (Bottom Center) */}
+                    {/* Hidden in UI, Visible in Share via onclone */}
+                    <div id="sponsorship-row" className="hidden flex-col items-center justify-center gap-2 opacity-80 mt-auto mb-4">
+                        <span className="text-[0.4rem] uppercase font-bold tracking-[0.2em]" style={{ color: 'rgba(44, 24, 16, 0.5)' }}>Sponsored By</span>
+                        <div className="flex items-center justify-center gap-3">
+                            <div className="h-6 w-6 flex items-center justify-center border rounded-[9999px]"
+                                style={{ backgroundColor: 'rgba(44, 24, 16, 0.1)', borderColor: 'rgba(44, 24, 16, 0.2)' }}>
+                            </div>
+                            <div className="h-6 w-6 flex items-center justify-center border rounded-[9999px]"
+                                style={{ backgroundColor: 'rgba(44, 24, 16, 0.1)', borderColor: 'rgba(44, 24, 16, 0.2)' }}>
+                            </div>
+                            <div className="h-6 w-6 flex items-center justify-center border rounded-[9999px]"
+                                style={{ backgroundColor: 'rgba(44, 24, 16, 0.1)', borderColor: 'rgba(44, 24, 16, 0.2)' }}>
+                            </div>
                         </div>
                     </div>
                 </div>
