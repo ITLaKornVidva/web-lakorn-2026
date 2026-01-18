@@ -2,24 +2,23 @@ import type { Level, Item } from '../types';
 
 const ITEMS: Record<string, Item> = {
     // Characters
-    you: { id: 'you', name: 'You', type: 'character', icon: '/assets/you.png' },
-    citizen_a: { id: 'citizen_a', name: 'Citizen A', type: 'character', icon: '🧑‍�' },
-    citizen_b: { id: 'citizen_b', name: 'Citizen B', type: 'character', icon: '👷' },
-    citizen_c: { id: 'citizen_c', name: 'Citizen C', type: 'character', icon: '�‍🌾' },
-    citizen_d: { id: 'citizen_d', name: 'Citizen D', type: 'character', icon: '👨‍🍳' },
-    group_citizens: { id: 'group_citizens', name: 'Citizens', type: 'character', icon: '👥' },
+    you: { id: 'you', name: 'You', type: 'character', icon: '/assets/characters/player1_idle.png', spriteName: 'player', defaultState: 'idle' },
+    citizen_a: { id: 'citizen_a', name: 'Citizen A', type: 'character', icon: '/assets/characters/a_idle.png', spriteName: 'a', defaultState: 'idle' },
+    citizen_b: { id: 'citizen_b', name: 'Citizen B', type: 'character', icon: '/assets/characters/b_idle.png', spriteName: 'b', defaultState: 'idle' },
+    citizen_c: { id: 'citizen_c', name: 'Citizen C', type: 'character', icon: '/assets/characters/c_idle.png', spriteName: 'c', defaultState: 'idle' },
+    citizen_d: { id: 'citizen_d', name: 'Citizen D', type: 'character', icon: '/assets/characters/d_idle.png', spriteName: 'd', defaultState: 'idle' },
+    group_citizens: { id: 'group_citizens', name: 'Citizens', type: 'character', icon: '/assets/characters/group_idle.png', spriteName: 'group', defaultState: 'idle' },
 
     // Objects
     book: { id: 'book', name: 'Book', type: 'object', icon: '/assets/book.png' },
 
     // Actions
-    open: { id: 'open', name: 'Open', type: 'action', icon: '/assets/open_book.png' },
-    greet: { id: 'greet', name: 'Greet', type: 'action', icon: '�' },
-    interest: { id: 'interest', name: 'Interest', type: 'action', icon: '🤩' },
-    work: { id: 'work', name: 'Work', type: 'action', icon: '🔨' },
-    cheer: { id: 'cheer', name: 'Cheer', type: 'action', icon: '🎉' },
-    dance: { id: 'dance', name: 'Dance', type: 'action', icon: '💃' },
-    special: { id: 'special', name: 'Special', type: 'action', icon: '�t' },
+    open: { id: 'open', name: 'Open', type: 'action', icon: 'OPEN' },
+    greet: { id: 'greet', name: 'Greet', type: 'action', icon: 'GREET' },
+    interest: { id: 'interest', name: 'Interest', type: 'action', icon: 'INTEREST' },
+    work: { id: 'work', name: 'Work', type: 'action', icon: 'WORK' },
+    dance: { id: 'dance', name: 'Dance', type: 'action', icon: 'DANCE' },
+    special: { id: 'special', name: 'Special', type: 'action', icon: 'SPECIAL' },
 };
 
 export const levels: Level[] = [
@@ -35,48 +34,51 @@ export const levels: Level[] = [
             {
                 id: 'scene-1-1',
                 slots: [
-                    { id: 'slot-1-1-1', allowedTypes: ['character'], placedItemId: null, x: 600, y: 420, scale: 2 },
-                    { id: 'slot-1-1-2', allowedTypes: ['object'], placedItemId: null, x: 320, y: 330, scale: 3 },
+                    { id: 'slot-1-1-1', allowedTypes: ['character'], placedItemId: null, x: 160, y: 350, scale: 3, flipX: true },
+                    { id: 'slot-1-1-2', allowedTypes: ['object'], placedItemId: null, x: 550, y: 360, scale: 2 },
                 ],
-                backgroundImage: '/assets/scene1_bg.png',
+                backgroundImage: '/assets/backgrounds/Background-3.png',
                 outcomes: [
                     {
                         id: 'outcome-1-1-solved',
                         itemIds: ['you', 'book'],
                         title: 'You found a book',
-                        isSolved: true
+                        isSolved: true,
+                        characterStates: { 'you': 'awe' }
                     }
                 ]
             },
             {
                 id: 'scene-1-2',
                 slots: [
-                    { id: 'slot-1-2-1', allowedTypes: ['character'], placedItemId: null, x: 200, y: 420, scale: 2 },
-                    { id: 'slot-1-2-2', allowedTypes: ['action'], placedItemId: null, x: 400, y: 300, scale: 2 },
-                    { id: 'slot-1-2-3', allowedTypes: ['object'], placedItemId: null, x: 600, y: 420, scale: 2 },
+                    { id: 'slot-1-2-1', allowedTypes: ['character'], placedItemId: null, x: 160, y: 350, scale: 3, flipX: true },
+                    { id: 'slot-1-2-2', allowedTypes: ['action'], placedItemId: null, x: 350, y: 150, scale: 2 },
+                    { id: 'slot-1-2-3', allowedTypes: ['object'], placedItemId: null, x: 550, y: 360, scale: 2 },
                 ],
-                backgroundImage: '/assets/scene1_bg.png',
+                backgroundImage: '/assets/backgrounds/Background-3.png',
                 outcomes: [
                     {
                         id: 'outcome-1-2-solved',
                         itemIds: ['you', 'open', 'book'],
                         title: 'You opened a book',
-                        isSolved: true
+                        isSolved: true,
+                        characterStates: { 'you': 'awe' }
                     }
                 ]
             },
             {
                 id: 'scene-1-3',
                 slots: [
-                    { id: 'slot-1-3-1', allowedTypes: ['character'], placedItemId: null, x: 400, y: 420, scale: 2 },
+                    { id: 'slot-1-3-1', allowedTypes: ['character'], placedItemId: null, x: 350, y: 350, scale: 3 },
                 ],
-                backgroundImage: '/assets/scene1_bg.png',
+                backgroundImage: '/assets/backgrounds/Background-2.png',
                 outcomes: [
                     {
                         id: 'outcome-1-3-solved',
                         itemIds: ['you'],
                         title: 'You traveled into the past',
-                        isSolved: true
+                        isSolved: true,
+                        characterStates: { 'you': 'awe' }
                     }
                 ]
             }
@@ -96,56 +98,60 @@ export const levels: Level[] = [
             {
                 id: 'scene-2-1',
                 slots: [
-                    { id: 'slot-2-1-1', allowedTypes: ['character'], placedItemId: null, x: 200, y: 400, scale: 1.5 },
-                    { id: 'slot-2-1-2', allowedTypes: ['action'], placedItemId: null, x: 400, y: 250, scale: 1.2 },
-                    { id: 'slot-2-1-3', allowedTypes: ['character'], placedItemId: null, x: 600, y: 400, scale: 1.5 },
+                    { id: 'slot-2-1-1', allowedTypes: ['character'], placedItemId: null, x: 160, y: 350, scale: 3, flipX: true },
+                    { id: 'slot-2-1-2', allowedTypes: ['action'], placedItemId: null, x: 350, y: 150, scale: 2 },
+                    { id: 'slot-2-1-3', allowedTypes: ['character'], placedItemId: null, x: 575, y: 350, scale: 3 },
                 ],
-                backgroundImage: '/assets/scene2_bg.png',
+                backgroundImage: '/assets/backgrounds/Background-2.png',
                 outcomes: [
                     {
                         id: 'outcome-2-1-solved',
                         itemIds: ['you', 'greet', 'citizen_a'],
                         title: 'You met Citizen A for the first time and you greet each other',
-                        isSolved: true
+                        isSolved: true,
+                        characterStates: { 'you': 'greet', 'citizen_a': 'greet' }
                     },
                     {
                         id: 'outcome-2-1-solved-reverse',
                         itemIds: ['citizen_a', 'greet', 'you'],
                         title: 'You met Citizen A for the first time and you greet each other',
-                        isSolved: true
+                        isSolved: true,
+                        characterStates: { 'you': 'greet', 'citizen_a': 'greet' }
                     }
                 ]
             },
             {
                 id: 'scene-2-2',
                 slots: [
-                    { id: 'slot-2-2-1', allowedTypes: ['character'], placedItemId: null, x: 200, y: 400, scale: 1.5 },
-                    { id: 'slot-2-2-2', allowedTypes: ['character'], placedItemId: null, x: 600, y: 400, scale: 1.5 },
-                    { id: 'slot-2-2-3', allowedTypes: ['action'], placedItemId: null, x: 400, y: 250, scale: 1.2 },
+                    { id: 'slot-2-2-1', allowedTypes: ['character'], placedItemId: null, x: 160, y: 350, scale: 3, flipX: true },
+                    { id: 'slot-2-2-2', allowedTypes: ['character'], placedItemId: null, x: 575, y: 350, scale: 3 },
+                    { id: 'slot-2-2-3', allowedTypes: ['action'], placedItemId: null, x: 350, y: 150, scale: 2 },
                 ],
-                backgroundImage: '/assets/scene2_bg.png',
+                backgroundImage: '/assets/backgrounds/Background-4.png',
                 outcomes: [
                     {
                         id: 'outcome-2-2-solved',
                         itemIds: ['you', 'citizen_a', 'interest'],
                         title: 'Citizen A takes you to new place and you are interested in this city',
-                        isSolved: true
+                        isSolved: true,
+                        characterStates: { 'you': 'awe', 'citizen_a': 'greet' }
                     },
                     {
                         id: 'outcome-2-2-solved-reverse',
                         itemIds: ['citizen_a', 'you', 'interest'],
                         title: 'Citizen A takes you to new place and you are interested in this city',
-                        isSolved: true
+                        isSolved: true,
+                        characterStates: { 'you': 'awe', 'citizen_a': 'greet' }
                     }
                 ]
             },
             {
                 id: 'scene-2-3',
                 slots: [
-                    { id: 'slot-2-3-1', allowedTypes: ['character'], placedItemId: null, x: 400, y: 400, scale: 1.5 },
-                    { id: 'slot-2-3-2', allowedTypes: ['action'], placedItemId: null, x: 400, y: 200, scale: 1.2 },
+                    { id: 'slot-2-3-1', allowedTypes: ['character'], placedItemId: null, x: 350, y: 420, scale: 3 },
+                    { id: 'slot-2-3-2', allowedTypes: ['action'], placedItemId: null, x: 350, y: 150, scale: 2 },
                 ],
-                backgroundImage: '/assets/scene2_bg.png',
+                backgroundImage: '/assets/backgrounds/Background.png',
                 outcomes: [
                     {
                         id: 'outcome-2-3-solved',
@@ -167,9 +173,9 @@ export const levels: Level[] = [
         title: 'Level 3',
         goal: 'PEOPLE IN THIS CITY ARE VERY HARDWORKING',
         availableItems: [
-            ITEMS.citizen_b, ITEMS.citizen_b, ITEMS.citizen_b,
-            ITEMS.citizen_c, ITEMS.citizen_c, ITEMS.citizen_c,
-            ITEMS.citizen_d, ITEMS.citizen_d, ITEMS.citizen_d,
+            ITEMS.citizen_b,
+            ITEMS.citizen_c,
+            ITEMS.citizen_d,
             ITEMS.work, ITEMS.work, ITEMS.work,
             ITEMS.special, ITEMS.special, ITEMS.special
         ],
@@ -177,138 +183,156 @@ export const levels: Level[] = [
             {
                 id: 'scene-3-1',
                 slots: [
-                    { id: 'slot-3-1-1', allowedTypes: ['character'], placedItemId: null, x: 400, y: 400, scale: 1.5 },
-                    { id: 'slot-3-1-2', allowedTypes: ['action'], placedItemId: null, x: 400, y: 200, scale: 1.2 },
+                    { id: 'slot-3-1-1', allowedTypes: ['character'], placedItemId: null, x: 350, y: 420, scale: 3 },
+                    { id: 'slot-3-1-2', allowedTypes: ['action'], placedItemId: null, x: 350, y: 150, scale: 2 },
                 ],
-                backgroundImage: '/assets/scene3_bg.png',
+                backgroundImage: '/assets/backgrounds/Background.png',
                 outcomes: [
                     {
                         id: 'outcome-3-1-b',
                         itemIds: ['citizen_b', 'work'],
                         title: 'CITIZEN B WORKS VERY HARD',
-                        isSolved: true
+                        isSolved: true,
+                        characterStates: { 'citizen_b': 'work' }
                     },
                     {
                         id: 'outcome-3-1-c',
                         itemIds: ['citizen_c', 'work'],
                         title: 'CITIZEN C WORKS VERY HARD',
-                        isSolved: true
+                        isSolved: true,
+                        characterStates: { 'citizen_c': 'work' }
                     },
                     {
                         id: 'outcome-3-1-d',
                         itemIds: ['citizen_d', 'work'],
                         title: 'CITIZEN D WORKS VERY HARD',
-                        isSolved: true
+                        isSolved: true,
+                        characterStates: { 'citizen_d': 'work' }
                     },
                     {
                         id: 'outcome-3-1-b-special',
                         itemIds: ['citizen_b', 'special'],
                         title: 'CITIZEN B IS DANCING',
-                        isSolved: true
+                        isSolved: true,
+                        characterStates: { 'citizen_b': 'dance' }
                     },
                     {
                         id: 'outcome-3-1-c-special',
                         itemIds: ['citizen_c', 'special'],
                         title: 'CITIZEN C IS DANCING',
-                        isSolved: true
+                        isSolved: true,
+                        characterStates: { 'citizen_c': 'dance' }
                     },
                     {
                         id: 'outcome-3-1-d-special',
                         itemIds: ['citizen_d', 'special'],
                         title: 'CITIZEN D IS DANCING',
-                        isSolved: true
+                        isSolved: true,
+                        characterStates: { 'citizen_d': 'dance' }
                     }
                 ]
             },
             {
                 id: 'scene-3-2',
                 slots: [
-                    { id: 'slot-3-2-1', allowedTypes: ['character'], placedItemId: null, x: 400, y: 400, scale: 1.5 },
-                    { id: 'slot-3-2-2', allowedTypes: ['action'], placedItemId: null, x: 400, y: 200, scale: 1.2 },
+                    { id: 'slot-3-2-1', allowedTypes: ['character'], placedItemId: null, x: 350, y: 420, scale: 3 },
+                    { id: 'slot-3-2-2', allowedTypes: ['action'], placedItemId: null, x: 350, y: 150, scale: 2 },
                 ],
-                backgroundImage: '/assets/scene3_bg.png',
+                backgroundImage: '/assets/backgrounds/Background.png',
                 outcomes: [
                     {
                         id: 'outcome-3-2-b',
                         itemIds: ['citizen_b', 'work'],
                         title: 'CITIZEN B WORKS VERY HARD',
-                        isSolved: true
+                        isSolved: true,
+                        characterStates: { 'citizen_b': 'work' }
                     },
                     {
                         id: 'outcome-3-2-c',
                         itemIds: ['citizen_c', 'work'],
                         title: 'CITIZEN C WORKS VERY HARD',
-                        isSolved: true
+                        isSolved: true,
+                        characterStates: { 'citizen_c': 'work' }
                     },
                     {
                         id: 'outcome-3-2-d',
                         itemIds: ['citizen_d', 'work'],
                         title: 'CITIZEN D WORKS VERY HARD',
-                        isSolved: true
+                        isSolved: true,
+                        characterStates: { 'citizen_d': 'work' }
                     },
                     {
                         id: 'outcome-3-2-b-special',
                         itemIds: ['citizen_b', 'special'],
                         title: 'CITIZEN B IS DANCING',
-                        isSolved: true
+                        isSolved: true,
+                        characterStates: { 'citizen_b': 'dance' }
                     },
                     {
                         id: 'outcome-3-2-c-special',
                         itemIds: ['citizen_c', 'special'],
                         title: 'CITIZEN C IS DANCING',
-                        isSolved: true
+                        isSolved: true,
+                        characterStates: { 'citizen_c': 'dance' }
                     },
                     {
                         id: 'outcome-3-2-d-special',
                         itemIds: ['citizen_d', 'special'],
                         title: 'CITIZEN D IS DANCING',
-                        isSolved: true
+                        isSolved: true,
+                        characterStates: { 'citizen_d': 'dance' }
                     }
                 ]
             },
             {
                 id: 'scene-3-3',
                 slots: [
-                    { id: 'slot-3-3-1', allowedTypes: ['character'], placedItemId: null, x: 400, y: 400, scale: 1.5 },
-                    { id: 'slot-3-3-2', allowedTypes: ['action'], placedItemId: null, x: 400, y: 200, scale: 1.2 },
+                    { id: 'slot-3-3-1', allowedTypes: ['character'], placedItemId: null, x: 350, y: 420, scale: 3 },
+                    { id: 'slot-3-3-2', allowedTypes: ['action'], placedItemId: null, x: 350, y: 150, scale: 2 },
                 ],
-                backgroundImage: '/assets/scene3_bg.png',
+                backgroundImage: '/assets/backgrounds/Background.png',
                 outcomes: [
                     {
                         id: 'outcome-3-3-b',
                         itemIds: ['citizen_b', 'work'],
                         title: 'CITIZEN B WORKS VERY HARD',
-                        isSolved: true
+                        isSolved: true,
+                        characterStates: { 'citizen_b': 'work' }
                     },
                     {
                         id: 'outcome-3-3-c',
                         itemIds: ['citizen_c', 'work'],
                         title: 'CITIZEN C WORKS VERY HARD',
-                        isSolved: true
+                        isSolved: true,
+                        characterStates: { 'citizen_c': 'work' }
                     },
                     {
                         id: 'outcome-3-3-d',
                         itemIds: ['citizen_d', 'work'],
                         title: 'CITIZEN D WORKS VERY HARD',
-                        isSolved: true
+                        isSolved: true,
+                        characterStates: { 'citizen_d': 'work' }
                     },
                     {
                         id: 'outcome-3-3-b-special',
                         itemIds: ['citizen_b', 'special'],
                         title: 'CITIZEN B IS DANCING',
-                        isSolved: true
+                        isSolved: true,
+                        characterStates: { 'citizen_b': 'dance' }
                     },
                     {
                         id: 'outcome-3-3-c-special',
                         itemIds: ['citizen_c', 'special'],
                         title: 'CITIZEN C IS DANCING',
-                        isSolved: true
+                        isSolved: true,
+                        characterStates: { 'citizen_c': 'dance' }
                     },
                     {
                         id: 'outcome-3-3-d-special',
                         itemIds: ['citizen_d', 'special'],
                         title: 'CITIZEN D IS DANCING',
-                        isSolved: true
+                        isSolved: true,
+                        characterStates: { 'citizen_d': 'dance' }
                     }
                 ]
             }
@@ -338,74 +362,74 @@ export const levels: Level[] = [
                 id: 'scene-4-1',
                 slots: [
                     // Slots 1 & 2: Entity Types
-                    { id: 'slot-4-1-1', allowedTypes: ['character', 'object'], placedItemId: null, x: 200, y: 400, scale: 1.5 },
-                    { id: 'slot-4-1-2', allowedTypes: ['character', 'object'], placedItemId: null, x: 400, y: 400, scale: 1.5 },
+                    { id: 'slot-4-1-1', allowedTypes: ['character', 'object'], placedItemId: null, x: 160, y: 420, scale: 3, flipX: true },
+                    { id: 'slot-4-1-2', allowedTypes: ['character', 'object'], placedItemId: null, x: 575, y: 420, scale: 3 },
                     // Slots 3 & 4: Action Verbs
-                    { id: 'slot-4-1-3', allowedTypes: ['action'], placedItemId: null, x: 600, y: 300, shape: 'rectangle', scale: 1.2 },
-                    { id: 'slot-4-1-4', allowedTypes: ['action'], placedItemId: null, x: 600, y: 500, shape: 'rectangle', scale: 1.2 },
+                    { id: 'slot-4-1-3', allowedTypes: ['action'], placedItemId: null, x: 160, y: 160, scale: 2 },
+                    { id: 'slot-4-1-4', allowedTypes: ['action'], placedItemId: null, x: 575, y: 160, scale: 2 },
                 ],
-                backgroundImage: '/assets/scene4_bg.png',
+                backgroundImage: '/assets/backgrounds/Background.png',
                 outcomes: [
                     // OUTCOME A: "YOU OPENED A BOOK"
-                    // Logic: You + Book (Any Order) AND (One Action Open, Other Empty)
-                    // Permutations:
-                    // 1. You, Book, Open, Null
                     {
                         id: 'outcome-scholar-1',
                         itemIds: ['you', 'book', 'open', null],
                         title: 'YOU OPENED A BOOK',
-                        isSolved: true
+                        isSolved: true,
+                        characterStates: { 'you': 'awe' }
                     },
-                    // 2. Book, You, Open, Null
                     {
                         id: 'outcome-scholar-2',
                         itemIds: ['book', 'you', 'open', null],
                         title: 'YOU OPENED A BOOK',
-                        isSolved: true
+                        isSolved: true,
+                        characterStates: { 'you': 'awe' }
                     },
-                    // 3. You, Book, Null, Open
                     {
                         id: 'outcome-scholar-3',
                         itemIds: ['you', 'book', null, 'open'],
                         title: 'YOU OPENED A BOOK',
-                        isSolved: true
+                        isSolved: true,
+                        characterStates: { 'you': 'awe' }
                     },
-                    // 4. Book, You, Null, Open
                     {
                         id: 'outcome-scholar-4',
                         itemIds: ['book', 'you', null, 'open'],
                         title: 'YOU OPENED A BOOK',
-                        isSolved: true
+                        isSolved: true,
+                        characterStates: { 'you': 'awe' }
                     },
 
                     // OUTCOME B: "YOU JOINED THE CITY’S WORKFORCE"
-                    // Logic: You + Citizens + Work + Work
                     {
                         id: 'outcome-workforce-1',
                         itemIds: ['you', 'group_citizens', 'work', 'work'],
                         title: 'YOU JOINED THE CITY’S WORKFORCE',
-                        isSolved: true
+                        isSolved: true,
+                        characterStates: { 'group_citizens': 'work' }
                     },
                     {
                         id: 'outcome-workforce-2',
                         itemIds: ['group_citizens', 'you', 'work', 'work'],
                         title: 'YOU JOINED THE CITY’S WORKFORCE',
-                        isSolved: true
+                        isSolved: true,
+                        characterStates: { 'group_citizens': 'work' }
                     },
 
                     // OUTCOME C: "YOU DANCED TO CHEER THE WORKFORCE"
-                    // Logic: You + Citizens + Dance + Dance
                     {
                         id: 'outcome-celebration-1',
                         itemIds: ['you', 'group_citizens', 'dance', 'dance'],
                         title: 'YOU DANCED TO CHEER THE WORKFORCE',
-                        isSolved: true
+                        isSolved: true,
+                        characterStates: { 'you': 'dance', 'group_citizens': 'dance' }
                     },
                     {
                         id: 'outcome-celebration-2',
                         itemIds: ['group_citizens', 'you', 'dance', 'dance'],
                         title: 'YOU DANCED TO CHEER THE WORKFORCE',
-                        isSolved: true
+                        isSolved: true,
+                        characterStates: { 'you': 'dance', 'group_citizens': 'dance' }
                     }
                 ]
             },
@@ -413,7 +437,7 @@ export const levels: Level[] = [
             {
                 id: 'scene-4-2',
                 slots: [], // No interaction
-                backgroundImage: '/assets/scene4_outcome_placeholder.png',
+                backgroundImage: '/assets/backgrounds/Background-5.png',
                 outcomes: []
             }
         ]

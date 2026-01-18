@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { useEffect } from 'react';
 import { AudioController } from './components/UI/AudioController'
 import { LevelSelect } from './components/LevelSelect'
 import { GamePage } from './components/GamePage'
@@ -9,7 +10,14 @@ import { Summary } from './components/Summary';
 import { useGameStore } from './store/gameStore';
 
 function App() {
-  const { isGameCompleted } = useGameStore();
+  const { isGameCompleted, tickAnimation } = useGameStore();
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      tickAnimation();
+    }, 500); // Global 500ms Beat
+    return () => clearInterval(interval);
+  }, [tickAnimation]);
 
   return (
     <BrowserRouter>

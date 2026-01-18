@@ -62,29 +62,30 @@ export const Summary = () => {
     const staticSceneInfo = useMemo(() => {
         let slots: any[] = [];
         let bgTitle = "";
-        let bgImage = "/assets/scene4_outcome_placeholder.png";
+        let bgImage: string | string[] = "/assets/scene4_outcome_placeholder.png"; // Support arrays
+        let characterStates: Record<string, string> = {};
 
         if (outcomeType === 'scholar') {
-            bgTitle = "YOU TRAVELED BACK TO THE PRESENT";
+            bgTitle = "You traveled back to the present.";
+            bgImage = '/assets/backgrounds/Background-3.png';
+            characterStates = { 'you': 'awe' };
             slots = [
-                // Scholar Layout: You Left, Open Center, Book Right
-                { id: 'slot-4-2-1', allowedTypes: ['character'], placedItemId: 'you', shape: 'ellipse' as const, x: 360, y: 300, scale: 2 },
+                { id: 'slot-4-2-1', allowedTypes: ['character'], placedItemId: 'you', shape: 'ellipse' as const, x: 350, y: 420, scale: 3, flipX: true }
             ];
         } else if (outcomeType === 'workforce') {
-            bgTitle = "YOU JOINED THE CITY’S WORKFORCE";
+            bgTitle = "Now you work hard everyday.";
+            bgImage = ['/assets/backgrounds/Background.png', '/assets/backgrounds/Background-1.png'];
+            characterStates = { 'you': 'work' };
             slots = [
-                // Workforce Layout: You Left, Work Center, Citizens Right
-                { id: 'slot-4-2-1', allowedTypes: ['character'], placedItemId: 'you', shape: 'ellipse' as const, x: 200, y: 420, scale: 2 },
-                { id: 'slot-4-2-2', allowedTypes: ['action'], placedItemId: 'work', shape: 'rectangle' as const, x: 400, y: 300, scale: 2 },
-                { id: 'slot-4-2-3', allowedTypes: ['character'], placedItemId: 'group_citizens', shape: 'ellipse' as const, x: 600, y: 420, scale: 2 },
+                { id: 'slot-4-2-1', allowedTypes: ['character'], placedItemId: 'you', shape: 'ellipse' as const, x: [370, 270], y: [400, 330], scale: [3, 4], flipX: [true, false] },
             ];
         } else if (outcomeType === 'celebration') {
-            bgTitle = "YOU DANCED TO CHEER THE WORKFORCE";
+            bgTitle = "Everyone starts dancing with you.";
+            bgImage = '/assets/backgrounds/Background.png';
+            characterStates = { 'you': 'dance', 'group_citizens': 'dance' };
             slots = [
-                // Celebration Layout: You Left, Dance Center, Citizens Right
-                { id: 'slot-4-2-1', allowedTypes: ['character'], placedItemId: 'you', shape: 'ellipse' as const, x: 200, y: 420, scale: 2 },
-                { id: 'slot-4-2-2', allowedTypes: ['action'], placedItemId: 'dance', shape: 'rectangle' as const, x: 400, y: 300, scale: 2 },
-                { id: 'slot-4-2-3', allowedTypes: ['character'], placedItemId: 'group_citizens', shape: 'ellipse' as const, x: 600, y: 420, scale: 2 },
+                { id: 'slot-4-2-1', allowedTypes: ['character'], placedItemId: 'you', shape: 'ellipse' as const, x: 160, y: 420, scale: 3, flipX: true },
+                { id: 'slot-4-2-2', allowedTypes: ['character'], placedItemId: 'group_citizens', shape: 'ellipse' as const, x: 575, y: 420, scale: 3 },
             ];
         }
 
@@ -95,12 +96,13 @@ export const Summary = () => {
                 backgroundImage: bgImage,
                 outcomes: [],
             } as SceneType,
-            title: bgTitle
+            title: bgTitle,
+            characterStates // Pass this out to override scene
         };
 
     }, [outcomeType]);
 
-    const { scene: staticScene2, title: bgTitle } = staticSceneInfo;
+    const { scene: staticScene2, title: bgTitle, characterStates: overrideStates } = staticSceneInfo;
 
     const [shareImage, setShareImage] = useState<string | null>(null);
 
@@ -280,6 +282,7 @@ export const Summary = () => {
                                     isActive={false}
                                     levelItems={level4Items}
                                     overrideTitle={bgTitle}
+                                    overrideCharacterStates={overrideStates}
                                 />
                             </div>
                         )}

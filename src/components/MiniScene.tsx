@@ -10,9 +10,11 @@ interface MiniSlotProps {
     placedItem?: Item;
     shape?: 'ellipse' | 'rectangle';
     scale?: number;
+    flipX?: boolean;
+    flipY?: boolean;
 }
 
-const MiniSlot = ({ x, y, placedItem, shape = 'ellipse', scale = 1 }: MiniSlotProps) => {
+const MiniSlot = ({ x, y, placedItem, shape = 'ellipse', scale = 1, flipX, flipY }: MiniSlotProps) => {
     return (
         <div
             className={clsx(
@@ -26,7 +28,8 @@ const MiniSlot = ({ x, y, placedItem, shape = 'ellipse', scale = 1 }: MiniSlotPr
             }}
         >
             {placedItem ? (
-                <div className="w-full h-full flex items-center justify-center" style={{ transform: `scale(${scale})` }}>
+                <div className="w-full h-full flex items-center justify-center"
+                    style={{ transform: `scale(${scale}) scaleX(${flipX ? -1 : 1}) scaleY(${flipY ? -1 : 1})` }}>
                     <ItemVisual item={placedItem} />
                 </div>
             ) : (
@@ -69,6 +72,14 @@ export const MiniScene = ({ scene, levelItems, className }: MiniSceneProps) => {
         return () => observer.disconnect();
     }, []);
 
+    const getBackgroundImageUrl = () => {
+        const bg = scene.backgroundImage;
+        if (Array.isArray(bg)) {
+            return `url(${bg[0]})`;
+        }
+        return bg ? `url(${bg})` : undefined;
+    };
+
     return (
         <div
             ref={containerRef}
@@ -87,7 +98,7 @@ export const MiniScene = ({ scene, levelItems, className }: MiniSceneProps) => {
             >
                 <div
                     className="w-full h-full relative bg-cover bg-center"
-                    style={scene.backgroundImage ? { backgroundImage: `url(${scene.backgroundImage})` } : { backgroundColor: '#fdf6e3' }}
+                    style={getBackgroundImageUrl() ? { backgroundImage: getBackgroundImageUrl() } : { backgroundColor: '#fdf6e3' }}
                 >
                     {/* Dark overlay for better visibility of uncompleted slots, or just style choice */}
                     <div className="absolute inset-0 bg-[#2c1810]/5" />
@@ -95,10 +106,12 @@ export const MiniScene = ({ scene, levelItems, className }: MiniSceneProps) => {
                     {scene.slots.map(slot => (
                         <MiniSlot
                             key={slot.id}
-                            x={slot.x}
-                            y={slot.y}
-                            scale={slot.scale}
+                            x={Array.isArray(slot.x) ? slot.x[0] : slot.x}
+                            y={Array.isArray(slot.y) ? slot.y[0] : slot.y}
+                            scale={Array.isArray(slot.scale) ? slot.scale[0] : slot.scale}
                             shape={slot.shape}
+                            flipX={Array.isArray(slot.flipX) ? slot.flipX[0] : slot.flipX}
+                            flipY={Array.isArray(slot.flipY) ? slot.flipY[0] : slot.flipY}
                             placedItem={slot.placedItemId ?
                                 levelItems.find(i => i.id === slot.placedItemId)
                                 : undefined

@@ -231,6 +231,8 @@ export const Book = () => {
                         {currentScenes.map((originalScene) => {
                             let overrideTitle: string | undefined;
                             let overrideSlots: any[] | undefined;
+                            let overrideBgImage: string | string[] | undefined;
+                            let overrideCharacterStates: Record<string, string> | undefined;
 
                             // LEVEL 4 DYNAMIC LOGIC
                             // If this is Scene 2 (The Outcome), we override it based on Scene 1 "Active Outcome"
@@ -243,45 +245,47 @@ export const Book = () => {
                                     else if (scene1Outcome.id.includes('workforce')) outcomeType = 'workforce';
                                     else if (scene1Outcome.id.includes('celebration')) outcomeType = 'celebration';
 
-                                    const config = {
+                                    const config: { title: string, slots: any[], backgroundImage?: string | string[], characterStates?: Record<string, string> } | undefined = {
                                         scholar: {
                                             title: "You traveled back to the present.",
                                             slots: [
-                                                { id: 'slot-4-2-1', allowedTypes: ['character'], placedItemId: 'you', shape: 'ellipse' as const, x: 200, y: 420, scale: 2 },
-                                                { id: 'slot-4-2-2', allowedTypes: ['action'], placedItemId: 'open', shape: 'rectangle' as const, x: 400, y: 300, scale: 2 },
-                                                { id: 'slot-4-2-3', allowedTypes: ['object'], placedItemId: 'book', shape: 'ellipse' as const, x: 600, y: 420, scale: 2 },
-                                            ]
+                                                { id: 'slot-4-2-1', allowedTypes: ['character'], placedItemId: 'you', shape: 'ellipse' as const, x: 350, y: 420, scale: 3, flipX: true }
+                                            ],
+                                            backgroundImage: '/assets/backgrounds/Background-3.png',
+                                            characterStates: { 'you': 'awe' }
                                         },
                                         workforce: {
                                             title: "Now you work hard everyday.",
                                             slots: [
-                                                { id: 'slot-4-2-1', allowedTypes: ['character'], placedItemId: 'you', shape: 'ellipse' as const, x: 200, y: 420, scale: 2 },
-                                                { id: 'slot-4-2-2', allowedTypes: ['action'], placedItemId: 'work', shape: 'rectangle' as const, x: 400, y: 300, scale: 2 },
-                                                { id: 'slot-4-2-3', allowedTypes: ['character'], placedItemId: 'group_citizens', shape: 'ellipse' as const, x: 600, y: 420, scale: 2 },
-                                            ]
+                                                { id: 'slot-4-2-1', allowedTypes: ['character'], placedItemId: 'you', shape: 'ellipse' as const, x: [370, 270], y: [400, 330], scale: [3, 4], flipX: [true, false] },
+                                            ],
+                                            backgroundImage: ['/assets/backgrounds/Background.png', '/assets/backgrounds/Background-1.png'],
+                                            characterStates: { 'you': 'work' }
                                         },
                                         celebration: {
                                             title: "Everyone starts dancing with you.",
                                             slots: [
-                                                { id: 'slot-4-2-1', allowedTypes: ['character'], placedItemId: 'you', shape: 'ellipse' as const, x: 200, y: 420, scale: 2 },
-                                                { id: 'slot-4-2-2', allowedTypes: ['action'], placedItemId: 'dance', shape: 'rectangle' as const, x: 400, y: 300, scale: 2 },
-                                                { id: 'slot-4-2-3', allowedTypes: ['character'], placedItemId: 'group_citizens', shape: 'ellipse' as const, x: 600, y: 420, scale: 2 },
-                                            ]
+                                                { id: 'slot-4-2-1', allowedTypes: ['character'], placedItemId: 'you', shape: 'ellipse' as const, x: 160, y: 420, scale: 3, flipX: true },
+                                                { id: 'slot-4-2-2', allowedTypes: ['character'], placedItemId: 'group_citizens', shape: 'ellipse' as const, x: 575, y: 420, scale: 3 },
+                                            ],
+                                            backgroundImage: '/assets/backgrounds/Background.png',
+                                            characterStates: { 'you': 'dance', 'group_citizens': 'dance' }
                                         },
-                                        default: { title: "The End", slots: [] }
+                                        default: { title: "The End", slots: [], backgroundImage: '/assets/backgrounds/Background-5.png' }
                                     }[outcomeType];
 
                                     if (config) {
                                         overrideTitle = config.title;
                                         overrideSlots = config.slots;
-                                        // overrideBgImage = "/assets/scene4_outcome_placeholder.png"; // Already default
+                                        overrideBgImage = config.backgroundImage;
+                                        overrideCharacterStates = config.characterStates;
                                     }
                                 }
                             }
 
                             // Construct a temp scene object if overrides exist
                             const sceneToRender = (overrideSlots)
-                                ? { ...originalScene, slots: overrideSlots }
+                                ? { ...originalScene, slots: overrideSlots, backgroundImage: overrideBgImage || originalScene.backgroundImage }
                                 : originalScene;
 
                             return (
@@ -293,6 +297,7 @@ export const Book = () => {
                                         isActive={false} // Always non-interactive for display/static scenes
                                         levelItems={currentLevel.availableItems}
                                         overrideTitle={overrideTitle}
+                                        overrideCharacterStates={overrideCharacterStates}
                                     />
                                 </div>
                             );

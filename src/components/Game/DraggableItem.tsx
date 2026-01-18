@@ -9,14 +9,65 @@ interface DraggableItemProps {
 }
 
 // Visual component for consistency between original and overlay
-export const ItemVisual = ({ item, disabled, isDragging, className }: { item: Item, disabled?: boolean, isDragging?: boolean, className?: string }) => {
-    const isImageIcon = item.icon.startsWith('/') || item.icon.startsWith('http');
+import { useGameStore } from '../../store/gameStore';
+
+// Animation Config
+const GET_ANIMATION_FRAMES = (state: string, baseName: string): string[] => {
+    if (state === 'work') {
+        // Player animation: work > idle
+        if (baseName.startsWith('player') || baseName === 'you') {
+            return ['work', 'sleep'];
+        }
+        // Citizen animation: work1 > work2
+        return ['work1', 'work2'];
+    }
+    if (state === 'dance') {
+        return ['dance', 'idle'];
+    }
+    return [];
+};
+
+export const ItemVisual = ({ item, disabled, isDragging, className, forcedState }: { item: Item, disabled?: boolean, isDragging?: boolean, className?: string, forcedState?: string }) => {
+    const characterId = useGameStore(state => state.characterId);
+    const globalFrame = useGameStore(state => state.globalAnimationFrame);
+
+    // Resolve Base Name first to determine frames
+    let baseName = item.spriteName || '';
+    if (baseName === 'player') {
+        baseName = characterId || 'player1';
+    }
+
+    // Resolve State
+    // Priority: forcedState > item.defaultState > 'idle'
+    const targetState = forcedState || item.defaultState || 'idle';
+
+    // Determine current frame from global tick
+    // We cannot just use globalFrame directly because some animations might have different lengths?
+    // Actually, for sync, we SHOULD use globalFrame directly modulo length.
+    // This ensures that "Frame 0" of background aligns with "Frame 0" of character.
+
+    // Resolve Dynamic Image Path
+    let iconSrc = item.icon;
+    if (item.spriteName) {
+        let stateTag = targetState;
+        const frames = GET_ANIMATION_FRAMES(targetState, baseName);
+        if (frames && frames.length > 0) {
+            stateTag = frames[globalFrame % frames.length];
+        }
+        iconSrc = `/assets/characters/${baseName}_${stateTag}.png`;
+    }
+
+    const isImageIcon = iconSrc.startsWith('/') || iconSrc.startsWith('http');
+    const isTextAction = item.type === 'action' && !isImageIcon;
 
     return (
         <div
             className={clsx(
-                "w-16 h-16 flex items-center justify-center transition-all duration-300",
-                !isImageIcon && "text-5xl bg-[url('/assets/parchment_bg.png')] bg-cover border border-[#2c1810]/40 rounded-sm shadow-md",
+                "flex items-center justify-center transition-all duration-300",
+                isTextAction
+                    ? "px-3 py-1 bg-[#2c1810]/90 text-[#f5e6d3] border border-[#f5e6d3]/40 rounded-full font-serif font-bold text-[10px] tracking-[0.15em] shadow-lg backdrop-blur-sm whitespace-nowrap"
+                    : "w-16 h-16",
+                !isImageIcon && !isTextAction && "text-5xl bg-[url('/assets/parchment_bg.png')] bg-cover border border-[#2c1810]/40 rounded-sm shadow-md",
                 disabled ? "opacity-30 grayscale cursor-not-allowed" : "cursor-grab",
                 !disabled && !isDragging && "active:cursor-grabbing hover:scale-105",
                 className
@@ -24,15 +75,22 @@ export const ItemVisual = ({ item, disabled, isDragging, className }: { item: It
             title={item.name}
         >
             {isImageIcon ? (
-                <img src={item.icon} alt={item.name} className="w-full h-full object-contain pointer-events-none drop-shadow-md" />
+                <img src={iconSrc} alt={item.name} className="w-full h-full object-contain pointer-events-none drop-shadow-md" />
             ) : (
-                <span className="drop-shadow-sm">{item.icon}</span>
+                <span className={clsx("drop-shadow-sm", isTextAction && "mt-[1px]")}>{iconSrc}</span>
             )}
         </div>
     );
 };
 
-export const DraggableItem = ({ item, id, disabled }: DraggableItemProps) => {
+interface DraggableItemProps {
+    item: Item;
+    id: string; // unique drag id
+    disabled?: boolean;
+    forcedState?: string;
+}
+
+export const DraggableItem = ({ item, id, disabled, forcedState }: DraggableItemProps) => {
     const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
         id: id,
         data: { item },
@@ -53,7 +111,7 @@ export const DraggableItem = ({ item, id, disabled }: DraggableItemProps) => {
             {...listeners}
             {...attributes}
         >
-            <ItemVisual item={item} disabled={disabled} isDragging={isDragging} />
+            <ItemVisual item={item} disabled={disabled} isDragging={isDragging} forcedState={forcedState} />
         </div>
     );
 };

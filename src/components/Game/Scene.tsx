@@ -11,9 +11,10 @@ interface SceneProps {
     levelItems: Item[];
     overrideTitle?: string;
     hideTitle?: boolean;
+    overrideCharacterStates?: Record<string, string>;
 }
 
-export const Scene = ({ scene, isActive, levelItems, overrideTitle, hideTitle }: SceneProps) => {
+export const Scene = ({ scene, isActive, levelItems, overrideTitle, hideTitle, overrideCharacterStates }: SceneProps) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const [scale, setScale] = useState(1);
 
@@ -22,6 +23,19 @@ export const Scene = ({ scene, isActive, levelItems, overrideTitle, hideTitle }:
     const activeOutcome = activeOutcomes[scene.id];
 
     const displayTitle = hideTitle ? null : (overrideTitle || activeOutcome?.title);
+
+    // Helper to get forced state for an item in this scene
+    // Logic: Check override first, then active outcome
+    const getForcedState = (itemId: string | undefined) => {
+        if (!itemId) return undefined;
+        if (overrideCharacterStates && overrideCharacterStates[itemId]) {
+            return overrideCharacterStates[itemId];
+        }
+        if (activeOutcome && activeOutcome.characterStates) {
+            return activeOutcome.characterStates[itemId];
+        }
+        return undefined;
+    };
 
     useEffect(() => {
         const updateScale = () => {
@@ -38,12 +52,21 @@ export const Scene = ({ scene, isActive, levelItems, overrideTitle, hideTitle }:
         return () => observer.disconnect();
     }, []);
 
-    return (
+    const globalFrame = useGameStore(state => state.globalAnimationFrame);
 
+    const getBackgroundImageUrl = () => {
+        const bg = scene.backgroundImage;
+        if (Array.isArray(bg) && bg.length > 0) {
+            return `url(${bg[globalFrame % bg.length]})`;
+        }
+        return bg ? `url(${bg})` : undefined;
+    };
+
+    return (
         <div
             ref={containerRef}
             className={clsx(
-                "overflow-hidden flex flex-col shadow-lg transition-all duration-500",
+                "overflow-hidden flex flex-col shadow-lg", // Removed transition-all duration-500
                 "aspect-[4/3] w-full relative",
                 isActive ? "scale-[1.02]" : ""
             )}
@@ -64,29 +87,48 @@ export const Scene = ({ scene, isActive, levelItems, overrideTitle, hideTitle }:
             >
                 <div
                     className="w-full h-full relative bg-cover bg-center grayscale-[0.2] sepia-[0.2]"
-                    style={scene.backgroundImage ? { backgroundImage: `url(${scene.backgroundImage})` } : { backgroundColor: '#fdf6e3' }}
+                    style={getBackgroundImageUrl() ? { backgroundImage: getBackgroundImageUrl() } : { backgroundColor: '#fdf6e3' }}
                 >
                     {/* This mimics the "stage" */}
                     <div className="absolute inset-0 pointer-events-none" style={{ backgroundColor: 'rgba(44, 24, 16, 0.05)' }} />
-                    {scene.slots.map(slot => (
-                        <Slot
-                            key={slot.id}
-                            id={slot.id}
-                            x={slot.x}
-                            y={slot.y}
-                            scale={slot.scale}
-                            shape={slot.shape}
-                            placedItem={slot.placedItemId ?
-                                levelItems.find(i => i.id === slot.placedItemId)
-                                : undefined
+                    {scene.slots.map(slot => {
+                        // Resolve animated coordinates
+                        const resolveCoord = (val: number | number[]) => {
+                            if (Array.isArray(val)) {
+                                return val[globalFrame % val.length];
                             }
-                            allowedTypes={slot.allowedTypes}
-                        />
-                    ))}
+                            return val;
+                        };
 
-                    {/* Title Overlay - Inside the scaled world or outside? 
-                        Inside puts it in context. 
-                    */}
+                        // Resolve animated booleans
+                        const resolveBool = (val: boolean | boolean[] | undefined) => {
+                            if (Array.isArray(val)) {
+                                return val[globalFrame % val.length];
+                            }
+                            return val;
+                        };
+
+                        return (
+                            <Slot
+                                key={slot.id}
+                                id={slot.id}
+                                x={resolveCoord(slot.x)}
+                                y={resolveCoord(slot.y)}
+                                scale={resolveCoord(slot.scale || 1)}
+                                shape={slot.shape}
+                                flipX={resolveBool(slot.flipX)}
+                                flipY={resolveBool(slot.flipY)}
+                                placedItem={slot.placedItemId ?
+                                    levelItems.find(i => i.id === slot.placedItemId)
+                                    : undefined
+                                }
+                                forcedState={getForcedState(slot.placedItemId || undefined)} // Pass animation state override
+                                allowedTypes={slot.allowedTypes}
+                            />
+                        );
+                    })}
+
+                    {/* Title Overlay */}
                     {displayTitle && (
                         <div className="absolute top-4 left-0 w-full flex justify-center pointer-events-none z-10">
                             <h3 className="font-serif-bold text-center uppercase tracking-widest animate-fade-in shadow-sm backdrop-blur-sm"

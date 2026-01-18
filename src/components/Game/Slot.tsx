@@ -11,9 +11,12 @@ interface SlotProps {
     allowedTypes: string[];
     shape?: 'ellipse' | 'rectangle';
     scale?: number;
+    flipX?: boolean;
+    flipY?: boolean;
+    forcedState?: string;
 }
 
-export const Slot = ({ id, x, y, placedItem, allowedTypes, shape = 'ellipse', scale }: SlotProps) => {
+export const Slot = ({ id, x, y, placedItem, allowedTypes, shape = 'ellipse', scale = 1, flipX, flipY, forcedState }: SlotProps) => {
     const { isOver, setNodeRef } = useDroppable({
         id: id,
         data: { allowedTypes, scale },
@@ -23,7 +26,7 @@ export const Slot = ({ id, x, y, placedItem, allowedTypes, shape = 'ellipse', sc
         <div
             ref={setNodeRef}
             className={clsx(
-                "absolute flex items-center justify-center transition-all duration-300",
+                "absolute flex items-center justify-center", // Removed transition-all duration-300 for snap animation
                 shape === 'ellipse' ? "rounded-[50%]" : "rounded-sm",
                 placedItem ? "z-10" : "z-0"
             )}
@@ -39,8 +42,11 @@ export const Slot = ({ id, x, y, placedItem, allowedTypes, shape = 'ellipse', sc
             }}
         >
             {placedItem ? (
-                <div className="w-full h-full flex items-center justify-center" style={{ transform: `scale(${scale})` }}>
-                    <DraggableItem item={placedItem} id={`item-in-${id}`} />
+                <div className="w-full h-full flex items-center justify-center"
+                    style={{
+                        transform: `scale(${scale}) scaleX(${flipX ? -1 : 1}) scaleY(${flipY ? -1 : 1})`
+                    }}>
+                    <DraggableItem item={placedItem} id={`item-in-${id}`} forcedState={forcedState} />
                 </div>
             ) : (
                 <>

@@ -55,11 +55,15 @@ interface GameState {
     userAvatar: string;
     completeGame: () => void;
     resetGame: () => void;
+
+    // Global Animation (500ms Tick)
+    globalAnimationFrame: number;
+    tickAnimation: () => void;
 }
 
 const defaultGameState = {
     playerName: '',
-    characterId: '',
+    characterId: 'player1',
     levelProgress: {},
 
     completedScenes: [],
@@ -79,6 +83,7 @@ const defaultGameState = {
     isGameCompleted: false,
     userName: 'Storyteller',
     userAvatar: '🧙‍♂️',
+    globalAnimationFrame: 0,
 };
 
 
@@ -90,6 +95,8 @@ export const useGameStore = create<GameState>()(
             setPlayerName: (name: string) => set({ playerName: name }),
 
             setCharacterId: (id: string) => set({ characterId: id }),
+
+            tickAnimation: () => set(state => ({ globalAnimationFrame: state.globalAnimationFrame + 1 })),
 
             loadLevel: (levelId: string) => {
                 const level = levels.find(l => l.id === levelId);
