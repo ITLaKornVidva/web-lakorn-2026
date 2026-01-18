@@ -486,6 +486,7 @@ export const useGameStore = create<GameState>()(
                 solvedLevels: state.solvedLevels,
                 completedScenes: state.completedScenes,
                 isGameCompleted: state.isGameCompleted,
+                activeOutcomes: state.activeOutcomes,
             }),
             onRehydrateStorage: () => (state) => {
                 state?.recalculateAllProgress();

@@ -9,9 +9,11 @@ interface SceneProps {
     scene: SceneType;
     isActive: boolean;
     levelItems: Item[];
+    overrideTitle?: string;
+    hideTitle?: boolean;
 }
 
-export const Scene = ({ scene, isActive, levelItems }: SceneProps) => {
+export const Scene = ({ scene, isActive, levelItems, overrideTitle, hideTitle }: SceneProps) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const [scale, setScale] = useState(1);
 
@@ -19,7 +21,7 @@ export const Scene = ({ scene, isActive, levelItems }: SceneProps) => {
     const activeOutcomes = useGameStore(state => state.activeOutcomes);
     const activeOutcome = activeOutcomes[scene.id];
 
-    const displayTitle = activeOutcome?.title;
+    const displayTitle = hideTitle ? null : (overrideTitle || activeOutcome?.title);
 
     useEffect(() => {
         const updateScale = () => {
@@ -41,10 +43,15 @@ export const Scene = ({ scene, isActive, levelItems }: SceneProps) => {
         <div
             ref={containerRef}
             className={clsx(
-                "bg-white border-2 border-[#2c1810] overflow-hidden flex flex-col shadow-lg transition-all duration-500",
+                "overflow-hidden flex flex-col shadow-lg transition-all duration-500",
                 "aspect-[4/3] w-full relative",
-                isActive ? "ring-4 ring-amber-400 scale-[1.02]" : ""
+                isActive ? "scale-[1.02]" : ""
             )}
+            style={{
+                backgroundColor: '#ffffff',
+                border: '2px solid #2c1810',
+                boxShadow: isActive ? '0 0 0 4px #fbbf24' : 'none' // Manual ring
+            }}
         >
             {/* Scaling Wrapper */}
             <div
@@ -60,7 +67,7 @@ export const Scene = ({ scene, isActive, levelItems }: SceneProps) => {
                     style={scene.backgroundImage ? { backgroundImage: `url(${scene.backgroundImage})` } : { backgroundColor: '#fdf6e3' }}
                 >
                     {/* This mimics the "stage" */}
-                    <div className="absolute inset-0 bg-[#2c1810]/5 pointer-events-none" />
+                    <div className="absolute inset-0 pointer-events-none" style={{ backgroundColor: 'rgba(44, 24, 16, 0.05)' }} />
                     {scene.slots.map(slot => (
                         <Slot
                             key={slot.id}
@@ -82,8 +89,14 @@ export const Scene = ({ scene, isActive, levelItems }: SceneProps) => {
                     */}
                     {displayTitle && (
                         <div className="absolute top-4 left-0 w-full flex justify-center pointer-events-none z-10">
-                            <h3 className="font-serif-bold text-[#2c1810] bg-white/80 px-4 py-1 rounded-full text-center uppercase tracking-widest animate-fade-in shadow-sm backdrop-blur-sm"
-                                style={{ fontSize: '1.5rem' }}>
+                            <h3 className="font-serif-bold text-center uppercase tracking-widest animate-fade-in shadow-sm backdrop-blur-sm"
+                                style={{
+                                    fontSize: '1.5rem',
+                                    color: '#2c1810',
+                                    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                                    padding: '4px 16px',
+                                    borderRadius: '9999px'
+                                }}>
                                 {displayTitle}
                             </h3>
                         </div>

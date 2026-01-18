@@ -18,7 +18,8 @@ const ITEMS: Record<string, Item> = {
     interest: { id: 'interest', name: 'Interest', type: 'action', icon: '🤩' },
     work: { id: 'work', name: 'Work', type: 'action', icon: '🔨' },
     cheer: { id: 'cheer', name: 'Cheer', type: 'action', icon: '🎉' },
-    special: { id: 'special', name: '?', type: 'action', icon: '❓' },
+    dance: { id: 'dance', name: 'Dance', type: 'action', icon: '💃' },
+    special: { id: 'special', name: 'Special', type: 'action', icon: '�t' },
 };
 
 export const levels: Level[] = [
@@ -34,8 +35,8 @@ export const levels: Level[] = [
             {
                 id: 'scene-1-1',
                 slots: [
-                    { id: 'slot-1-1-1', allowedTypes: ['character'], placedItemId: null, shape: 'ellipse', x: 600, y: 420, scale: 2 },
-                    { id: 'slot-1-1-2', allowedTypes: ['object'], placedItemId: null, shape: 'ellipse', x: 320, y: 330, scale: 3 },
+                    { id: 'slot-1-1-1', allowedTypes: ['character'], placedItemId: null, x: 600, y: 420, scale: 2 },
+                    { id: 'slot-1-1-2', allowedTypes: ['object'], placedItemId: null, x: 320, y: 330, scale: 3 },
                 ],
                 backgroundImage: '/assets/scene1_bg.png',
                 outcomes: [
@@ -50,9 +51,9 @@ export const levels: Level[] = [
             {
                 id: 'scene-1-2',
                 slots: [
-                    { id: 'slot-1-2-1', allowedTypes: ['character'], placedItemId: null, shape: 'ellipse', x: 200, y: 420, scale: 2 },
-                    { id: 'slot-1-2-2', allowedTypes: ['action'], placedItemId: null, shape: 'rectangle', x: 400, y: 300, scale: 2 },
-                    { id: 'slot-1-2-3', allowedTypes: ['object'], placedItemId: null, shape: 'ellipse', x: 600, y: 420, scale: 2 },
+                    { id: 'slot-1-2-1', allowedTypes: ['character'], placedItemId: null, x: 200, y: 420, scale: 2 },
+                    { id: 'slot-1-2-2', allowedTypes: ['action'], placedItemId: null, x: 400, y: 300, scale: 2 },
+                    { id: 'slot-1-2-3', allowedTypes: ['object'], placedItemId: null, x: 600, y: 420, scale: 2 },
                 ],
                 backgroundImage: '/assets/scene1_bg.png',
                 outcomes: [
@@ -67,7 +68,7 @@ export const levels: Level[] = [
             {
                 id: 'scene-1-3',
                 slots: [
-                    { id: 'slot-1-3-1', allowedTypes: ['character'], placedItemId: null, shape: 'ellipse', x: 400, y: 420, scale: 2 },
+                    { id: 'slot-1-3-1', allowedTypes: ['character'], placedItemId: null, x: 400, y: 420, scale: 2 },
                 ],
                 backgroundImage: '/assets/scene1_bg.png',
                 outcomes: [
@@ -95,9 +96,9 @@ export const levels: Level[] = [
             {
                 id: 'scene-2-1',
                 slots: [
-                    { id: 'slot-2-1-1', allowedTypes: ['character'], placedItemId: null, x: 200, y: 400 },
-                    { id: 'slot-2-1-2', allowedTypes: ['action'], placedItemId: null, x: 400, y: 250 },
-                    { id: 'slot-2-1-3', allowedTypes: ['character'], placedItemId: null, x: 600, y: 400 },
+                    { id: 'slot-2-1-1', allowedTypes: ['character'], placedItemId: null, x: 200, y: 400, scale: 1.5 },
+                    { id: 'slot-2-1-2', allowedTypes: ['action'], placedItemId: null, x: 400, y: 250, scale: 1.2 },
+                    { id: 'slot-2-1-3', allowedTypes: ['character'], placedItemId: null, x: 600, y: 400, scale: 1.5 },
                 ],
                 backgroundImage: '/assets/scene2_bg.png',
                 outcomes: [
@@ -118,9 +119,9 @@ export const levels: Level[] = [
             {
                 id: 'scene-2-2',
                 slots: [
-                    { id: 'slot-2-2-1', allowedTypes: ['character'], placedItemId: null, x: 200, y: 400 },
-                    { id: 'slot-2-2-2', allowedTypes: ['character'], placedItemId: null, x: 600, y: 400 },
-                    { id: 'slot-2-2-3', allowedTypes: ['action'], placedItemId: null, x: 400, y: 250 },
+                    { id: 'slot-2-2-1', allowedTypes: ['character'], placedItemId: null, x: 200, y: 400, scale: 1.5 },
+                    { id: 'slot-2-2-2', allowedTypes: ['character'], placedItemId: null, x: 600, y: 400, scale: 1.5 },
+                    { id: 'slot-2-2-3', allowedTypes: ['action'], placedItemId: null, x: 400, y: 250, scale: 1.2 },
                 ],
                 backgroundImage: '/assets/scene2_bg.png',
                 outcomes: [
@@ -176,8 +177,8 @@ export const levels: Level[] = [
             {
                 id: 'scene-3-1',
                 slots: [
-                    { id: 'slot-3-1-1', allowedTypes: ['character'], placedItemId: null, x: 400, y: 400 },
-                    { id: 'slot-3-1-2', allowedTypes: ['action'], placedItemId: null, x: 400, y: 200 },
+                    { id: 'slot-3-1-1', allowedTypes: ['character'], placedItemId: null, x: 400, y: 400, scale: 1.5 },
+                    { id: 'slot-3-1-2', allowedTypes: ['action'], placedItemId: null, x: 400, y: 200, scale: 1.2 },
                 ],
                 backgroundImage: '/assets/scene3_bg.png',
                 outcomes: [
@@ -222,8 +223,8 @@ export const levels: Level[] = [
             {
                 id: 'scene-3-2',
                 slots: [
-                    { id: 'slot-3-2-1', allowedTypes: ['character'], placedItemId: null, x: 400, y: 400 },
-                    { id: 'slot-3-2-2', allowedTypes: ['action'], placedItemId: null, x: 400, y: 200 },
+                    { id: 'slot-3-2-1', allowedTypes: ['character'], placedItemId: null, x: 400, y: 400, scale: 1.5 },
+                    { id: 'slot-3-2-2', allowedTypes: ['action'], placedItemId: null, x: 400, y: 200, scale: 1.2 },
                 ],
                 backgroundImage: '/assets/scene3_bg.png',
                 outcomes: [
@@ -268,8 +269,8 @@ export const levels: Level[] = [
             {
                 id: 'scene-3-3',
                 slots: [
-                    { id: 'slot-3-3-1', allowedTypes: ['character'], placedItemId: null, x: 400, y: 400 },
-                    { id: 'slot-3-3-2', allowedTypes: ['action'], placedItemId: null, x: 400, y: 200 },
+                    { id: 'slot-3-3-1', allowedTypes: ['character'], placedItemId: null, x: 400, y: 400, scale: 1.5 },
+                    { id: 'slot-3-3-2', allowedTypes: ['action'], placedItemId: null, x: 400, y: 200, scale: 1.2 },
                 ],
                 backgroundImage: '/assets/scene3_bg.png',
                 outcomes: [
@@ -316,98 +317,104 @@ export const levels: Level[] = [
     },
 
     // -------------------------------------------------------------------------
-    // LEVEL 4: It's Your Time
+    // LEVEL 4: The Final Chapter
     // -------------------------------------------------------------------------
     {
         id: 'level-4',
         title: 'Level 4',
-        goal: 'It’s your time to create your own story',
+        goal: 'The Final Chapter',
         availableItems: [
-            ITEMS.you, ITEMS.you, ITEMS.you,
-            ITEMS.book, ITEMS.open,
-            ITEMS.work, ITEMS.work, ITEMS.work, ITEMS.work, // Enough 'work' for You+Group in S2/S3? (Needs 2 in S2, 1 in S3? No, "Group with Work"). Let's give plenty.
-            ITEMS.group_citizens, ITEMS.group_citizens,
-            ITEMS.cheer
+            ITEMS.you, ITEMS.you,
+            ITEMS.book,
+            ITEMS.group_citizens,
+            ITEMS.open, ITEMS.open,
+            ITEMS.work, ITEMS.work,
+            ITEMS.dance, ITEMS.dance
         ],
         scenes: [
+
+            // Scene 1: Logic Engine
             {
                 id: 'scene-4-1',
                 slots: [
-                    { id: 'slot-4-1-1', allowedTypes: ['character'], placedItemId: null, x: 200, y: 400 }, // You
-                    { id: 'slot-4-1-2', allowedTypes: ['object'], placedItemId: null, x: 600, y: 400 }, // Book
-                    { id: 'slot-4-1-3', allowedTypes: ['action'], placedItemId: null, x: 400, y: 250 }, // Open
+                    // Slots 1 & 2: Entity Types
+                    { id: 'slot-4-1-1', allowedTypes: ['character', 'object'], placedItemId: null, x: 200, y: 400, scale: 1.5 },
+                    { id: 'slot-4-1-2', allowedTypes: ['character', 'object'], placedItemId: null, x: 400, y: 400, scale: 1.5 },
+                    // Slots 3 & 4: Action Verbs
+                    { id: 'slot-4-1-3', allowedTypes: ['action'], placedItemId: null, x: 600, y: 300, shape: 'rectangle', scale: 1.2 },
+                    { id: 'slot-4-1-4', allowedTypes: ['action'], placedItemId: null, x: 600, y: 500, shape: 'rectangle', scale: 1.2 },
                 ],
                 backgroundImage: '/assets/scene4_bg.png',
                 outcomes: [
+                    // OUTCOME A: "YOU OPENED A BOOK"
+                    // Logic: You + Book (Any Order) AND (One Action Open, Other Empty)
+                    // Permutations:
+                    // 1. You, Book, Open, Null
                     {
-                        id: 'outcome-4-1-solved',
-                        itemIds: ['you', 'book', 'open'],
-                        title: 'BACK TO THE PRESENT',
+                        id: 'outcome-scholar-1',
+                        itemIds: ['you', 'book', 'open', null],
+                        title: 'YOU OPENED A BOOK',
+                        isSolved: true
+                    },
+                    // 2. Book, You, Open, Null
+                    {
+                        id: 'outcome-scholar-2',
+                        itemIds: ['book', 'you', 'open', null],
+                        title: 'YOU OPENED A BOOK',
+                        isSolved: true
+                    },
+                    // 3. You, Book, Null, Open
+                    {
+                        id: 'outcome-scholar-3',
+                        itemIds: ['you', 'book', null, 'open'],
+                        title: 'YOU OPENED A BOOK',
+                        isSolved: true
+                    },
+                    // 4. Book, You, Null, Open
+                    {
+                        id: 'outcome-scholar-4',
+                        itemIds: ['book', 'you', null, 'open'],
+                        title: 'YOU OPENED A BOOK',
+                        isSolved: true
+                    },
+
+                    // OUTCOME B: "YOU JOINED THE CITY’S WORKFORCE"
+                    // Logic: You + Citizens + Work + Work
+                    {
+                        id: 'outcome-workforce-1',
+                        itemIds: ['you', 'group_citizens', 'work', 'work'],
+                        title: 'YOU JOINED THE CITY’S WORKFORCE',
+                        isSolved: true
+                    },
+                    {
+                        id: 'outcome-workforce-2',
+                        itemIds: ['group_citizens', 'you', 'work', 'work'],
+                        title: 'YOU JOINED THE CITY’S WORKFORCE',
+                        isSolved: true
+                    },
+
+                    // OUTCOME C: "YOU DANCED TO CHEER THE WORKFORCE"
+                    // Logic: You + Citizens + Dance + Dance
+                    {
+                        id: 'outcome-celebration-1',
+                        itemIds: ['you', 'group_citizens', 'dance', 'dance'],
+                        title: 'YOU DANCED TO CHEER THE WORKFORCE',
+                        isSolved: true
+                    },
+                    {
+                        id: 'outcome-celebration-2',
+                        itemIds: ['group_citizens', 'you', 'dance', 'dance'],
+                        title: 'YOU DANCED TO CHEER THE WORKFORCE',
                         isSolved: true
                     }
                 ]
             },
+            // Scene 2: Visual Outcome (Fixed - Logic handled by Summary from Scene 1 state)
             {
                 id: 'scene-4-2',
-                slots: [
-                    { id: 'slot-4-2-1', allowedTypes: ['character'], placedItemId: null, x: 250, y: 400 }, // You
-                    { id: 'slot-4-2-2', allowedTypes: ['action'], placedItemId: null, x: 250, y: 200 }, // Work
-                    { id: 'slot-4-2-3', allowedTypes: ['character'], placedItemId: null, x: 550, y: 400 }, // Group
-                    { id: 'slot-4-2-4', allowedTypes: ['action'], placedItemId: null, x: 550, y: 200 }, // Work
-                ],
-                backgroundImage: '/assets/scene4_bg.png',
-                outcomes: [
-                    {
-                        id: 'outcome-4-2-solved',
-                        itemIds: ['you', 'work', 'group_citizens', 'work'],
-                        title: 'WORKING TOGETHER',
-                        isSolved: true
-                    }
-                ]
-            },
-            {
-                id: 'scene-4-3',
-                slots: [
-                    { id: 'slot-4-3-1', allowedTypes: ['character'], placedItemId: null, x: 250, y: 400 }, // You
-                    { id: 'slot-4-3-2', allowedTypes: ['action'], placedItemId: null, x: 250, y: 200 }, // Cheer
-                    { id: 'slot-4-3-3', allowedTypes: ['character'], placedItemId: null, x: 550, y: 400 }, // Group
-                    { id: 'slot-4-3-4', allowedTypes: ['action'], placedItemId: null, x: 550, y: 200 }, // Work (Group is working, then starts dancing)
-                ],
-                backgroundImage: '/assets/scene4_bg.png',
-                outcomes: [
-                    {
-                        id: 'outcome-4-3-solved',
-                        itemIds: ['you', 'cheer', 'group_citizens', 'work'],
-                        title: 'DANCE PARTY',
-                        isSolved: true
-                    }
-                ]
-            }
-        ],
-
-    },
-
-    // -------------------------------------------------------------------------
-    // FINAL PAGE: La Derniere
-    // -------------------------------------------------------------------------
-    {
-        id: 'level-5',
-        title: 'Final Chapter',
-        goal: 'YOUR STORY HAS ENDED',
-        availableItems: [], // No items
-        scenes: [
-            {
-                id: 'scene-final',
-                backgroundImage: '/assets/final_bg.png', // Placeholder
-                slots: [],
-                outcomes: [
-                    {
-                        id: 'outcome-final',
-                        itemIds: [],
-                        title: 'LA DERNIÈRE',
-                        isSolved: true
-                    }
-                ]
+                slots: [], // No interaction
+                backgroundImage: '/assets/scene4_outcome_placeholder.png',
+                outcomes: []
             }
         ]
     }

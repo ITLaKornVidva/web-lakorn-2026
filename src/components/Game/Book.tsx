@@ -9,6 +9,7 @@ import { ItemVisual } from './DraggableItem';
 import { SettingsModal } from '../UI/SettingsModal';
 import type { Item } from '../../types';
 import { levels } from '../../data/levels';
+import { TicketModal } from '../TicketModal';
 
 
 export const Book = () => {
@@ -24,12 +25,22 @@ export const Book = () => {
         loadLevel,
         isLevelSolved,
         solvedLevels,
-        completeGame
+        completeGame,
+        activeOutcomes
 
     } = useGameStore();
 
     const [activeDragItem, setActiveDragItem] = useState<Item | null>(null);
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+    const [showTicketModal, setShowTicketModal] = useState(false);
+
+    // LEVEL 4 COMPLETION LOGIC
+    // (Timer logic removed - now triggered by Finish button)
+
+    const handleTicketClose = () => {
+        setShowTicketModal(false);
+        completeGame(); // Navigate to Summary
+    };
 
     // Load level on mount or when needed
     useEffect(() => {
@@ -63,7 +74,7 @@ export const Book = () => {
 
     const handleDragEnd = (event: DragEndEvent) => {
         const { active, over } = event;
-        console.log('handleDragEnd called', { activeId: active.id, overId: over?.id });
+        // console.log('handleDragEnd called', { activeId: active.id, overId: over?.id });
         setActiveDragItem(null);
 
         const activeId = active.id.toString();
@@ -80,10 +91,6 @@ export const Book = () => {
             if (allowedTypes && !allowedTypes.includes(draggedItem.type)) {
                 return false;
             }
-
-            // Check 2: (Removed) Slot occupation check removed to allow swapping/replacement
-            // The store handles returning to tray or swapping if occupied.
-
             return true;
         };
 
@@ -98,6 +105,9 @@ export const Book = () => {
                 const slotId = over.id as string;
                 const scene = findSceneBySlotId(slotId);
 
+                // GUARD: Block drops to Scene 4-2
+                if (scene && scene.id === 'scene-4-2') return;
+
                 if (scene && droppedItem && isDropValid(droppedItem, over.data.current)) {
                     placeItemFromTray(scene.id, slotId, itemId);
                 }
@@ -109,8 +119,7 @@ export const Book = () => {
         else if (activeId.startsWith('item-in-')) {
             const fromSlotId = activeId.replace('item-in-', '');
             const fromScene = findSceneBySlotId(fromSlotId);
-            const droppedItem = active.data.current?.item as Item; // Item is passed in data for slot items too? 
-            // Checking Slot.tsx -> DraggableItem -> yes it passes item.
+            const droppedItem = active.data.current?.item as Item;
 
             if (!fromScene) return;
 
@@ -121,6 +130,9 @@ export const Book = () => {
                 const toSlot = toScene?.slots.find(s => s.id === toSlotId);
                 const fromSlot = fromScene.slots.find(s => s.id === fromSlotId);
 
+                // GUARD: Block moves to Scene 4-2
+                if (toScene && toScene.id === 'scene-4-2') return;
+
                 // Validation Logic
                 if (toScene && droppedItem && fromSlot) {
                     // Check 1: Is Dragged Item allowed in Target Slot?
@@ -129,14 +141,8 @@ export const Book = () => {
                     // Check 2: If occupied, is Target Item allowed in Source Slot?
                     let isSwapAllowed = true;
                     if (toSlot && toSlot.placedItemId) {
-                        // We need the Item object for the target item to check its type.
-                        // But we only have the ID. We can find it in availableItems or levels data.
-                        // Since availableItems in store has everything, we can look there.
                         const targetItem = availableItems.find(i => i.id === toSlot.placedItemId);
-
                         if (targetItem) {
-                            // Construct targetData mock for isDropValid or just check types directly
-                            // fromSlot has allowedTypes.
                             const sourceAllowedTypes = fromSlot.allowedTypes;
                             if (!sourceAllowedTypes.includes(targetItem.type)) {
                                 isSwapAllowed = false;
@@ -157,14 +163,22 @@ export const Book = () => {
     };
 
     const handleNextLevel = () => {
-        if (nextLevelId) {
-            // unlockLevel(nextLevelId); // Removed as automatic
+        if (currentLevelId === 'level-4') {
+            // For Level 4, "Next" means "Finish" -> Open Ticket Modal
+            setShowTicketModal(true);
+        } else if (nextLevelId) {
             loadLevel(nextLevelId);
             navigate(`/game/${nextLevelId}`);
         } else {
             completeGame();
         }
     };
+
+    // Show Next Button logic:
+    // It should show if level is solved OR previously solved.
+    // For Level 4, it acts as "Finish", so we DO show it now (Change from previous logic).
+    const isLevel4Ready = currentLevelId === 'level-4' && !!activeOutcomes['scene-4-1'];
+    const showNextButton = isLevelSolved || solvedLevels.includes(currentLevelId) || isLevel4Ready;
 
     return (
         <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
@@ -212,20 +226,77 @@ export const Book = () => {
                 </div>
 
                 {/* Section 2: Playing Field / Scenes (Middle) */}
-                {/* This section grows to fill available space, respecting min-h to prevent crushing */}
                 <div className="flex-1 min-h-0 w-full flex items-center justify-center py-1">
                     <div className="h-full flex flex-nowrap gap-2 md:gap-4 items-center justify-center">
-                        {currentScenes.map((scene) => (
-                            // CRITICAL: Height-based sizing to ensure it fits vertically
-                            // w-auto + aspect-ratio + h-full = scaling by height
-                            <div key={scene.id} className="h-full aspect-[4/3] w-auto max-w-[32vw] relative">
-                                <Scene
-                                    scene={scene}
-                                    isActive={false}
-                                    levelItems={currentLevel.availableItems}
-                                />
-                            </div>
-                        ))}
+                        {currentScenes.map((originalScene) => {
+                            let overrideTitle: string | undefined;
+                            let overrideSlots: any[] | undefined;
+
+                            // LEVEL 4 DYNAMIC LOGIC
+                            // If this is Scene 2 (The Outcome), we override it based on Scene 1 "Active Outcome"
+                            if (currentLevelId === 'level-4' && originalScene.id === 'scene-4-2') {
+                                // 1. Check Scene 1 result
+                                const scene1Outcome = activeOutcomes['scene-4-1'];
+                                if (scene1Outcome) {
+                                    let outcomeType = 'default';
+                                    if (scene1Outcome.id.includes('scholar')) outcomeType = 'scholar';
+                                    else if (scene1Outcome.id.includes('workforce')) outcomeType = 'workforce';
+                                    else if (scene1Outcome.id.includes('celebration')) outcomeType = 'celebration';
+
+                                    const config = {
+                                        scholar: {
+                                            title: "You traveled back to the present.",
+                                            slots: [
+                                                { id: 'slot-4-2-1', allowedTypes: ['character'], placedItemId: 'you', shape: 'ellipse' as const, x: 200, y: 420, scale: 2 },
+                                                { id: 'slot-4-2-2', allowedTypes: ['action'], placedItemId: 'open', shape: 'rectangle' as const, x: 400, y: 300, scale: 2 },
+                                                { id: 'slot-4-2-3', allowedTypes: ['object'], placedItemId: 'book', shape: 'ellipse' as const, x: 600, y: 420, scale: 2 },
+                                            ]
+                                        },
+                                        workforce: {
+                                            title: "Now you work hard everyday.",
+                                            slots: [
+                                                { id: 'slot-4-2-1', allowedTypes: ['character'], placedItemId: 'you', shape: 'ellipse' as const, x: 200, y: 420, scale: 2 },
+                                                { id: 'slot-4-2-2', allowedTypes: ['action'], placedItemId: 'work', shape: 'rectangle' as const, x: 400, y: 300, scale: 2 },
+                                                { id: 'slot-4-2-3', allowedTypes: ['character'], placedItemId: 'group_citizens', shape: 'ellipse' as const, x: 600, y: 420, scale: 2 },
+                                            ]
+                                        },
+                                        celebration: {
+                                            title: "Everyone starts dancing with you.",
+                                            slots: [
+                                                { id: 'slot-4-2-1', allowedTypes: ['character'], placedItemId: 'you', shape: 'ellipse' as const, x: 200, y: 420, scale: 2 },
+                                                { id: 'slot-4-2-2', allowedTypes: ['action'], placedItemId: 'dance', shape: 'rectangle' as const, x: 400, y: 300, scale: 2 },
+                                                { id: 'slot-4-2-3', allowedTypes: ['character'], placedItemId: 'group_citizens', shape: 'ellipse' as const, x: 600, y: 420, scale: 2 },
+                                            ]
+                                        },
+                                        default: { title: "The End", slots: [] }
+                                    }[outcomeType];
+
+                                    if (config) {
+                                        overrideTitle = config.title;
+                                        overrideSlots = config.slots;
+                                        // overrideBgImage = "/assets/scene4_outcome_placeholder.png"; // Already default
+                                    }
+                                }
+                            }
+
+                            // Construct a temp scene object if overrides exist
+                            const sceneToRender = (overrideSlots)
+                                ? { ...originalScene, slots: overrideSlots }
+                                : originalScene;
+
+                            return (
+                                // CRITICAL: Height-based sizing to ensure it fits vertically
+                                // w-auto + aspect-ratio + h-full = scaling by height
+                                <div key={originalScene.id} className="h-full aspect-[4/3] w-auto max-w-[32vw] relative">
+                                    <Scene
+                                        scene={sceneToRender}
+                                        isActive={false} // Always non-interactive for display/static scenes
+                                        levelItems={currentLevel.availableItems}
+                                        overrideTitle={overrideTitle}
+                                    />
+                                </div>
+                            );
+                        })}
                     </div>
                 </div>
 
@@ -236,15 +307,15 @@ export const Book = () => {
                     </div>
 
                     {/* Level Progress Indicator / Next Button */}
-                    <div className={`absolute bottom-2 right-safe-offset transition-all duration-700 ${isLevelSolved || solvedLevels.includes(currentLevelId) ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0 pointer-events-none'} z-[60]`}
+                    <div className={`absolute bottom-2 right-safe-offset transition-all duration-700 ${showNextButton ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0 pointer-events-none'} z-[60]`}
                         style={{ right: 'max(1rem, env(safe-area-inset-right))', bottom: 'max(0.5rem, env(safe-area-inset-bottom))' }}>
                         <button
                             onClick={handleNextLevel}
-                            disabled={!(isLevelSolved || solvedLevels.includes(currentLevelId))}
+                            disabled={!showNextButton}
                             className="group bg-[#4a2c2a] hover:bg-[#5d3a37] text-amber-100 font-serif-bold px-4 md:px-8 py-2 md:py-3 rounded-sm shadow-xl transform hover:scale-105 transition-all flex items-center gap-2 border border-amber-900/20 disabled:opacity-50 disabled:cursor-not-allowed"
                             style={{ fontSize: 'clamp(0.8rem, 2.5vh, 1.25rem)' }}
                         >
-                            <span className="uppercase tracking-widest">Next</span>
+                            <span className="uppercase tracking-widest">{currentLevelId === 'level-4' ? 'Finish' : 'Next'}</span>
                             <span className="group-hover:translate-x-1 transition-transform">→</span>
                         </button>
                     </div>
@@ -261,6 +332,9 @@ export const Book = () => {
 
                 {/* Settings Modal */}
                 <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
+
+                {/* Ticket Modal (End of Level 4) */}
+                <TicketModal isOpen={showTicketModal} onClose={handleTicketClose} />
 
             </div>
         </DndContext>

@@ -22,7 +22,7 @@ export interface Slot {
 
 export interface Outcome {
     id: string;
-    itemIds: string[]; // IDs of items in slots (order matters? or set? Usually set for this game logic based on previous turns)
+    itemIds: (string | null)[]; // IDs of items in slots (order matters? or set? Usually set for this game logic based on previous turns)
     title: string;
     isSolved: boolean;
     endingImage?: string;

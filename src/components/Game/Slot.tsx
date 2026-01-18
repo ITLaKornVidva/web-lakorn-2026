@@ -24,14 +24,18 @@ export const Slot = ({ id, x, y, placedItem, allowedTypes, shape = 'ellipse', sc
             ref={setNodeRef}
             className={clsx(
                 "absolute flex items-center justify-center transition-all duration-300",
-                shape === 'ellipse' ? "w-20 h-20 rounded-[50%]" : "w-20 h-20 rounded-sm",
-                isOver ? "bg-amber-400/20 ring-4 ring-amber-400/50 scale-105" : "bg-transparent",
+                shape === 'ellipse' ? "rounded-[50%]" : "rounded-sm",
                 placedItem ? "z-10" : "z-0"
             )}
             style={{
                 left: x,
                 top: y,
-                // transform: `translate(-50%, -50%)`,
+                width: '5rem',
+                height: '5rem',
+                // Manual ring/bg logic
+                backgroundColor: isOver ? 'rgba(251, 191, 36, 0.2)' : 'transparent',
+                boxShadow: isOver ? '0 0 0 4px rgba(251, 191, 36, 0.5)' : 'none',
+                transform: isOver ? 'scale(1.05)' : 'scale(1)'
             }}
         >
             {placedItem ? (
@@ -49,16 +53,23 @@ export const Slot = ({ id, x, y, placedItem, allowedTypes, shape = 'ellipse', sc
                         style={{ transform: `scale(${scale})` }}
                     >
                         <div className={clsx(
-                            "w-20 h-20 border-2 border-dashed border-amber-400/50 rounded-sm",
+                            "w-20 h-20 border-2 border-dashed rounded-sm",
                             shape === 'ellipse' && "rounded-[50%]"
-                        )} />
+                        )}
+                            style={{ borderColor: 'rgba(251, 191, 36, 0.5)' }} // Hex equivalent of amber-400/50
+                        />
                     </div>
                     {/* Type label */}
                     <div className={clsx(
                         "w-full h-full flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-300 relative z-10",
                         isOver && "opacity-100"
                     )}>
-                        <span className="text-[10px] text-amber-900/40 font-serif-bold uppercase tracking-wider text-center pointer-events-none px-2 bg-white/40 rounded-full">
+                        <span className="font-serif-bold uppercase tracking-wider text-center pointer-events-none px-2 rounded-full"
+                            style={{
+                                fontSize: '10px',
+                                color: 'rgba(120, 53, 15, 0.4)', // amber-900/40
+                                backgroundColor: 'rgba(255, 255, 255, 0.4)' // white/40
+                            }}>
                             {allowedTypes[0]}
                         </span>
                     </div>
