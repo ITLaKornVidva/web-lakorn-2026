@@ -47,7 +47,14 @@ interface GameState {
     checkWinCondition: () => void;
     recalculateAllProgress: () => void;
     resetLevel: () => void;
+
     resetProgress: () => void;
+    // Game Completion
+    isGameCompleted: boolean;
+    userName: string;
+    userAvatar: string;
+    completeGame: () => void;
+    resetGame: () => void;
 }
 
 const defaultGameState = {
@@ -66,8 +73,13 @@ const defaultGameState = {
     activeOutcomes: {},
     isLevelSolved: false,
     lastOutcome: null,
-};
 
+
+    // Default user info
+    isGameCompleted: false,
+    userName: 'Storyteller',
+    userAvatar: '🧙‍♂️',
+};
 
 
 export const useGameStore = create<GameState>()(
@@ -384,16 +396,9 @@ export const useGameStore = create<GameState>()(
                     const reconstruction = level.scenes.map(sceneDef => {
                         const savedScene = { ...sceneDef, slots: sceneDef.slots.map(s => ({ ...s })) }; // shallow clone structure needed
                         savedScene.slots.forEach(slot => {
-                            const savedItemId = savedProgress.placements[sceneDef.id + "-" + slot.id.split('-').slice(1).join('-')] || savedProgress.placements[slot.id];
-                            // Note: slot.id in levels.ts might be generic, but saved placements key is usually full id.
-                            // Actually, in gameStore placeItemFromTray: `[slotId]: itemId`. slotId comes from the component.
-                            // In Tray.tsx / Scene.tsx, slot.id is used.
-                            // Let's verify how slot keys are stored. 
-                            // In loadLevel: `savedProgress.placements[slot.id]`.
-                            // So keys matches.
-                            if (savedProgress.placements[slot.id]) {
+                            if (savedProgress.placements[sceneDef.id + "-" + slot.id.split('-').slice(1).join('-')] || savedProgress.placements[slot.id]) {
                                 savedScene.slots.forEach(s => {
-                                    if (s.id === slot.id) s.placedItemId = savedProgress.placements[slot.id];
+                                    if (s.id === slot.id) s.placedItemId = savedProgress.placements[sceneDef.id + "-" + slot.id.split('-').slice(1).join('-')] || savedProgress.placements[slot.id];
                                 });
                             }
                         });
@@ -461,6 +466,15 @@ export const useGameStore = create<GameState>()(
                     completedScenes: newCompletedScenes,
                     solvedLevels: newSolvedLevels
                 });
+            },
+
+            completeGame: () => {
+                set({ isGameCompleted: true });
+            },
+
+            resetGame: () => {
+                set({ isGameCompleted: false });
+                get().loadLevel('level-1');
             }
         }),
         {
@@ -469,6 +483,9 @@ export const useGameStore = create<GameState>()(
                 playerName: state.playerName,
                 characterId: state.characterId,
                 levelProgress: state.levelProgress,
+                solvedLevels: state.solvedLevels,
+                completedScenes: state.completedScenes,
+                isGameCompleted: state.isGameCompleted,
             }),
             onRehydrateStorage: () => (state) => {
                 state?.recalculateAllProgress();

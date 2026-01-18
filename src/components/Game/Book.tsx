@@ -23,7 +23,9 @@ export const Book = () => {
         returnItemToTray,
         loadLevel,
         isLevelSolved,
-        solvedLevels
+        solvedLevels,
+        completeGame
+
     } = useGameStore();
 
     const [activeDragItem, setActiveDragItem] = useState<Item | null>(null);
@@ -160,7 +162,7 @@ export const Book = () => {
             loadLevel(nextLevelId);
             navigate(`/game/${nextLevelId}`);
         } else {
-            alert("No more levels! Thanks for playing.");
+            completeGame();
         }
     };
 
