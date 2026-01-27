@@ -1,11 +1,16 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGameStore } from '../store/gameStore';
 import { levels } from '../data/levels';
 import { MiniScene } from './MiniScene';
+import { SettingsModal } from './UI/SettingsModal';
+import { useSfx } from './UI/AudioController';
 
 export const LevelSelect = () => {
     const navigate = useNavigate();
     const { completedScenes, levelProgress, solvedLevels } = useGameStore();
+    const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+    const { playSfx } = useSfx();
 
     const handleLevelClick = (levelId: string) => {
         // Accessible check is done on render, so if clicked it implies accessible? 
@@ -19,22 +24,53 @@ export const LevelSelect = () => {
             (prevLevel && solvedLevels.includes(prevLevel.id));
 
         if (isAccessible) {
+            playSfx('/assets/sfx/click.mp3');
             navigate(`/game/${levelId}`);
         }
     };
 
+    const handleBack = () => {
+        playSfx('/assets/sfx/click.mp3');
+        navigate('/');
+    };
+
+    const handleOpenSettings = () => {
+        playSfx('/assets/sfx/click.mp3');
+        setIsSettingsOpen(true);
+    };
+
     return (
-        <div className="h-[100dvh] w-[100dvw] bg-[#f5e6d3] text-[#2c1810] font-serif overflow-hidden landscape:flex hidden flex-col safe-padding pt-2 lg:pt-6">
+        <div className="h-[100dvh] w-[100dvw] bg-[#f5e6d3] text-[#2c1810] font-serif overflow-hidden landscape:flex hidden flex-col safe-padding pt-2 lg:pt-6 relative">
+            {/* Background Texture */}
+            <div className="absolute inset-0 pointer-events-none opacity-20 bg-[url('/assets/backgrounds/paper-texture.png')] bg-cover mix-blend-multiply"></div>
+
+            {/* Navigation Buttons */}
+            <button
+                onClick={handleBack}
+                className="absolute top-4 left-safe-offset z-50 bg-[#8B5A2B] text-[#f5e6d3] px-4 py-2 rounded-sm font-serif-bold shadow-md hover:bg-[#5C4033] transition-colors border-2 border-[#5C4033]"
+                style={{ left: 'max(1rem, env(safe-area-inset-left))' }}
+            >
+                ← BACK
+            </button>
+
+            <button
+                onClick={handleOpenSettings}
+                className="absolute top-4 right-safe-offset z-50 bg-[#8B5A2B] text-[#f5e6d3] px-4 py-2 rounded-sm font-serif-bold shadow-md hover:bg-[#5C4033] transition-colors border-2 border-[#5C4033]"
+                style={{ right: 'max(1rem, env(safe-area-inset-right))' }}
+            >
+                SETTINGS
+            </button>
+
             {/* Header */}
             <div className="text-center mb-1 lg:mb-4 flex-none relative z-10">
-                <h1 className="text-xl lg:text-4xl xl:text-5xl font-serif-bold uppercase tracking-widest mb-0.5 leading-tight">It's Lakorn Vidva</h1>
-                <p className="text-[10px] lg:text-lg italic opacity-80">Select a chapter to begin</p>
+                <h1 className="text-xl lg:text-4xl xl:text-5xl font-serif-bold uppercase tracking-widest mb-0.5 leading-tight text-[#2c1810]">It's Lakorn Vidva</h1>
+                <p className="text-[10px] lg:text-lg italic opacity-80 text-[#5C4033]">Select a chapter to begin</p>
             </div>
 
             <div className="flex-1 min-h-0 grid grid-cols-[0.8fr_1.2fr] lg:grid-cols-2 gap-3 lg:gap-8 max-w-7xl mx-auto w-full relative z-10 pb-2 px-2 lg:px-6">
                 {/* Left Column: Collection / Completed Scenes */}
                 <div className="flex flex-col gap-2 p-1 lg:p-4 border-r-2 border-[#2c1810]/10 overflow-hidden">
-                    <h2 className="text-sm lg:text-2xl font-serif-bold uppercase tracking-widest border-b-2 border-[#2c1810] pb-1 lg:pb-2 mb-1 lg:mb-2 inline-block self-start flex-none">
+                    <h2 className="text-sm lg:text-2xl font-serif-bold uppercase tracking-widest border-b-2 border-[#2c1810] pb-1 lg:pb-2 mb-1 lg:mb-2 inline-block self-start flex-none text-[#5C4033]">
                         Collection
                     </h2>
 
@@ -53,7 +89,7 @@ export const LevelSelect = () => {
                             };
 
                             return (
-                                <div key={scene.id} className={`p-1 lg:p-2 rounded border flex flex-col items-center gap-1 transition-all ${isCompleted ? 'bg-white/80 border-[#2c1810]/20 shadow-sm hover:scale-105' : 'bg-[#e6d5bc] border-[#2c1810]/5 opacity-60'}`}>
+                                <div key={scene.id} className={`p-1 lg:p-2 rounded border flex flex-col items-center gap-1 transition-all ${isCompleted ? 'bg-[#fffaf0] border-[#2c1810]/20 shadow-sm hover:scale-105' : 'bg-[#e6d5bc] border-[#2c1810]/5 opacity-60'}`}>
                                     <div className="w-full aspect-[4/3] rounded overflow-hidden relative bg-[#dccfb9]">
                                         {isCompleted ? (
                                             <MiniScene
@@ -62,7 +98,7 @@ export const LevelSelect = () => {
                                             />
                                         ) : (
                                             <div className="w-full h-full flex items-center justify-center">
-                                                <span className="text-sm lg:text-xl opacity-20">?</span>
+                                                <span className="text-sm lg:text-xl opacity-20 text-[#2c1810]">?</span>
                                             </div>
                                         )}
                                     </div>
@@ -74,7 +110,7 @@ export const LevelSelect = () => {
 
                 {/* Right Column: Level List */}
                 <div className="flex flex-col gap-2 p-1 lg:p-4 overflow-hidden">
-                    <h2 className="text-sm lg:text-2xl font-serif-bold uppercase tracking-widest border-b-2 border-[#2c1810] pb-1 lg:pb-2 mb-1 lg:mb-2 inline-block self-end flex-none">
+                    <h2 className="text-sm lg:text-2xl font-serif-bold uppercase tracking-widest border-b-2 border-[#2c1810] pb-1 lg:pb-2 mb-1 lg:mb-2 inline-block self-end flex-none text-[#5C4033]">
                         Chapters
                     </h2>
 
@@ -92,7 +128,7 @@ export const LevelSelect = () => {
                                     onClick={() => accessible && handleLevelClick(level.id)}
                                     disabled={!accessible}
                                     className={`
-                                        group relative p-3 lg:p-5 rounded-lg border-2 text-left transition-all duration-300 flex-none
+                                        group relative p-3 lg:p-5 rounded-sm border-2 text-left transition-all duration-300 flex-none
                                         ${accessible
                                             ? 'bg-[#EFE5D5] border-[#4a2c2a] hover:bg-[#4a2c2a] hover:text-[#EFE5D5] hover:shadow-lg cursor-pointer hover:-translate-y-0.5'
                                             : 'bg-[#cfc0aa] border-transparent opacity-50 cursor-not-allowed grayscale'
@@ -117,9 +153,9 @@ export const LevelSelect = () => {
 
                                     {/* Progress Bar (green or some color) */}
                                     {accessible && (
-                                        <div className="absolute bottom-0 left-0 h-1 bg-[#2c1810]/10 w-full rounded-b-lg overflow-hidden">
+                                        <div className="absolute bottom-0 left-0 h-1 bg-[#2c1810]/10 w-full rounded-b-sm overflow-hidden">
                                             <div
-                                                className="h-full bg-[#4a2c2a] transition-all"
+                                                className="h-full bg-[#8B5A2B] transition-all"
                                                 style={{
                                                     width: `${(level.scenes.filter(s => completedScenes.includes(s.id)).length / level.scenes.length) * 100}%`
                                                 }}
@@ -128,9 +164,9 @@ export const LevelSelect = () => {
                                     )}
                                     {/* Solved Indicator */}
                                     {solvedLevels.includes(level.id) && (
-                                        <div className="absolute top-1 right-1 lg:top-2 lg:right-2 text-green-700 bg-white/50 rounded-full p-0.5 text-[10px] lg:text-sm leading-none" title="Level Complete">
+                                        <span className="absolute top-1 right-1 lg:top-2 lg:right-2 text-[#4a2c2a] bg-[#f5e6d3]/80 rounded-full p-0.5 text-[10px] lg:text-sm leading-none" title="Level Complete">
                                             ✓
-                                        </div>
+                                        </span>
                                     )}
                                 </button>
                             );
@@ -144,6 +180,8 @@ export const LevelSelect = () => {
                 <div className="text-6xl mb-4 animate-pulse">↻</div>
                 <h2 className="text-3xl font-serif mb-2">Please Rotate Device</h2>
             </div>
+
+            <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
         </div>
     );
 };

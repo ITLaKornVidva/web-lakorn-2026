@@ -3,6 +3,8 @@ import { useEffect } from 'react';
 import { AudioController } from './components/UI/AudioController'
 import { LevelSelect } from './components/LevelSelect'
 import { GamePage } from './components/GamePage'
+import { LobbyPage } from './components/LobbyPage'
+import { CharacterSelectionPage } from './components/CharacterSelectionPage'
 import { RouteGuard } from './components/RouteGuard'
 import { OrientationGuard } from './components/OrientationGuard'
 
@@ -22,12 +24,14 @@ function App() {
   return (
     <BrowserRouter>
       <OrientationGuard>
-        <AudioController bgmSrc="" />
+        <AudioController />
         {isGameCompleted ? (
           <Summary />
         ) : (
           <Routes>
-            <Route path="/" element={<LevelSelect />} />
+            <Route path="/" element={<LobbyPage />} />
+            <Route path="/character-select" element={<CharacterSelectionPage />} />
+            <Route path="/level-select" element={<LevelSelect />} />
             <Route path="/game/:levelId" element={
               <RouteGuard>
                 <GamePage />

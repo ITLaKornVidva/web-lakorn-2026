@@ -8,7 +8,7 @@ import { Scene } from './Game/Scene';
 import type { Scene as SceneType } from '../types';
 
 export const Summary = () => {
-    const { resetGame, levelProgress, activeOutcomes } = useGameStore();
+    const { resetGame, levelProgress, activeOutcomes, playerName } = useGameStore();
     const captureRef = useRef<HTMLDivElement>(null); // Ref for capturing the scene area
     const [isSharing, setIsSharing] = useState(false);
 
@@ -263,11 +263,16 @@ export const Summary = () => {
                 <div className="absolute inset-0 pointer-events-none opacity-10 mix-blend-multiply bg-[url('/assets/parchment-texture.png')] bg-cover" />
 
                 {/* 1. Header: WONDERFUL STORY */}
-                <div className="flex-none h-[12%] w-full flex items-center pb-2 justify-center text-center relative z-10">
+                <div className="flex-none h-[12%] w-full flex flex-col items-center pb-2 justify-center text-center relative z-10">
                     <h1 className="leading-none uppercase tracking-widest"
                         style={{ fontFamily: 'serif', fontSize: 'clamp(1.5rem, 6vh, 3rem)', color: '#2c1810', textShadow: '2px 2px 4px rgba(0,0,0,0.1)' }}>
                         WONDERFUL STORY
                     </h1>
+                    {playerName && (
+                        <p className="text-[#5C4033] font-serif-bold tracking-[0.2em] uppercase text-[clamp(0.8rem,2vh,1.2rem)] mt-1 animate-fade-in">
+                            — {playerName} —
+                        </p>
+                    )}
                 </div>
 
                 {/* 2. Scenes Area */}
