@@ -1,5 +1,4 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { useSettingsStore } from '../../store/settingsStore';
 import { useGameStore } from '../../store/gameStore';
 import { useFullscreen } from '../../hooks/useFullscreen';
 import { clsx } from 'clsx';
@@ -11,7 +10,6 @@ interface SettingsModalProps {
 }
 
 export const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
-    const { resetSettings } = useSettingsStore();
     const { resetProgress } = useGameStore();
     const { isFullscreen, toggleFullscreen, isEnabled: isFullscreenEnabled } = useFullscreen();
 
@@ -19,12 +17,6 @@ export const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
         if (window.confirm('Are you sure you want to reset all game progress? This cannot be undone.')) {
             resetProgress();
             alert('Progress reset successfully!');
-        }
-    };
-
-    const handleResetSettings = () => {
-        if (window.confirm('Reset all settings to default values?')) {
-            resetSettings();
         }
     };
 
@@ -60,7 +52,7 @@ export const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
                             </h1>
                             <button
                                 onClick={onClose}
-                                className="text-2xl text-white/50 hover:text-white transition-colors"
+                                className="text-2xl text-white/50 hover:text-white transition-colors cursor-pointer"
                                 aria-label="Close"
                             >
                                 ×
@@ -77,7 +69,7 @@ export const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
                                     {isFullscreenEnabled ? (
                                         <button
                                             onClick={toggleFullscreen}
-                                            className="w-full px-6 py-4 bg-white/5 hover:bg-white/10 text-white font-serif-bold rounded-sm border border-white/10 hover:border-white/30 transition-all flex items-center justify-between group"
+                                            className="w-full px-6 py-4 bg-white/5 hover:bg-white/10 text-white font-serif-bold rounded-sm border border-white/10 hover:border-white/30 transition-all flex items-center justify-between group cursor-pointer"
                                         >
                                             <span className="tracking-wider">{isFullscreen ? 'EXIT FULLSCREEN' : 'ENTER FULLSCREEN'}</span>
                                             <span className="opacity-50 group-hover:opacity-100 transition-opacity">{isFullscreen ? '↙️' : '↗️'}</span>
@@ -91,18 +83,18 @@ export const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
                             {/* Danger Zone */}
                             <section>
                                 <h2 className="text-xl font-serif text-red-400/80 mb-4 border-l-2 border-red-500/50 pl-3">
-                                    DANGER ZONE
+                                    RESET PROGRESS
                                 </h2>
                                 <div className="space-y-4">
-                                    <button
+                                    {/* <button
                                         onClick={handleResetSettings}
                                         className="w-full px-6 py-4 bg-red-900/20 hover:bg-red-900/40 text-red-200 font-serif-bold rounded-sm border border-red-900/30 hover:border-red-500/50 transition-all text-left"
                                     >
                                         RESET SETTINGS TO DEFAULT
-                                    </button>
+                                    </button> */}
                                     <button
                                         onClick={handleResetProgress}
-                                        className="w-full px-6 py-4 bg-red-900/30 hover:bg-red-900/50 text-red-100 font-serif-bold rounded-sm border border-red-900/40 hover:border-red-500/60 transition-all text-left"
+                                        className="w-full px-6 py-4 bg-red-900/30 hover:bg-red-900/50 text-red-100 font-serif-bold rounded-sm border border-red-900/40 hover:border-red-500/60 transition-all text-left cursor-pointer"
                                     >
                                         RESET ALL GAME PROGRESS
                                     </button>
@@ -114,7 +106,7 @@ export const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
                         <div className="p-6 border-t border-white/10 bg-white/5 text-center">
                             <button
                                 onClick={onClose}
-                                className="px-10 py-3 bg-white/10 hover:bg-white/20 text-white font-serif-bold rounded-sm transition-all tracking-widest border border-white/10 hover:border-white/30"
+                                className="px-10 py-3 bg-white/10 hover:bg-white/20 text-white font-serif-bold rounded-sm transition-all tracking-widest border border-white/10 hover:border-white/30 cursor-pointer"
                             >
                                 CLOSE
                             </button>

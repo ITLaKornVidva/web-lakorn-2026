@@ -41,7 +41,8 @@ export const LobbyPage = () => {
                         className={twMerge(clsx(
                             "group relative px-8 py-5 border border-white/30 backdrop-blur-md rounded-sm overflow-hidden transition-all duration-300",
                             "hover:border-white/80 hover:shadow-[0_0_30px_rgba(255,255,255,0.2)]",
-                            "bg-black/20 hover:bg-black/40"
+                            "bg-black/20 hover:bg-black/40",
+                            "cursor-pointer"
                         ))}
                     >
                         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
@@ -58,7 +59,8 @@ export const LobbyPage = () => {
                         className={twMerge(clsx(
                             "group relative px-8 py-4 border border-white/20 backdrop-blur-sm rounded-sm overflow-hidden transition-all duration-300",
                             "hover:border-white/60 hover:shadow-[0_0_20px_rgba(255,255,255,0.1)]",
-                            "bg-black/20 hover:bg-black/40"
+                            "bg-black/20 hover:bg-black/40",
+                            "cursor-pointer"
                         ))}
                     >
                         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />

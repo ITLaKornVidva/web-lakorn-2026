@@ -354,7 +354,7 @@ export const Summary = () => {
                     <button
                         onClick={handleShare}
                         disabled={isSharing}
-                        className="bg-[#2c1810] hover:bg-[#4a2c2a] text-[#f5e6d3] font-serif-bold px-6 py-2 rounded-sm shadow-lg flex items-center gap-2 transition-all uppercase tracking-wider transform hover:scale-105 disabled:opacity-50"
+                        className="bg-[#2c1810] hover:bg-[#4a2c2a] text-[#f5e6d3] font-serif-bold px-6 py-2 rounded-sm shadow-lg flex items-center gap-2 transition-all uppercase tracking-wider transform hover:scale-105 disabled:opacity-50 cursor-pointer"
                     >
                         {isSharing ? 'Saving...' : 'Share Story'}
                     </button>
@@ -364,7 +364,7 @@ export const Summary = () => {
                             resetGame();
                             window.location.href = "/";
                         }}
-                        className="bg-transparent border-2 border-[#2c1810] text-[#2c1810] hover:bg-[#2c1810]/5 font-serif-bold px-6 py-2 rounded-sm transition-all uppercase tracking-wider transform hover:scale-105"
+                        className="bg-transparent border-2 border-[#2c1810] text-[#2c1810] hover:bg-[#2c1810]/5 font-serif-bold px-6 py-2 rounded-sm transition-all uppercase tracking-wider transform hover:scale-105 cursor-pointer"
                     >
                         Replay
                     </button>
@@ -373,7 +373,7 @@ export const Summary = () => {
                         href="https://www.ticketmelon.com/th/lakornvidva_official/lakornvidva2026?utm_source=ig&utm_medium=social&utm_content=link_in_bio&fbclid=PAZXh0bgNhZW0CMTEAc3J0YwZhcHBfaWQMMjU2MjgxMDQwNTU4AAGnYmZVPGy-7xnMwvhDjlG3TVkM8eZQP8oPZabo2LW1p5wK1HGAl6Z557TzaLg_aem_mVeCv3jjvneT3N-gui9Elw"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="bg-amber-700 hover:bg-amber-800 text-white font-serif-bold px-6 py-2 rounded-sm shadow-lg transition-all uppercase tracking-wider transform hover:scale-105"
+                        className="bg-amber-700 hover:bg-amber-800 text-white font-serif-bold px-6 py-2 rounded-sm shadow-lg transition-all uppercase tracking-wider transform hover:scale-105 cursor-pointer"
                     >
                         Buy Ticket
                     </a>
@@ -399,7 +399,7 @@ export const Summary = () => {
                             </p>
                             <button
                                 onClick={() => setShareImage(null)}
-                                className="mt-4 px-6 py-2 bg-white/20 hover:bg-white/30 rounded-full text-sm font-bold uppercase tracking-widest transition-colors"
+                                className="mt-4 px-6 py-2 bg-white/20 hover:bg-white/30 rounded-full text-sm font-bold uppercase tracking-widest transition-colors cursor-pointer"
                             >
                                 Close
                             </button>

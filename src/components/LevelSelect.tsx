@@ -40,14 +40,13 @@ export const LevelSelect = () => {
     };
 
     return (
-        <div className="h-[100dvh] w-[100dvw] bg-[#f5e6d3] text-[#2c1810] font-serif overflow-hidden landscape:flex hidden flex-col safe-padding pt-2 lg:pt-6 relative">
-            {/* Background Texture */}
-            <div className="absolute inset-0 pointer-events-none opacity-20 bg-[url('/assets/backgrounds/paper-texture.png')] bg-cover mix-blend-multiply"></div>
+        <div className="h-[100dvh] w-[100dvw] text-[#2c1810] font-serif overflow-hidden landscape:flex hidden flex-col safe-padding pt-2 lg:pt-6 relative">
+            {/* Background Texture Removed */}
 
             {/* Navigation Buttons */}
             <button
                 onClick={handleBack}
-                className="absolute top-4 left-safe-offset z-50 bg-[#8B5A2B] text-[#f5e6d3] px-4 py-2 rounded-sm font-serif-bold shadow-md hover:bg-[#5C4033] transition-colors border-2 border-[#5C4033]"
+                className="absolute top-4 left-safe-offset z-50 bg-[#8B5A2B] text-[#f5e6d3] px-4 py-2 rounded-sm font-serif-bold shadow-md hover:bg-[#5C4033] transition-colors border-2 border-[#5C4033] cursor-pointer"
                 style={{ left: 'max(1rem, env(safe-area-inset-left))' }}
             >
                 ← BACK
@@ -55,7 +54,7 @@ export const LevelSelect = () => {
 
             <button
                 onClick={handleOpenSettings}
-                className="absolute top-4 right-safe-offset z-50 bg-[#8B5A2B] text-[#f5e6d3] px-4 py-2 rounded-sm font-serif-bold shadow-md hover:bg-[#5C4033] transition-colors border-2 border-[#5C4033]"
+                className="absolute top-4 right-safe-offset z-50 bg-[#8B5A2B] text-[#f5e6d3] px-4 py-2 rounded-sm font-serif-bold shadow-md hover:bg-[#5C4033] transition-colors border-2 border-[#5C4033] cursor-pointer"
                 style={{ right: 'max(1rem, env(safe-area-inset-right))' }}
             >
                 SETTINGS

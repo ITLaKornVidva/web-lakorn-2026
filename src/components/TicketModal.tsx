@@ -25,14 +25,14 @@ export const TicketModal: React.FC<TicketModalProps> = ({ isOpen, onClose }) => 
                         href="https://www.ticketmelon.com/th/lakornvidva_official/lakornvidva2026?utm_source=ig&utm_medium=social&utm_content=link_in_bio&fbclid=PAZXh0bgNhZW0CMTEAc3J0YwZhcHBfaWQMMjU2MjgxMDQwNTU4AAGnYmZVPGy-7xnMwvhDjlG3TVkM8eZQP8oPZabo2LW1p5wK1HGAl6Z557TzaLg_aem_mVeCv3jjvneT3N-gui9Elw"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="w-full bg-[#2c1810] hover:bg-[#4a2c2a] text-[#f5e6d3] font-serif-bold py-3 px-6 rounded-sm uppercase tracking-wide transition-colors"
+                        className="w-full bg-[#2c1810] hover:bg-[#4a2c2a] text-[#f5e6d3] font-serif-bold py-3 px-6 rounded-sm uppercase tracking-wide transition-colors cursor-pointer"
                     >
                         Buy Ticket
                     </a>
 
                     <button
                         onClick={onClose}
-                        className="w-full border-2 border-[#2c1810] text-[#2c1810] hover:bg-[#2c1810]/5 font-serif-bold py-3 px-6 rounded-sm uppercase tracking-wide transition-colors"
+                        className="w-full border-2 border-[#2c1810] text-[#2c1810] hover:bg-[#2c1810]/5 font-serif-bold py-3 px-6 rounded-sm uppercase tracking-wide transition-colors cursor-pointer"
                     >
                         Close
                     </button>

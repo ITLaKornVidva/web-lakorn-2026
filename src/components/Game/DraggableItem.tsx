@@ -76,17 +76,16 @@ export const ItemVisual = ({ item, disabled, isDragging, className, forcedState 
             title={item.name}
             style={{
                 // Explicit RGBA shadows to prevent oklab/oklch errors in html2canvas
-                boxShadow: isTextAction ? '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)' : (!isImageIcon && !isTextAction ? '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' : 'none'),
+                // boxShadow: isTextAction ? '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)' : (!isImageIcon && !isTextAction ? '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' : 'none'),
                 // Explicit Backgrounds/Borders for html2canvas compatibility
                 backgroundColor: isTextAction ? 'rgba(44, 24, 16, 0.9)' : undefined,
                 borderColor: isTextAction ? 'rgba(245, 230, 211, 0.4)' : (!isImageIcon ? 'rgba(44, 24, 16, 0.4)' : undefined)
             }}
         >
             {isImageIcon ? (
-                <img src={iconSrc} alt={item.name} className="w-full h-full object-contain pointer-events-none"
-                    style={{ filter: 'drop-shadow(0 4px 3px rgba(0, 0, 0, 0.07)) drop-shadow(0 2px 2px rgba(0, 0, 0, 0.06))' }} />
+                <img src={iconSrc} alt={item.name} className="w-full h-full object-contain pointer-events-none" />
             ) : (
-                <span className={clsx(isTextAction && "action-item-text")} style={{ filter: 'drop-shadow(0 1px 1px rgba(0, 0, 0, 0.05))' }}>{iconSrc}</span>
+                <span className={clsx(isTextAction && "action-item-text")}>{iconSrc}</span>
             )}
         </div>
     );

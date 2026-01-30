@@ -56,9 +56,8 @@ export const CharacterSelectionPage = () => {
     const nextIndex = (selectedIndex + 1) % CHARACTERS.length;
 
     return (
-        <div className="fixed inset-0 w-full h-full bg-[#f5e6d3] overflow-hidden flex flex-col items-center justify-center font-serif">
-            {/* Background Texture */}
-            <div className="absolute inset-0 pointer-events-none opacity-20 bg-[url('/assets/backgrounds/paper-texture.png')] bg-cover mix-blend-multiply"></div>
+        <div className="fixed inset-0 w-full h-full overflow-hidden flex flex-col items-center justify-center font-serif">
+            {/* Background Texture Removed */}
 
             <div className="relative z-10 w-full max-w-4xl flex flex-col items-center px-4">
 
@@ -157,7 +156,7 @@ export const CharacterSelectionPage = () => {
                     <button
                         onClick={handleConfirm}
                         disabled={!name.trim()}
-                        className="px-12 py-4 bg-[#5C4033] text-[#D2B48C] font-serif-bold text-xl uppercase tracking-widest rounded-sm shadow-lg hover:shadow-xl hover:bg-[#4a332a] active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed border-2 border-[#3e2b22] w-full"
+                        className="px-12 py-4 bg-[#5C4033] text-[#D2B48C] font-serif-bold text-xl uppercase tracking-widest rounded-sm shadow-lg hover:shadow-xl hover:bg-[#4a332a] active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed border-2 border-[#3e2b22] w-full cursor-pointer"
                     >
                         Start Journey
                     </button>

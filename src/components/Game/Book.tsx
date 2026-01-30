@@ -191,12 +191,12 @@ export const Book = () => {
             </div>
 
             {/* Main Game Content - Landscape Only */}
-            <div className="fixed inset-0 overflow-hidden hidden landscape:flex flex-col h-[100dvh] w-[100dvw] bg-[#f5e6d3] safe-padding">
+            <div className="fixed inset-0 overflow-hidden hidden landscape:flex flex-col h-[100dvh] w-[100dvw] safe-padding">
 
                 {/* Back Arrow */}
                 <button
                     onClick={() => navigate('/level-select')}
-                    className="absolute top-2 left-safe-offset bg-[#f5e6d3]/80 hover:bg-[#f5e6d3] text-[#2c1810]/70 hover:text-[#2c1810] transition-all z-20 px-2 py-2 rounded-br-lg shadow-sm"
+                    className="absolute top-2 left-safe-offset bg-[#f5e6d3]/80 hover:bg-[#f5e6d3] text-[#2c1810]/70 hover:text-[#2c1810] transition-all z-20 px-2 py-2 rounded-br-lg shadow-sm cursor-pointer"
                     style={{ left: 'max(0px, env(safe-area-inset-left))' }}
                 >
                     <svg style={{ width: 'clamp(20px, 3vh, 32px)', height: 'clamp(20px, 3vh, 32px)' }} viewBox="0 0 24 24" fill="currentColor">
@@ -207,7 +207,7 @@ export const Book = () => {
                 {/* Settings Button */}
                 <button
                     onClick={() => setIsSettingsOpen(true)}
-                    className="absolute top-2 right-safe-offset bg-[#f5e6d3]/80 hover:bg-[#f5e6d3] text-[#2c1810]/70 hover:text-[#2c1810] transition-all z-20 px-2 py-2 rounded-bl-lg shadow-sm"
+                    className="absolute top-2 right-safe-offset bg-[#f5e6d3]/80 hover:bg-[#f5e6d3] text-[#2c1810]/70 hover:text-[#2c1810] transition-all z-20 px-2 py-2 rounded-bl-lg shadow-sm cursor-pointer"
                     title="Settings"
                     style={{ right: 'max(0px, env(safe-area-inset-right))' }}
                 >
@@ -317,7 +317,7 @@ export const Book = () => {
                         <button
                             onClick={handleNextLevel}
                             disabled={!showNextButton}
-                            className="group bg-[#4a2c2a] hover:bg-[#5d3a37] text-amber-100 font-serif-bold px-4 md:px-8 py-2 md:py-3 rounded-sm shadow-xl transform hover:scale-105 transition-all flex items-center gap-2 border border-amber-900/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="cursor-pointer group bg-[#4a2c2a] hover:bg-[#5d3a37] text-amber-100 font-serif-bold px-4 md:px-8 py-2 md:py-3 rounded-sm shadow-xl transform hover:scale-105 transition-all flex items-center gap-2 border border-amber-900/20 disabled:opacity-50 disabled:cursor-not-allowed"
                             style={{ fontSize: 'clamp(0.8rem, 2.5vh, 1.25rem)' }}
                         >
                             <span className="uppercase tracking-widest">{currentLevelId === 'level-4' ? 'Finish' : 'Next'}</span>
@@ -328,7 +328,7 @@ export const Book = () => {
 
                 <DragOverlay dropAnimation={null}>
                     {activeDragItem ? (
-                        <div className="cursor-grabbing rotate-3 transition-transform shadow-2xl">
+                        <div className="cursor-grabbing rotate-3 transition-transform">
                             {/* Use Visual component solely! No dragging logic here */}
                             <ItemVisual item={activeDragItem} />
                         </div>
