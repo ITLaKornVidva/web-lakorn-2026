@@ -370,7 +370,7 @@ export const Summary = () => {
                     </button>
 
                     <a
-                        href="https://ticketmelon.com"
+                        href="https://www.ticketmelon.com/th/lakornvidva_official/lakornvidva2026?utm_source=ig&utm_medium=social&utm_content=link_in_bio&fbclid=PAZXh0bgNhZW0CMTEAc3J0YwZhcHBfaWQMMjU2MjgxMDQwNTU4AAGnYmZVPGy-7xnMwvhDjlG3TVkM8eZQP8oPZabo2LW1p5wK1HGAl6Z557TzaLg_aem_mVeCv3jjvneT3N-gui9Elw"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="bg-amber-700 hover:bg-amber-800 text-white font-serif-bold px-6 py-2 rounded-sm shadow-lg transition-all uppercase tracking-wider transform hover:scale-105"
