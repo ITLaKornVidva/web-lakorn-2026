@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { useEffect } from 'react';
-import { AudioController } from './components/UI/AudioController'
+
 import { LevelSelect } from './components/LevelSelect'
 import { GamePage } from './components/GamePage'
 import { LobbyPage } from './components/LobbyPage'
@@ -23,8 +23,17 @@ function App() {
 
   return (
     <BrowserRouter>
+      <div className="fixed inset-0 z-[-1] w-full h-full">
+        <img
+          src="/assets/main_bg.png"
+          alt="Background"
+          className="w-full h-full object-cover object-center"
+        />
+        <div className="absolute inset-0 bg-black/10" /> {/* Optional overlay if needed for contrast */}
+      </div>
+
       <OrientationGuard>
-        <AudioController />
+
         {isGameCompleted ? (
           <Summary />
         ) : (

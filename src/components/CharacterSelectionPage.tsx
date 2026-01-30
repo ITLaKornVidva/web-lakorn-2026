@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGameStore } from '../store/gameStore';
-import { useSfx } from './UI/AudioController';
+
 
 const CHARACTERS = [
     { id: 'player1', name: 'Adventurer' },
@@ -13,7 +13,7 @@ const CHARACTERS = [
 export const CharacterSelectionPage = () => {
     const navigate = useNavigate();
     const { setCharacterId, setPlayerName, playerName: savedName, characterId: savedCharId } = useGameStore();
-    const { playSfx } = useSfx();
+
 
     // Determine initial index based on savedCharId
     const initialIndex = CHARACTERS.findIndex(c => c.id === savedCharId);
@@ -21,18 +21,18 @@ export const CharacterSelectionPage = () => {
     const [name, setName] = useState(savedName || '');
 
     const handleNext = () => {
-        playSfx('/assets/sfx/paper-flip.mp3');
+
         setSelectedIndex((prev) => (prev + 1) % CHARACTERS.length);
     };
 
     const handlePrev = () => {
-        playSfx('/assets/sfx/paper-flip.mp3');
+
         setSelectedIndex((prev) => (prev - 1 + CHARACTERS.length) % CHARACTERS.length);
     };
 
     const handleCharacterClick = (index: number) => {
         if (index === selectedIndex) return;
-        playSfx('/assets/sfx/paper-flip.mp3');
+
         setSelectedIndex(index);
     };
 
@@ -41,7 +41,7 @@ export const CharacterSelectionPage = () => {
             alert("Please enter your name!");
             return;
         }
-        playSfx('/assets/sfx/success.mp3');
+
 
         // Save to store (Logic handles persistence automatically via zustand persist)
         setCharacterId(CHARACTERS[selectedIndex].id);

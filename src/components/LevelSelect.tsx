@@ -4,13 +4,13 @@ import { useGameStore } from '../store/gameStore';
 import { levels } from '../data/levels';
 import { MiniScene } from './MiniScene';
 import { SettingsModal } from './UI/SettingsModal';
-import { useSfx } from './UI/AudioController';
+
 
 export const LevelSelect = () => {
     const navigate = useNavigate();
     const { completedScenes, levelProgress, solvedLevels } = useGameStore();
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-    const { playSfx } = useSfx();
+
 
     const handleLevelClick = (levelId: string) => {
         // Accessible check is done on render, so if clicked it implies accessible? 
@@ -24,18 +24,18 @@ export const LevelSelect = () => {
             (prevLevel && solvedLevels.includes(prevLevel.id));
 
         if (isAccessible) {
-            playSfx('/assets/sfx/click.mp3');
+
             navigate(`/game/${levelId}`);
         }
     };
 
     const handleBack = () => {
-        playSfx('/assets/sfx/click.mp3');
+
         navigate('/');
     };
 
     const handleOpenSettings = () => {
-        playSfx('/assets/sfx/click.mp3');
+
         setIsSettingsOpen(true);
     };
 

@@ -1,6 +1,9 @@
+import { motion, AnimatePresence } from 'framer-motion';
 import { useSettingsStore } from '../../store/settingsStore';
 import { useGameStore } from '../../store/gameStore';
 import { useFullscreen } from '../../hooks/useFullscreen';
+import { clsx } from 'clsx';
+import { twMerge } from 'tailwind-merge';
 
 interface SettingsModalProps {
     isOpen: boolean;
@@ -8,11 +11,9 @@ interface SettingsModalProps {
 }
 
 export const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
-    const { sfxVolume, setSfxVolume, resetSettings } = useSettingsStore();
+    const { resetSettings } = useSettingsStore();
     const { resetProgress } = useGameStore();
     const { isFullscreen, toggleFullscreen, isEnabled: isFullscreenEnabled } = useFullscreen();
-
-    if (!isOpen) return null;
 
     const handleResetProgress = () => {
         if (window.confirm('Are you sure you want to reset all game progress? This cannot be undone.')) {
@@ -28,106 +29,99 @@ export const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
     };
 
     return (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-70 p-4" onClick={onClose}>
-            <div
-                className="max-w-2xl w-full bg-[#f5e6d3] border-4 border-[#2c1810] rounded-sm shadow-2xl p-8 max-h-[90vh] overflow-y-auto touch-pan-y overscroll-contain bg-[url('/assets/backgrounds/paper-texture.png')] bg-blend-multiply"
-                onClick={(e) => e.stopPropagation()}
-            >
-                {/* Header with Close Button */}
-                <div className="flex justify-between items-center mb-6 border-b-2 border-[#5C4033]/30 pb-4">
-                    <h1 className="text-4xl font-serif-bold text-[#2c1810] tracking-wide">
-                        ⚙️ Settings
-                    </h1>
-                    <button
+        <AnimatePresence>
+            {isOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                    {/* Backdrop */}
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
                         onClick={onClose}
-                        className="text-3xl text-[#5C4033] hover:text-[#2c1810] transition-colors font-serif"
-                        aria-label="Close"
+                        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+                    />
+
+                    {/* Modal Content */}
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                        onClick={(e) => e.stopPropagation()}
+                        className={twMerge(clsx(
+                            "relative w-full max-w-2xl overflow-hidden",
+                            "bg-black/80 border border-white/20 shadow-[0_0_50px_rgba(0,0,0,0.5)]",
+                            "rounded-sm backdrop-blur-md"
+                        ))}
                     >
-                        ×
-                    </button>
-                </div>
-
-                {/* Audio Settings Section */}
-                <section className="mb-8">
-                    <h2 className="text-2xl font-serif-bold text-[#5C4033] mb-4 flex items-center gap-2">
-                        🔊 Audio Settings
-                    </h2>
-                    <div className="space-y-6">
-                        {/* SFX Volume */}
-                        <div>
-                            <label className="block text-sm font-bold text-[#5C4033] mb-2 uppercase tracking-wider">
-                                Sound Effects Volume: {Math.round(sfxVolume * 100)}%
-                            </label>
-                            <input
-                                type="range"
-                                min="0"
-                                max="1"
-                                step="0.01"
-                                value={sfxVolume}
-                                onChange={(e) => setSfxVolume(parseFloat(e.target.value))}
-                                className="w-full h-2 bg-[#D2B48C]/50 rounded-lg appearance-none cursor-pointer accent-[#8B5A2B]"
-                            />
-                            <div className="flex justify-between text-xs text-[#5C4033]/70 mt-1 font-serif">
-                                <span>Mute</span>
-                                <span>Max</span>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                {/* Display & App Section */}
-                <section className="mb-8 border-t-2 border-[#5C4033]/30 pt-6">
-                    <h2 className="text-2xl font-serif-bold text-[#5C4033] mb-4 flex items-center gap-2">
-                        📱 Display
-                    </h2>
-                    <div className="space-y-4">
-                        {isFullscreenEnabled && (
+                        {/* Header */}
+                        <div className="flex justify-between items-center p-6 border-b border-white/10 bg-white/5">
+                            <h1 className="text-3xl font-serif-bold text-white tracking-widest">
+                                SETTINGS
+                            </h1>
                             <button
-                                onClick={toggleFullscreen}
-                                className="w-full px-6 py-3 bg-[#e8dcc5] text-[#2c1810] font-serif-bold rounded-sm border border-[#5C4033]/50 hover:bg-[#D2B48C] transition-colors flex items-center justify-center gap-2"
+                                onClick={onClose}
+                                className="text-2xl text-white/50 hover:text-white transition-colors"
+                                aria-label="Close"
                             >
-                                <span>{isFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}</span>
-                                <span>{isFullscreen ? '↙️' : '↗️'}</span>
+                                ×
                             </button>
-                        )}
+                        </div>
 
-                        {!isFullscreenEnabled && (
-                            <p className="text-[#5C4033]/60 italic text-center font-serif">No additional display options available for this device.</p>
-                        )}
-                    </div>
-                </section>
+                        <div className="p-8 space-y-8 max-h-[70vh] overflow-y-auto custom-scrollbar">
+                            {/* Display Section */}
+                            <section>
+                                <h2 className="text-xl font-serif text-white/70 mb-4 border-l-2 border-white/30 pl-3">
+                                    DISPLAY
+                                </h2>
+                                <div>
+                                    {isFullscreenEnabled ? (
+                                        <button
+                                            onClick={toggleFullscreen}
+                                            className="w-full px-6 py-4 bg-white/5 hover:bg-white/10 text-white font-serif-bold rounded-sm border border-white/10 hover:border-white/30 transition-all flex items-center justify-between group"
+                                        >
+                                            <span className="tracking-wider">{isFullscreen ? 'EXIT FULLSCREEN' : 'ENTER FULLSCREEN'}</span>
+                                            <span className="opacity-50 group-hover:opacity-100 transition-opacity">{isFullscreen ? '↙️' : '↗️'}</span>
+                                        </button>
+                                    ) : (
+                                        <p className="text-white/40 italic text-center font-serif py-4">Fullscreen not supported on this device.</p>
+                                    )}
+                                </div>
+                            </section>
 
-                {/* Danger Zone */}
-                <section className="border-t-2 border-[#5C4033]/30 pt-6">
-                    <h2 className="text-2xl font-serif-bold text-[#8B0000] mb-4 flex items-center gap-2">
-                        ⚠️ Danger Zone
-                    </h2>
-                    <div className="space-y-3">
-                        <button
-                            onClick={handleResetSettings}
-                            className="w-full px-6 py-3 bg-[#5C4033] text-[#f5e6d3] font-serif-bold rounded-sm hover:bg-[#3e2b22] transition-colors border border-[#2c1810]"
-                        >
-                            Reset Settings to Default
-                        </button>
-                        <button
-                            onClick={handleResetProgress}
-                            className="w-full px-6 py-3 bg-[#8B0000] text-[#f5e6d3] font-serif-bold rounded-sm hover:bg-[#600000] transition-colors border border-[#2c1810]"
-                        >
-                            Reset All Game Progress
-                        </button>
-                    </div>
-                </section>
+                            {/* Danger Zone */}
+                            <section>
+                                <h2 className="text-xl font-serif text-red-400/80 mb-4 border-l-2 border-red-500/50 pl-3">
+                                    DANGER ZONE
+                                </h2>
+                                <div className="space-y-4">
+                                    <button
+                                        onClick={handleResetSettings}
+                                        className="w-full px-6 py-4 bg-red-900/20 hover:bg-red-900/40 text-red-200 font-serif-bold rounded-sm border border-red-900/30 hover:border-red-500/50 transition-all text-left"
+                                    >
+                                        RESET SETTINGS TO DEFAULT
+                                    </button>
+                                    <button
+                                        onClick={handleResetProgress}
+                                        className="w-full px-6 py-4 bg-red-900/30 hover:bg-red-900/50 text-red-100 font-serif-bold rounded-sm border border-red-900/40 hover:border-red-500/60 transition-all text-left"
+                                    >
+                                        RESET ALL GAME PROGRESS
+                                    </button>
+                                </div>
+                            </section>
+                        </div>
 
-                {/* Close Button */}
-                <div className="mt-8 text-center">
-                    <button
-                        onClick={onClose}
-                        className="px-8 py-3 bg-[#8B5A2B] text-[#f5e6d3] font-serif-bold rounded-sm hover:bg-[#5C4033] transition-colors shadow-lg uppercase tracking-widest border border-[#2c1810]"
-                    >
-                        Close Settings
-                    </button>
+                        {/* Footer */}
+                        <div className="p-6 border-t border-white/10 bg-white/5 text-center">
+                            <button
+                                onClick={onClose}
+                                className="px-10 py-3 bg-white/10 hover:bg-white/20 text-white font-serif-bold rounded-sm transition-all tracking-widest border border-white/10 hover:border-white/30"
+                            >
+                                CLOSE
+                            </button>
+                        </div>
+                    </motion.div>
                 </div>
-            </div>
-        </div>
+            )}
+        </AnimatePresence>
     );
 };

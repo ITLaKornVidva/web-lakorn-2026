@@ -27,7 +27,7 @@ body {
 }
 
 .game-bg {
-  background-image: url('/assets/parchment_bg.png');
+  background-image: url('/assets/main_bg.png');
   background-size: cover;
   background-attachment: fixed;
   background-position: center;
