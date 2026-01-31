@@ -35,7 +35,7 @@ export const levels: Level[] = [
                 id: 'scene-1-1',
                 slots: [
                     { id: 'slot-1-1-1', allowedTypes: ['character'], placedItemId: null, x: 160, y: 350, scale: 3, flipX: true },
-                    { id: 'slot-1-1-2', allowedTypes: ['object'], placedItemId: null, x: 550, y: 360, scale: 3.5 },
+                    { id: 'slot-1-1-2', allowedTypes: ['object'], placedItemId: null, x: 550, y: 360, scale: 3.5, flipX: true },
                 ],
                 backgroundImage: '/assets/backgrounds/Background-3.png',
                 outcomes: [
