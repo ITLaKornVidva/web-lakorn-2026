@@ -35,7 +35,7 @@ export const levels: Level[] = [
                 id: 'scene-1-1',
                 slots: [
                     { id: 'slot-1-1-1', allowedTypes: ['character'], placedItemId: null, x: 160, y: 350, scale: 3, flipX: true },
-                    { id: 'slot-1-1-2', allowedTypes: ['object'], placedItemId: null, x: 550, y: 360, scale: 2 },
+                    { id: 'slot-1-1-2', allowedTypes: ['object'], placedItemId: null, x: 550, y: 360, scale: 3.5 },
                 ],
                 backgroundImage: '/assets/backgrounds/Background-3.png',
                 outcomes: [
@@ -53,7 +53,7 @@ export const levels: Level[] = [
                 slots: [
                     { id: 'slot-1-2-1', allowedTypes: ['character'], placedItemId: null, x: 160, y: 350, scale: 3, flipX: true },
                     { id: 'slot-1-2-2', allowedTypes: ['action'], placedItemId: null, x: 350, y: 150, scale: 2 },
-                    { id: 'slot-1-2-3', allowedTypes: ['object'], placedItemId: null, x: 550, y: 360, scale: 2 },
+                    { id: 'slot-1-2-3', allowedTypes: ['object'], placedItemId: null, x: 550, y: 360, scale: 3.5 },
                 ],
                 backgroundImage: '/assets/backgrounds/Background-3.png',
                 outcomes: [
@@ -62,7 +62,7 @@ export const levels: Level[] = [
                         itemIds: ['you', 'open', 'book'],
                         title: 'You opened a book',
                         isSolved: true,
-                        characterStates: { 'you': 'awe' }
+                        characterStates: { 'you': 'awe', 'book': 'open' }
                     }
                 ]
             },
@@ -376,28 +376,28 @@ export const levels: Level[] = [
                         itemIds: ['you', 'book', 'open', null],
                         title: 'YOU OPENED A BOOK',
                         isSolved: true,
-                        characterStates: { 'you': 'awe' }
+                        characterStates: { 'you': 'awe', 'book': 'open' }
                     },
                     {
                         id: 'outcome-scholar-2',
                         itemIds: ['book', 'you', 'open', null],
                         title: 'YOU OPENED A BOOK',
                         isSolved: true,
-                        characterStates: { 'you': 'awe' }
+                        characterStates: { 'you': 'awe', 'book': 'open' }
                     },
                     {
                         id: 'outcome-scholar-3',
                         itemIds: ['you', 'book', null, 'open'],
                         title: 'YOU OPENED A BOOK',
                         isSolved: true,
-                        characterStates: { 'you': 'awe' }
+                        characterStates: { 'you': 'awe', 'book': 'open' }
                     },
                     {
                         id: 'outcome-scholar-4',
                         itemIds: ['book', 'you', null, 'open'],
                         title: 'YOU OPENED A BOOK',
                         isSolved: true,
-                        characterStates: { 'you': 'awe' }
+                        characterStates: { 'you': 'awe', 'book': 'open' }
                     },
 
                     // OUTCOME B: "YOU JOINED THE CITY’S WORKFORCE"

@@ -48,7 +48,13 @@ export const ItemVisual = ({ item, disabled, isDragging, className, forcedState 
 
     // Resolve Dynamic Image Path
     let iconSrc = item.icon;
-    if (item.spriteName) {
+
+    // Special Case: Book Open
+    if (item.id === 'book' && targetState === 'open') {
+        iconSrc = '/assets/open_book.png';
+    }
+    // General Sprite Logic
+    else if (item.spriteName) {
         let stateTag = targetState;
         const frames = GET_ANIMATION_FRAMES(targetState, baseName);
         if (frames && frames.length > 0) {
