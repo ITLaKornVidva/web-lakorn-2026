@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { Analytics } from "@vercel/analytics/react"
 import { useEffect } from 'react';
 
 import { LevelSelect } from './components/LevelSelect'
@@ -49,6 +50,7 @@ function App() {
           </Routes>
         )}
       </OrientationGuard>
+      <Analytics />
     </BrowserRouter>
   )
 }
