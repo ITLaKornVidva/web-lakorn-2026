@@ -23,7 +23,7 @@ function App() {
 
   return (
     <BrowserRouter>
-      <div className="fixed inset-0 z-[-1] w-full h-full">
+      <div className="fixed inset-0 z-[-1] w-full h-dvh">
         <img
           src="/assets/main_bg.png"
           alt="Background"
