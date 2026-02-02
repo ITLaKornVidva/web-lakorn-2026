@@ -81,7 +81,7 @@ export const CharacterSelectionPage = () => {
                             <img
                                 src={`/assets/characters/${CHARACTERS[prevIndex].id}_idle.png`}
                                 alt="Previous"
-                                className="h-32 md:h-64 object-contain drop-shadow-md grayscale"
+                                className="h-56 max-lg:h-36 object-contain drop-shadow-md grayscale"
                             />
                         </div>
 
@@ -90,7 +90,7 @@ export const CharacterSelectionPage = () => {
                             <img
                                 src={`/assets/characters/${CHARACTERS[nextIndex].id}_idle.png`}
                                 alt="Next"
-                                className="h-32 md:h-64 object-contain drop-shadow-md grayscale"
+                                className="h-56 max-lg:h-36 object-contain drop-shadow-md grayscale"
                             />
                         </div>
 

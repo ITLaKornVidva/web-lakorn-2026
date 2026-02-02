@@ -28,7 +28,7 @@ export const levels: Level[] = [
     {
         id: 'level-1',
         title: 'Level 1',
-        goal: 'YOU FOUND A MYSTERIOUS BOOK THAT TAKES YOU TO THE PAST',
+        goal: 'You discover a mysterious book that pulls you into the past.',
         availableItems: [ITEMS.you, ITEMS.you, ITEMS.you, ITEMS.book, ITEMS.book, ITEMS.open],
         scenes: [
             {
@@ -42,7 +42,7 @@ export const levels: Level[] = [
                     {
                         id: 'outcome-1-1-solved',
                         itemIds: ['you', 'book'],
-                        title: 'You found a book',
+                        title: 'You find a mysterious book lying alone, waiting to be discovered.',
                         isSolved: true,
                         characterStates: { 'you': 'awe' }
                     }
@@ -60,7 +60,7 @@ export const levels: Level[] = [
                     {
                         id: 'outcome-1-2-solved',
                         itemIds: ['you', 'open', 'book'],
-                        title: 'You opened a book',
+                        title: 'Curiosity takes hold as you open the book, revealing its secrets.',
                         isSolved: true,
                         characterStates: { 'you': 'awe', 'book': 'open' }
                     }
@@ -76,7 +76,7 @@ export const levels: Level[] = [
                     {
                         id: 'outcome-1-3-solved',
                         itemIds: ['you'],
-                        title: 'You traveled into the past',
+                        title: 'A strange force pulls you in, transporting you to a different time.',
                         isSolved: true,
                         characterStates: { 'you': 'awe' }
                     }
@@ -92,7 +92,7 @@ export const levels: Level[] = [
     {
         id: 'level-2',
         title: 'Level 2',
-        goal: 'YOU VISIT THE CITY WITH YOUR NEW FRIEND',
+        goal: 'You explore an unfamiliar city alongside a new friend.',
         availableItems: [ITEMS.you, ITEMS.you, ITEMS.citizen_a, ITEMS.citizen_a, ITEMS.group_citizens, ITEMS.work, ITEMS.interest, ITEMS.greet],
         scenes: [
             {
@@ -107,14 +107,14 @@ export const levels: Level[] = [
                     {
                         id: 'outcome-2-1-solved',
                         itemIds: ['you', 'greet', 'citizen_a'],
-                        title: 'You met Citizen A for the first time and you greet each other',
+                        title: 'You meet Citizen A for the first time and exchange greetings.',
                         isSolved: true,
                         characterStates: { 'you': 'greet', 'citizen_a': 'greet' }
                     },
                     {
                         id: 'outcome-2-1-solved-reverse',
                         itemIds: ['citizen_a', 'greet', 'you'],
-                        title: 'You met Citizen A for the first time and you greet each other',
+                        title: 'You meet Citizen A for the first time and exchange greetings.',
                         isSolved: true,
                         characterStates: { 'you': 'greet', 'citizen_a': 'greet' }
                     }
@@ -132,14 +132,14 @@ export const levels: Level[] = [
                     {
                         id: 'outcome-2-2-solved',
                         itemIds: ['you', 'citizen_a', 'interest'],
-                        title: 'Citizen A takes you to new place and you are interested in this city',
+                        title: 'Citizen A leads you through the city, and you become intrigued by its sights and atmosphere.',
                         isSolved: true,
                         characterStates: { 'you': 'awe', 'citizen_a': 'greet' }
                     },
                     {
                         id: 'outcome-2-2-solved-reverse',
                         itemIds: ['citizen_a', 'you', 'interest'],
-                        title: 'Citizen A takes you to new place and you are interested in this city',
+                        title: 'Citizen A leads you through the city, and you become intrigued by its sights and atmosphere.',
                         isSolved: true,
                         characterStates: { 'you': 'awe', 'citizen_a': 'greet' }
                     }
@@ -156,7 +156,7 @@ export const levels: Level[] = [
                     {
                         id: 'outcome-2-3-solved',
                         itemIds: ['group_citizens', 'work'],
-                        title: 'Citizen A takes you to the workspace and everyone is walking into the factory',
+                        title: 'Citizen A takes you to the workplace, where you see other citizens work.',
                         isSolved: true
                     }
                 ]
@@ -171,7 +171,7 @@ export const levels: Level[] = [
     {
         id: 'level-3',
         title: 'Level 3',
-        goal: 'PEOPLE IN THIS CITY ARE VERY HARDWORKING',
+        goal: 'The citizens of this era are defined by their tireless dedication to work.',
         availableItems: [
             ITEMS.citizen_b,
             ITEMS.citizen_c,
@@ -191,42 +191,42 @@ export const levels: Level[] = [
                     {
                         id: 'outcome-3-1-b',
                         itemIds: ['citizen_b', 'work'],
-                        title: 'CITIZEN B WORKS VERY HARD',
+                        title: 'Citizen B is completely absorbed in their tasks, working with intense focus.',
                         isSolved: true,
                         characterStates: { 'citizen_b': 'work' }
                     },
                     {
                         id: 'outcome-3-1-c',
                         itemIds: ['citizen_c', 'work'],
-                        title: 'CITIZEN C WORKS VERY HARD',
+                        title: 'Citizen C is completely absorbed in their tasks, working with intense focus.',
                         isSolved: true,
                         characterStates: { 'citizen_c': 'work' }
                     },
                     {
                         id: 'outcome-3-1-d',
                         itemIds: ['citizen_d', 'work'],
-                        title: 'CITIZEN D WORKS VERY HARD',
+                        title: 'Citizen D is completely absorbed in their tasks, working with intense focus.',
                         isSolved: true,
                         characterStates: { 'citizen_d': 'work' }
                     },
                     {
                         id: 'outcome-3-1-b-special',
                         itemIds: ['citizen_b', 'special'],
-                        title: 'CITIZEN B IS DANCING',
+                        title: 'In a rare moment of freedom, Citizen B expresses themselves through dance.',
                         isSolved: true,
                         characterStates: { 'citizen_b': 'dance' }
                     },
                     {
                         id: 'outcome-3-1-c-special',
                         itemIds: ['citizen_c', 'special'],
-                        title: 'CITIZEN C IS DANCING',
+                        title: 'In a rare moment of freedom, Citizen C expresses themselves through dance.',
                         isSolved: true,
                         characterStates: { 'citizen_c': 'dance' }
                     },
                     {
                         id: 'outcome-3-1-d-special',
                         itemIds: ['citizen_d', 'special'],
-                        title: 'CITIZEN D IS DANCING',
+                        title: 'In a rare moment of freedom, Citizen D expresses themselves through dance.',
                         isSolved: true,
                         characterStates: { 'citizen_d': 'dance' }
                     }
@@ -243,42 +243,42 @@ export const levels: Level[] = [
                     {
                         id: 'outcome-3-2-b',
                         itemIds: ['citizen_b', 'work'],
-                        title: 'CITIZEN B WORKS VERY HARD',
+                        title: 'Citizen B is completely absorbed in their tasks, working with intense focus.',
                         isSolved: true,
                         characterStates: { 'citizen_b': 'work' }
                     },
                     {
                         id: 'outcome-3-2-c',
                         itemIds: ['citizen_c', 'work'],
-                        title: 'CITIZEN C WORKS VERY HARD',
+                        title: 'Citizen C is completely absorbed in their tasks, working with intense focus.',
                         isSolved: true,
                         characterStates: { 'citizen_c': 'work' }
                     },
                     {
                         id: 'outcome-3-2-d',
                         itemIds: ['citizen_d', 'work'],
-                        title: 'CITIZEN D WORKS VERY HARD',
+                        title: 'Citizen D is completely absorbed in their tasks, working with intense focus.',
                         isSolved: true,
                         characterStates: { 'citizen_d': 'work' }
                     },
                     {
                         id: 'outcome-3-2-b-special',
                         itemIds: ['citizen_b', 'special'],
-                        title: 'CITIZEN B IS DANCING',
+                        title: 'In a rare moment of freedom, Citizen B expresses themselves through dance.',
                         isSolved: true,
                         characterStates: { 'citizen_b': 'dance' }
                     },
                     {
                         id: 'outcome-3-2-c-special',
                         itemIds: ['citizen_c', 'special'],
-                        title: 'CITIZEN C IS DANCING',
+                        title: 'In a rare moment of freedom, Citizen C expresses themselves through dance.',
                         isSolved: true,
                         characterStates: { 'citizen_c': 'dance' }
                     },
                     {
                         id: 'outcome-3-2-d-special',
                         itemIds: ['citizen_d', 'special'],
-                        title: 'CITIZEN D IS DANCING',
+                        title: 'In a rare moment of freedom, Citizen D expresses themselves through dance.',
                         isSolved: true,
                         characterStates: { 'citizen_d': 'dance' }
                     }
@@ -295,42 +295,42 @@ export const levels: Level[] = [
                     {
                         id: 'outcome-3-3-b',
                         itemIds: ['citizen_b', 'work'],
-                        title: 'CITIZEN B WORKS VERY HARD',
+                        title: 'Citizen B is completely absorbed in their tasks, working with intense focus.',
                         isSolved: true,
                         characterStates: { 'citizen_b': 'work' }
                     },
                     {
                         id: 'outcome-3-3-c',
                         itemIds: ['citizen_c', 'work'],
-                        title: 'CITIZEN C WORKS VERY HARD',
+                        title: 'Citizen C is completely absorbed in their tasks, working with intense focus.',
                         isSolved: true,
                         characterStates: { 'citizen_c': 'work' }
                     },
                     {
                         id: 'outcome-3-3-d',
                         itemIds: ['citizen_d', 'work'],
-                        title: 'CITIZEN D WORKS VERY HARD',
+                        title: 'Citizen D is completely absorbed in their tasks, working with intense focus.',
                         isSolved: true,
                         characterStates: { 'citizen_d': 'work' }
                     },
                     {
                         id: 'outcome-3-3-b-special',
                         itemIds: ['citizen_b', 'special'],
-                        title: 'CITIZEN B IS DANCING',
+                        title: 'In a rare moment of freedom, Citizen B expresses themselves through dance.',
                         isSolved: true,
                         characterStates: { 'citizen_b': 'dance' }
                     },
                     {
                         id: 'outcome-3-3-c-special',
                         itemIds: ['citizen_c', 'special'],
-                        title: 'CITIZEN C IS DANCING',
+                        title: 'In a rare moment of freedom, Citizen C expresses themselves through dance.',
                         isSolved: true,
                         characterStates: { 'citizen_c': 'dance' }
                     },
                     {
                         id: 'outcome-3-3-d-special',
                         itemIds: ['citizen_d', 'special'],
-                        title: 'CITIZEN D IS DANCING',
+                        title: 'In a rare moment of freedom, Citizen D expresses themselves through dance.',
                         isSolved: true,
                         characterStates: { 'citizen_d': 'dance' }
                     }
@@ -346,7 +346,7 @@ export const levels: Level[] = [
     {
         id: 'level-4',
         title: 'Level 4',
-        goal: 'The Final Chapter',
+        goal: 'The Final Chapter: Your Choices Define the Future',
         availableItems: [
             ITEMS.you, ITEMS.you,
             ITEMS.book,
@@ -374,28 +374,28 @@ export const levels: Level[] = [
                     {
                         id: 'outcome-scholar-1',
                         itemIds: ['you', 'book', 'open', null],
-                        title: 'YOU OPENED A BOOK',
+                        title: 'You choose knowledge, seeking answers within the pages of history.',
                         isSolved: true,
                         characterStates: { 'you': 'awe', 'book': 'open' }
                     },
                     {
                         id: 'outcome-scholar-2',
                         itemIds: ['book', 'you', 'open', null],
-                        title: 'YOU OPENED A BOOK',
+                        title: 'You choose knowledge, seeking answers within the pages of history.',
                         isSolved: true,
                         characterStates: { 'you': 'awe', 'book': 'open' }
                     },
                     {
                         id: 'outcome-scholar-3',
                         itemIds: ['you', 'book', null, 'open'],
-                        title: 'YOU OPENED A BOOK',
+                        title: 'You choose knowledge, seeking answers within the pages of history.',
                         isSolved: true,
                         characterStates: { 'you': 'awe', 'book': 'open' }
                     },
                     {
                         id: 'outcome-scholar-4',
                         itemIds: ['book', 'you', null, 'open'],
-                        title: 'YOU OPENED A BOOK',
+                        title: 'You choose knowledge, seeking answers within the pages of history.',
                         isSolved: true,
                         characterStates: { 'you': 'awe', 'book': 'open' }
                     },
@@ -404,14 +404,14 @@ export const levels: Level[] = [
                     {
                         id: 'outcome-workforce-1',
                         itemIds: ['you', 'group_citizens', 'work', 'work'],
-                        title: 'YOU JOINED THE CITY’S WORKFORCE',
+                        title: 'You embrace the city\'s way of life, dedicating yourself to the collective labor.',
                         isSolved: true,
                         characterStates: { 'group_citizens': 'work' }
                     },
                     {
                         id: 'outcome-workforce-2',
                         itemIds: ['group_citizens', 'you', 'work', 'work'],
-                        title: 'YOU JOINED THE CITY’S WORKFORCE',
+                        title: 'You embrace the city\'s way of life, dedicating yourself to the collective labor.',
                         isSolved: true,
                         characterStates: { 'group_citizens': 'work' }
                     },
@@ -420,14 +420,14 @@ export const levels: Level[] = [
                     {
                         id: 'outcome-celebration-1',
                         itemIds: ['you', 'group_citizens', 'dance', 'dance'],
-                        title: 'YOU DANCED TO CHEER THE WORKFORCE',
+                        title: 'You choose joy, sparking a celebration that lifts the spirits of everyone around you.',
                         isSolved: true,
                         characterStates: { 'you': 'dance', 'group_citizens': 'dance' }
                     },
                     {
                         id: 'outcome-celebration-2',
                         itemIds: ['group_citizens', 'you', 'dance', 'dance'],
-                        title: 'YOU DANCED TO CHEER THE WORKFORCE',
+                        title: 'You choose joy, sparking a celebration that lifts the spirits of everyone around you.',
                         isSolved: true,
                         characterStates: { 'you': 'dance', 'group_citizens': 'dance' }
                     }

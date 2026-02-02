@@ -1,4 +1,5 @@
 import { useRef, useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import clsx from 'clsx';
 import { useGameStore } from '../../store/gameStore';
 import type { Scene as SceneType, Item } from '../../types';
@@ -17,6 +18,7 @@ interface SceneProps {
 export const Scene = ({ scene, isActive, levelItems, overrideTitle, hideTitle, overrideCharacterStates }: SceneProps) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const [scale, setScale] = useState(1);
+    const [isZoomed, setIsZoomed] = useState(false);
 
     // Subscribe to active outcomes
     const activeOutcomes = useGameStore(state => state.activeOutcomes);
@@ -61,6 +63,25 @@ export const Scene = ({ scene, isActive, levelItems, overrideTitle, hideTitle, o
         }
         return bg ? `url(${bg})` : undefined;
     };
+
+    // Auto-trigger zoom when title appears (scene solved)
+    const prevTitleRef = useRef(displayTitle);
+    const isFirstMount = useRef(true);
+
+    useEffect(() => {
+        // Skip check on initial mount to prevent popup when loading a solved level
+        if (isFirstMount.current) {
+            isFirstMount.current = false;
+            prevTitleRef.current = displayTitle;
+            return;
+        }
+
+        // If title just appeared (was null/undefined, now is string), trigger zoom
+        if (!prevTitleRef.current && displayTitle) {
+            setIsZoomed(true);
+        }
+        prevTitleRef.current = displayTitle;
+    }, [displayTitle]);
 
     return (
         <div
@@ -131,22 +152,72 @@ export const Scene = ({ scene, isActive, levelItems, overrideTitle, hideTitle, o
 
                     {/* Title Overlay */}
                     {displayTitle && (
-                        <div className="absolute top-4 left-0 w-full flex justify-center pointer-events-none z-10">
-                            <h3 className="scene-title font-serif-bold text-center uppercase tracking-widest animate-fade-in shadow-sm backdrop-blur-sm"
+                        <div className="absolute top-4 left-1/2 -translate-x-1/2 w-[80%] flex justify-center pointer-events-none z-10">
+                            <h3 className="scene-title font-serif-bold text-center uppercase tracking-widest animate-fade-in shadow-sm backdrop-blur-sm pointer-events-auto cursor-pointer hover:scale-105 transition-transform"
+                                onClick={() => setIsZoomed(true)}
                                 style={{
                                     fontSize: '1.5rem',
                                     color: '#2c1810',
                                     backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                                    padding: '4px 16px',
-                                    borderRadius: '9999px',
+                                    padding: '8px 16px',
+                                    borderRadius: '10px',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
                                     textAlign: 'center',
+                                    width: 'fit-content',
                                 }}>
                                 {displayTitle}
                             </h3>
                         </div>
+                    )}
+
+                    {/* Zoom Modal Portal */}
+                    {isZoomed && displayTitle && createPortal(
+                        <>
+                            <style>
+                                {`
+                                    @keyframes zoomPopIn {
+                                        0% { transform: scale(0.8); opacity: 0; }
+                                        100% { transform: scale(1); opacity: 1; }
+                                    }
+                                    @keyframes zoomBackdropFade {
+                                        0% { opacity: 0; }
+                                        100% { opacity: 1; }
+                                    }
+                                `}
+                            </style>
+                            <div
+                                className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm cursor-pointer"
+                                onClick={() => setIsZoomed(false)}
+                                style={{
+                                    animation: 'zoomBackdropFade 300ms ease-out forwards',
+                                    pointerEvents: 'auto', // Ensure immediate interaction
+                                    willChange: 'opacity'
+                                }}
+                            >
+                                <h3 className="font-serif-bold text-center uppercase tracking-widest shadow-lg cursor-auto"
+                                    onClick={(e) => e.stopPropagation()}
+                                    style={{
+                                        fontSize: '1.5rem',
+                                        color: '#2c1810',
+                                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                                        padding: '16px 24px',
+                                        borderRadius: '10px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        textAlign: 'center',
+                                        width: 'fit-content',
+                                        maxWidth: '90%',
+                                        animation: 'zoomPopIn 300ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards',
+                                        willChange: 'transform, opacity'
+                                    }}>
+                                    {displayTitle}
+                                </h3>
+                            </div>
+                        </>,
+                        document.body
                     )}
                 </div>
             </div>

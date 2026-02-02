@@ -12,6 +12,7 @@ interface GameState {
     // Persistent fields (via customization)
     playerName: string;
     characterId: string;
+    maxUnlockedLevelIndex: number; // Monotonically increasing
 
     // Minimal persistence state
     levelProgress: Record<string, LevelProgress>; // levelId -> progress
@@ -59,11 +60,16 @@ interface GameState {
     // Global Animation (500ms Tick)
     globalAnimationFrame: number;
     tickAnimation: () => void;
+
+    // Tutorial
+    showTutorial: boolean;
+    setShowTutorial: (show: boolean) => void;
 }
 
 const defaultGameState = {
     playerName: '',
     characterId: 'player1',
+    maxUnlockedLevelIndex: 0,
     levelProgress: {},
 
     completedScenes: [],
@@ -84,6 +90,7 @@ const defaultGameState = {
     userName: 'Storyteller',
     userAvatar: '🧙‍♂️',
     globalAnimationFrame: 0,
+    showTutorial: false,
 };
 
 
@@ -95,6 +102,8 @@ export const useGameStore = create<GameState>()(
             setPlayerName: (name: string) => set({ playerName: name }),
 
             setCharacterId: (id: string) => set({ characterId: id }),
+
+            setShowTutorial: (show: boolean) => set({ showTutorial: show }),
 
             tickAnimation: () => set(state => ({ globalAnimationFrame: state.globalAnimationFrame + 1 })),
 
@@ -289,6 +298,7 @@ export const useGameStore = create<GameState>()(
             checkWinCondition: () => {
                 const state = get();
                 const level = levels.find(l => l.id === state.currentLevelId);
+                const levelIndex = levels.findIndex(l => l.id === state.currentLevelId);
                 if (!level) return;
 
                 const results: Record<string, boolean> = {};
@@ -343,13 +353,23 @@ export const useGameStore = create<GameState>()(
                     newSolvedLevels.push(state.currentLevelId);
                 }
 
+                // --- NEW PROGRESSION LOGIC ---
+                // If level is solved, update maxUnlockedLevelIndex monotonically
+                let newMaxUnlocked = state.maxUnlockedLevelIndex;
+                if (allSolved) {
+                    // If we just solved level index N, then N+1 should be unlocked.
+                    // e.g. Solved Level 1 (Index 0) -> Unlocked = 1 (Level 2)
+                    newMaxUnlocked = Math.max(newMaxUnlocked, levelIndex + 1);
+                }
+
                 set((current) => ({
                     sceneSolvedStatus: results,
                     activeOutcomes: activeOutcomes,
                     isLevelSolved: allSolved,
                     lastOutcome: foundOutcome || current.lastOutcome,
                     completedScenes: newCompletedScenes,
-                    solvedLevels: newSolvedLevels
+                    solvedLevels: newSolvedLevels,
+                    maxUnlockedLevelIndex: newMaxUnlocked,
                 }));
 
                 if (allSolved) {
@@ -373,6 +393,7 @@ export const useGameStore = create<GameState>()(
                     playerName: '',
                     characterId: '',
                     levelProgress: {},
+                    maxUnlockedLevelIndex: 0,
 
                     completedScenes: [],
                     solvedLevels: [],
@@ -392,7 +413,7 @@ export const useGameStore = create<GameState>()(
                 const newCompletedScenes: string[] = [];
                 const newSolvedLevels: string[] = [];
 
-                levels.forEach(level => {
+                levels.forEach((level) => {
                     const savedProgress = levelProgress[level.id];
                     // Even if no saved progress, we might want to check if it's auto-solved? 
                     // Unlikely for this game type, but let's stick to saved progress for now 
@@ -469,6 +490,9 @@ export const useGameStore = create<GameState>()(
                     }
                 });
 
+                // Do not recalculate maxUnlockedLevelIndex here to allow it to persist monotonically
+                // from hydration. Only recalculate solved/completed based on current state.
+
                 set({
                     completedScenes: newCompletedScenes,
                     solvedLevels: newSolvedLevels
@@ -494,6 +518,7 @@ export const useGameStore = create<GameState>()(
                 completedScenes: state.completedScenes,
                 isGameCompleted: state.isGameCompleted,
                 activeOutcomes: state.activeOutcomes,
+                maxUnlockedLevelIndex: state.maxUnlockedLevelIndex,
             }),
             onRehydrateStorage: () => (state) => {
                 state?.recalculateAllProgress();

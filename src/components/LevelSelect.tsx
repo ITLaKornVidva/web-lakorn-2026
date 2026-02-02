@@ -8,7 +8,7 @@ import { SettingsModal } from './UI/SettingsModal';
 
 export const LevelSelect = () => {
     const navigate = useNavigate();
-    const { completedScenes, levelProgress, solvedLevels } = useGameStore();
+    const { completedScenes, levelProgress, solvedLevels, maxUnlockedLevelIndex } = useGameStore();
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
 
@@ -16,12 +16,7 @@ export const LevelSelect = () => {
         // Accessible check is done on render, so if clicked it implies accessible? 
         // But good to double check.
         const levelIndex = levels.findIndex(l => l.id === levelId);
-        const prevLevel = levels[levelIndex - 1];
-        // Logic: Unlocked explicitly OR Previous level solved OR First level
-        // Logic: Unlocked strictly if previous level is solved or it's the first level
-        const isAccessible =
-            levelIndex === 0 ||
-            (prevLevel && solvedLevels.includes(prevLevel.id));
+        const isAccessible = levelIndex <= maxUnlockedLevelIndex;
 
         if (isAccessible) {
 
@@ -115,11 +110,7 @@ export const LevelSelect = () => {
 
                     <div className="flex flex-col gap-2 overflow-y-auto pr-1 no-scrollbar flex-1">
                         {levels.map((level, index) => {
-                            // Logic: Unlocked explicitly OR Previous level solved OR First level
-                            const prevLevelId = levels[index - 1]?.id;
-                            // Logic: Unlocked strictly if previous level is solved or it's the first level
-                            const prevLevelSolved = prevLevelId ? solvedLevels.includes(prevLevelId) : false;
-                            const accessible = index === 0 || prevLevelSolved;
+                            const accessible = index <= maxUnlockedLevelIndex;
 
                             return (
                                 <button

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { DndContext, DragOverlay, useSensor, useSensors, PointerSensor } from '@dnd-kit/core';
 import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
@@ -26,8 +27,9 @@ export const Book = () => {
         isLevelSolved,
         solvedLevels,
         completeGame,
-        activeOutcomes
-
+        activeOutcomes,
+        showTutorial,
+        setShowTutorial
     } = useGameStore();
 
     const [activeDragItem, setActiveDragItem] = useState<Item | null>(null);
@@ -49,6 +51,20 @@ export const Book = () => {
             loadLevel(currentLevelId);
         }
     }, [loadLevel, currentLevelId, currentScenes.length]);
+
+    // Tutorial Logic
+
+    useEffect(() => {
+        if (currentLevelId === 'level-1') {
+            setShowTutorial(true);
+            const timer = setTimeout(() => {
+                setShowTutorial(false);
+            }, 3500); // Show for 3.5 seconds
+            return () => clearTimeout(timer);
+        } else {
+            setShowTutorial(false);
+        }
+    }, [currentLevelId]);
 
     const sensors = useSensors(
         useSensor(PointerSensor, {
@@ -247,7 +263,7 @@ export const Book = () => {
 
                                     const config: { title: string, slots: any[], backgroundImage?: string | string[], characterStates?: Record<string, string> } | undefined = {
                                         scholar: {
-                                            title: "You traveled back to the present.",
+                                            title: "The book's power fades as you return to the present.",
                                             slots: [
                                                 { id: 'slot-4-2-1', allowedTypes: ['character'], placedItemId: 'you', shape: 'ellipse' as const, x: 350, y: 420, scale: 3, flipX: true }
                                             ],
@@ -255,7 +271,7 @@ export const Book = () => {
                                             characterStates: { 'you': 'awe' }
                                         },
                                         workforce: {
-                                            title: "Now you work hard everyday.",
+                                            title: "Days turn into weeks as you work tirelessly alongside the citizens.",
                                             slots: [
                                                 { id: 'slot-4-2-1', allowedTypes: ['character'], placedItemId: 'you', shape: 'ellipse' as const, x: [370, 270], y: [400, 330], scale: [3, 4], flipX: [true, false] },
                                             ],
@@ -263,7 +279,7 @@ export const Book = () => {
                                             characterStates: { 'you': 'work' }
                                         },
                                         celebration: {
-                                            title: "Everyone starts dancing with you.",
+                                            title: "The rhythm takes over, and soon everyone is dancing with you.",
                                             slots: [
                                                 { id: 'slot-4-2-1', allowedTypes: ['character'], placedItemId: 'you', shape: 'ellipse' as const, x: 160, y: 420, scale: 3, flipX: true },
                                                 { id: 'slot-4-2-2', allowedTypes: ['character'], placedItemId: 'group_citizens', shape: 'ellipse' as const, x: 575, y: 420, scale: 3 },
@@ -340,6 +356,36 @@ export const Book = () => {
 
                 {/* Ticket Modal (End of Level 4) */}
                 <TicketModal isOpen={showTicketModal} onClose={handleTicketClose} />
+
+                {/* Tutorial Overlay */}
+                <AnimatePresence>
+                    {showTutorial && (
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.5 }}
+                            className="fixed inset-0 z-[100] bg-black/70 flex items-center justify-center pointer-events-auto backdrop-blur-sm cursor-pointer"
+                            onClick={() => setShowTutorial(false)}
+                        >
+                            <motion.div
+                                initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                                animate={{ opacity: 1, scale: 1, y: 0 }}
+                                exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                                transition={{ delay: 0.2, duration: 0.5 }}
+                                className="flex flex-col items-center justify-center p-8 md:p-12 bg-[#2c1810] border border-[#f5e6d3]/20 shadow-[0_0_50px_rgba(0,0,0,0.5)] rounded-sm max-w-2xl mx-4 text-center cursor-default"
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                <h3 className="text-2xl md:text-4xl font-serif-bold text-[#f5e6d3] mb-6 tracking-[0.2em] uppercase drop-shadow-lg">
+                                    How to Play
+                                </h3>
+                                <p className="text-lg md:text-2xl font-serif text-[#f5e6d3]/90 leading-relaxed tracking-wide">
+                                    Drag the elements to complete the story
+                                </p>
+                            </motion.div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
 
             </div>
         </DndContext>

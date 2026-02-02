@@ -4,13 +4,14 @@ import { useFullscreen } from '../../hooks/useFullscreen';
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
+
 interface SettingsModalProps {
     isOpen: boolean;
     onClose: () => void;
 }
 
 export const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
-    const { resetProgress } = useGameStore();
+    const { resetProgress, setShowTutorial } = useGameStore();
     const { isFullscreen, toggleFullscreen, isEnabled: isFullscreenEnabled } = useFullscreen();
 
     const handleResetProgress = () => {
@@ -23,7 +24,7 @@ export const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
     return (
         <AnimatePresence>
             {isOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
                     {/* Backdrop */}
                     <motion.div
                         initial={{ opacity: 0 }}
@@ -77,6 +78,20 @@ export const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
                                     ) : (
                                         <p className="text-white/40 italic text-center font-serif py-4">Fullscreen not supported on this device.</p>
                                     )}
+                                </div>
+                                <div className="space-y-4 mt-4">
+                                    {/* <button
+                                        onClick={handleResetSettings}
+                                        className="w-full px-6 py-4 bg-red-900/20 hover:bg-red-900/40 text-red-200 font-serif-bold rounded-sm border border-red-900/30 hover:border-red-500/50 transition-all text-left"
+                                    >
+                                        RESET SETTINGS TO DEFAULT
+                                    </button> */}
+                                    <button
+                                        onClick={() => setShowTutorial(true)}
+                                        className="w-full px-6 py-4 bg-white/5 hover:bg-white/10 text-white font-serif-bold rounded-sm border border-white/10 hover:border-white/30 transition-all text-left cursor-pointer"
+                                    >
+                                        HOW TO PLAY
+                                    </button>
                                 </div>
                             </section>
 

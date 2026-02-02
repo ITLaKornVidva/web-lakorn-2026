@@ -15,7 +15,7 @@ export const Tray = ({ items, counts }: TrayProps) => {
 
                 return (
                     <div key={item.id} className="flex flex-col items-center justify-center gap-2 transition-all duration-300">
-                        <div className="relative group">
+                        <div className="relative group w-12 h-12 flex items-center justify-center">
                             <DraggableItem item={item} id={`tray-${item.id}`} disabled={isExhausted} />
                         </div>
                         <span className="text-nowrap text-center font-serif-bold text-[#2c1810] uppercase tracking-wider" style={{ fontSize: 'clamp(0.625rem, 0.9vw, 0.875rem)' }}>

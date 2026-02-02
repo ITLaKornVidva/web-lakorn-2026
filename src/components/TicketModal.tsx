@@ -15,9 +15,9 @@ export const TicketModal: React.FC<TicketModalProps> = ({ isOpen, onClose }) => 
                     The End
                 </h2>
                 <p className="text-[#5d3a37] font-serif text-lg mb-8 leading-relaxed">
-                    Your story has ended.<br />
-                    Do you wish to know more about<br />
-                    <span className="font-bold">LA DERNIÈRE?</span>
+                    This story has ended.<br />
+                    Discover the full story in<br />
+                    <span className="font-bold">LA DERNIÈRE</span>
                 </p>
 
                 <div className="flex flex-col gap-3">
