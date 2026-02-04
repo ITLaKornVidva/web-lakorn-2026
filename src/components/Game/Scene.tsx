@@ -13,9 +13,10 @@ interface SceneProps {
     overrideTitle?: string;
     hideTitle?: boolean;
     overrideCharacterStates?: Record<string, string>;
+    onModalClosed?: () => void;
 }
 
-export const Scene = ({ scene, isActive, levelItems, overrideTitle, hideTitle, overrideCharacterStates }: SceneProps) => {
+export const Scene = ({ scene, isActive, levelItems, overrideTitle, hideTitle, overrideCharacterStates, onModalClosed }: SceneProps) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const [scale, setScale] = useState(1);
     const [isZoomed, setIsZoomed] = useState(false);
@@ -189,7 +190,10 @@ export const Scene = ({ scene, isActive, levelItems, overrideTitle, hideTitle, o
                             </style>
                             <div
                                 className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm cursor-pointer"
-                                onClick={() => setIsZoomed(false)}
+                                onClick={() => {
+                                    setIsZoomed(false);
+                                    onModalClosed?.();
+                                }}
                                 style={{
                                     animation: 'zoomBackdropFade 300ms ease-out forwards',
                                     pointerEvents: 'auto', // Ensure immediate interaction

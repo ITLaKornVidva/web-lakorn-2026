@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { DndContext, DragOverlay, useSensor, useSensors, PointerSensor } from '@dnd-kit/core';
@@ -36,8 +36,28 @@ export const Book = () => {
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
     const [showTicketModal, setShowTicketModal] = useState(false);
 
-    // LEVEL 4 COMPLETION LOGIC
-    // (Timer logic removed - now triggered by Finish button)
+    // LEVEL 4 MODAL SEQUENCING
+    const [waitingForLeftModal, setWaitingForLeftModal] = useState(false);
+    // Track previous outcome to detect "Just Solved" moment
+    const prevScene41OutcomeId = useRef<string | undefined>(undefined);
+
+    const activeOutcome41 = activeOutcomes['scene-4-1'];
+    useEffect(() => {
+        if (currentLevelId === 'level-4') {
+            const currentId = activeOutcome41?.id;
+            // If we have an outcome now, but didn't before (or it changed), and it's Level 4
+            if (currentId && currentId !== prevScene41OutcomeId.current) {
+                // Determine if this is a "Solve" event that triggers a modal
+                // Scene 4-1 outcomes are all "isSolved: true"
+                setWaitingForLeftModal(true);
+            }
+            prevScene41OutcomeId.current = currentId;
+        }
+    }, [activeOutcome41, currentLevelId]);
+
+    const handleLeftModalClose = () => {
+        setWaitingForLeftModal(false);
+    };
 
     const handleTicketClose = () => {
         setShowTicketModal(false);
@@ -291,7 +311,8 @@ export const Book = () => {
                                     }[outcomeType];
 
                                     if (config) {
-                                        overrideTitle = config.title;
+                                        // SEQUENCING: Only show title if NOT waiting for left modal
+                                        overrideTitle = waitingForLeftModal ? undefined : config.title;
                                         overrideSlots = config.slots;
                                         overrideBgImage = config.backgroundImage;
                                         overrideCharacterStates = config.characterStates;
@@ -314,6 +335,7 @@ export const Book = () => {
                                         levelItems={currentLevel.availableItems}
                                         overrideTitle={overrideTitle}
                                         overrideCharacterStates={overrideCharacterStates}
+                                        onModalClosed={originalScene.id === 'scene-4-1' ? handleLeftModalClose : undefined}
                                     />
                                 </div>
                             );
