@@ -1,6 +1,7 @@
 import { useRef, useState, useMemo } from 'react';
 import { useGameStore } from '../store/gameStore';
 import html2canvas from 'html2canvas';
+import { DiscountCodeModal } from './DiscountCodeModal';
 
 // Helper to lookup item icon
 import { levels } from '../data/levels';
@@ -11,6 +12,7 @@ export const Summary = () => {
     const { resetGame, levelProgress, activeOutcomes, playerName } = useGameStore();
     const captureRef = useRef<HTMLDivElement>(null); // Ref for capturing the scene area
     const [isSharing, setIsSharing] = useState(false);
+    const [showDiscountModal, setShowDiscountModal] = useState(false);
 
     const level4Id = 'level-4';
     const scene1Id = 'scene-4-1';
@@ -369,14 +371,12 @@ export const Summary = () => {
                         Replay
                     </button>
 
-                    <a
-                        href="https://www.ticketmelon.com/th/lakornvidva_official/lakornvidva2026?utm_source=ig&utm_medium=social&utm_content=link_in_bio&fbclid=PAZXh0bgNhZW0CMTEAc3J0YwZhcHBfaWQMMjU2MjgxMDQwNTU4AAGnYmZVPGy-7xnMwvhDjlG3TVkM8eZQP8oPZabo2LW1p5wK1HGAl6Z557TzaLg_aem_mVeCv3jjvneT3N-gui9Elw"
-                        target="_blank"
-                        rel="noopener noreferrer"
+                    <button
+                        onClick={() => setShowDiscountModal(true)}
                         className="bg-amber-700 hover:bg-amber-800 text-white font-serif-bold px-6 py-2 rounded-sm shadow-lg transition-all uppercase tracking-wider transform hover:scale-105 cursor-pointer"
                     >
                         Buy Ticket
-                    </a>
+                    </button>
                 </div>
             </div>
 
@@ -407,6 +407,12 @@ export const Summary = () => {
                     </div>
                 </div>
             )}
+
+            <DiscountCodeModal
+                isOpen={showDiscountModal}
+                onClose={() => setShowDiscountModal(false)}
+                onProceed={() => setShowDiscountModal(false)}
+            />
         </div>
     );
 };
