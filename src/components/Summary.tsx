@@ -364,7 +364,7 @@ export const Summary = () => {
                     <button
                         onClick={() => {
                             resetGame();
-                            window.location.href = "/";
+                            window.location.href = "/game";
                         }}
                         className="bg-transparent border-2 border-[#2c1810] text-[#2c1810] hover:bg-[#2c1810]/5 font-serif-bold px-6 py-2 rounded-sm transition-all uppercase tracking-wider transform hover:scale-105 cursor-pointer"
                     >

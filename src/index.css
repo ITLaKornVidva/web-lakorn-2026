@@ -1,29 +1,29 @@
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
 @import "tailwindcss";
+
+@font-face {
+  font-family: 'SOV_YeeHor';
+  src: url('/assets/fonts/SOV_YeeHor.ttf') format('truetype');
+  font-display: swap;
+  size-adjust: 150%;
+  ascent-override: 50%;
+  descent-override: 0%;
+}
 
 html,
 body,
 #root {
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100%;
-  height: 100dvh;
-  width: 100%;
-  width: 100dvw;
   margin: 0;
   padding: 0;
-  overflow: hidden;
-  overscroll-behavior: none;
-  touch-action: none;
-  user-select: none;
-  -webkit-user-select: none;
-  -webkit-overflow-scrolling: touch;
+  min-height: 100%;
+  width: 100%;
+  background-color: #000000;
 }
 
 body {
+  overflow-x: hidden;
   background-color: #000000;
-  font-family: 'Playfair Display', serif;
+  font-family: 'SOV_YeeHor', serif;
+  letter-spacing: 0.03em;
 }
 
 .game-bg {
@@ -36,13 +36,13 @@ body {
 }
 
 .font-serif-bold {
-  font-family: 'Cinzel', serif;
+  font-family: 'SOV_YeeHor', serif;
   font-weight: 700;
   letter-spacing: 0.05em;
 }
 
 .font-sketchy {
-  font-family: 'Playfair Display', serif;
+  font-family: 'SOV_YeeHor', serif;
 }
 
 /* Custom Scrollbar for horizontal scrolling */
