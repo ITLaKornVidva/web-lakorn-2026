@@ -20,13 +20,13 @@ export const LevelSelect = () => {
 
         if (isAccessible) {
 
-            navigate(`/game/${levelId}`);
+            navigate(`/game/play/${levelId}`);
         }
     };
 
     const handleBack = () => {
 
-        navigate('/');
+        navigate('/game');
     };
 
     const handleOpenSettings = () => {

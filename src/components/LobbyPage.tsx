@@ -10,7 +10,7 @@ export const LobbyPage = () => {
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
     const handlePlay = () => {
-        navigate('/character-select');
+        navigate('/game/character-select');
     };
 
     return (

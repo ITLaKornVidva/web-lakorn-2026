@@ -11,13 +11,13 @@ export const GamePage = () => {
 
     useEffect(() => {
         if (!levelId) {
-            navigate('/');
+            navigate('/game');
             return;
         }
 
         const levelExists = levels.some(l => l.id === levelId);
         if (!levelExists) {
-            navigate('/');
+            navigate('/game');
             return;
         }
 

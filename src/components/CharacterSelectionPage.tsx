@@ -48,7 +48,7 @@ export const CharacterSelectionPage = () => {
         setPlayerName(name);
 
         // Navigate to Level Select (The Map)
-        navigate('/level-select');
+        navigate('/game/level-select');
     };
 
     // Calculate indices for circular carousel

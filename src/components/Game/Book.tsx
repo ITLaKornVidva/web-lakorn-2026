@@ -204,7 +204,7 @@ export const Book = () => {
             setShowTicketModal(true);
         } else if (nextLevelId) {
             loadLevel(nextLevelId);
-            navigate(`/game/${nextLevelId}`);
+            navigate(`/game/play/${nextLevelId}`);
         } else {
             completeGame();
         }
@@ -231,7 +231,7 @@ export const Book = () => {
 
                 {/* Back Arrow */}
                 <button
-                    onClick={() => navigate('/level-select')}
+                    onClick={() => navigate('/game/level-select')}
                     className="absolute top-2 left-safe-offset bg-[#f5e6d3]/80 hover:bg-[#f5e6d3] text-[#2c1810]/70 hover:text-[#2c1810] transition-all z-20 px-2 py-2 rounded-br-lg shadow-sm cursor-pointer"
                     style={{ left: 'max(0px, env(safe-area-inset-left))' }}
                 >
