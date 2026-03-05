@@ -4,9 +4,8 @@
   font-family: 'SOV_YeeHor';
   src: url('/assets/fonts/SOV_YeeHor.ttf') format('truetype');
   font-display: swap;
-  size-adjust: 150%;
-  ascent-override: 50%;
-  descent-override: 0%;
+  size-adjust: 140%;
+  ascent-override: 90%;
 }
 
 html,

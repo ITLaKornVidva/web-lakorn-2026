@@ -7,11 +7,11 @@ export function HeroSection() {
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#3A2A10]/40 via-[#0A0A0A] to-[#0A0A0A] z-0" />
 
             {/* Decorative Gears (Left and Right) */}
-            <div className="absolute top-1/4 -left-[20%] md:-left-[10%] w-[300px] h-[300px] md:w-[500px] md:h-[500px] opacity-20 z-0">
+            <div className="absolute top-1/4 -left-[20%] md:-left-[10%] w-[250px] h-[250px] lg:w-[500px] lg:h-[500px] opacity-20 z-0">
                 <img src="/assets/images/bg-gear-rotate.png" alt="" className="w-full h-full object-contain animate-[spin_60s_linear_infinite]" />
             </div>
 
-            <div className="absolute bottom-1/4 -right-[20%] md:-right-[10%] w-[400px] h-[400px] md:w-[600px] md:h-[600px] opacity-20 z-0">
+            <div className="absolute bottom-1/4 -right-[20%] md:-right-[10%] w-[275px] h-[275px] lg:w-[600px] lg:h-[600px] opacity-20 z-0">
                 <img src="/assets/images/bg-gear-rotate.png" alt="" className="w-full h-full object-contain animate-[spin_80s_reverse_linear_infinite]" />
             </div>
 
