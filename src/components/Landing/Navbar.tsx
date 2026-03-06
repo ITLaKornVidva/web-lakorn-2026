@@ -64,7 +64,7 @@ export function Navbar() {
                             href={BUY_TICKETS_URL}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="bg-[#851C20] hover:bg-[#6b1519] text-white px-6 py-2 rounded-full font-serif-bold tracking-widest text-sm transition-all transform active:scale-95 whitespace-nowrap"
+                            className="bg-[#851C20] hover:bg-[#6b1519] text-white px-6 py-2 rounded-full font-times font-bold tracking-widest text-sm transition-all transform active:scale-95 whitespace-nowrap"
                         >
                             BUY TICKETS
                         </a>
@@ -123,7 +123,7 @@ export function Navbar() {
                                 href={BUY_TICKETS_URL}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="bg-[#851C20] hover:bg-[#6b1519] text-white w-full py-4 rounded-full font-serif-bold tracking-widest text-sm transition-all shadow-md mt-4 text-center block"
+                                className="bg-[#851C20] hover:bg-[#6b1519] text-white w-full py-4 rounded-full font-times font-bold tracking-widest text-sm transition-all shadow-md mt-4 text-center block"
                             >
                                 BUY TICKETS
                             </a>

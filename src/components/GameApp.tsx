@@ -16,7 +16,14 @@ export function GameApp() {
         const interval = setInterval(() => {
             tickAnimation();
         }, 500); // Global 500ms Beat
-        return () => clearInterval(interval);
+
+        // Add class to body to disable SOV_YeeHor font in game route
+        document.body.classList.add('game-route');
+
+        return () => {
+            clearInterval(interval);
+            document.body.classList.remove('game-route');
+        };
     }, [tickAnimation]);
 
     return (

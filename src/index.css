@@ -8,6 +8,17 @@
   ascent-override: 90%;
 }
 
+:root {
+  --primary-font: 'SOV_YeeHor', serif;
+  --primary-letter-spacing: 0.03em;
+}
+
+/* When in game route, use default system fonts instead */
+body.game-route {
+  --primary-font: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  --primary-letter-spacing: normal;
+}
+
 html,
 body,
 #root {
@@ -21,8 +32,16 @@ body,
 body {
   overflow-x: hidden;
   background-color: #000000;
-  font-family: 'SOV_YeeHor', serif;
-  letter-spacing: 0.03em;
+  font-family: var(--primary-font);
+  letter-spacing: var(--primary-letter-spacing);
+}
+
+/* Safari workaround for SOV_YeeHor font metrics */
+@supports (background: -webkit-named-image(i)) {
+  body:not(.game-route) {
+    line-height: 1.2;
+    -webkit-font-smoothing: antialiased;
+  }
 }
 
 .game-bg {
@@ -35,13 +54,28 @@ body {
 }
 
 .font-serif-bold {
-  font-family: 'SOV_YeeHor', serif;
+  font-family: var(--primary-font);
   font-weight: 700;
   letter-spacing: 0.05em;
 }
 
 .font-sketchy {
-  font-family: 'SOV_YeeHor', serif;
+  font-family: var(--primary-font);
+}
+
+/* Safari specific shifts for the custom font */
+@supports (background: -webkit-named-image(i)) {
+
+  body:not(.game-route) .font-serif-bold,
+  body:not(.game-route) .font-sketchy {
+    position: relative;
+    top: -0.05em;
+  }
+}
+
+
+.font-times {
+  font-family: "Times New Roman", Times, serif !important;
 }
 
 /* Custom Scrollbar for horizontal scrolling */

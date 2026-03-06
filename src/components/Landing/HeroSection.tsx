@@ -49,7 +49,7 @@ export function HeroSection() {
                         href="https://www.ticketmelon.com/th/lakornvidva_official/lakornvidva2026?utm_source=ig&utm_medium=social&utm_content=link_in_bio"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="bg-[#851C20] text-white px-10 py-4 md:px-14 md:py-5 rounded-full font-serif-bold tracking-[0.2em] text-lg md:text-xl transition-all shadow-xl hover:bg-[#4f0d10] active:scale-95 inline-block"
+                        className="bg-[#851C20] text-white px-10 py-4 md:px-14 md:py-5 rounded-full font-times font-bold tracking-[0.2em] text-lg md:text-xl transition-all shadow-xl hover:bg-[#4f0d10] active:scale-95 inline-block"
                     >
                         BUY TICKETS
                     </a>
