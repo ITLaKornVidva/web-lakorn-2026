@@ -78,6 +78,10 @@ body {
   font-family: "Times New Roman", Times, serif !important;
 }
 
+.SOV_YeeHor {
+  font-family: 'SOV_YeeHor', serif !important;
+}
+
 /* Custom Scrollbar for horizontal scrolling */
 .custom-scrollbar::-webkit-scrollbar {
   height: 8px;

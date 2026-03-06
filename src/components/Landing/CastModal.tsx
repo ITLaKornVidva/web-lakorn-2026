@@ -59,19 +59,22 @@ export function CastModal({ cast, onClose }: CastModalProps) {
                         onClick={onClose}
                     />
 
-                    {/* Close Button ("X") - Screen Top Right */}
-                    <button
+                    {/* Close Button ("X") - Screen Top Right, now a motion component to sync exit */}
+                    <motion.button
+                        initial={{ opacity: 0, x: 0 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: 0 }}
                         onClick={(e) => {
                             e.stopPropagation();
                             onClose();
                         }}
-                        className="fixed top-8 right-8 md:top-12 md:right-12 text-white/50 hover:text-white bg-black/30 hover:bg-black/80 rounded-full w-10 h-10 md:w-12 md:h-12 flex items-center justify-center transition-all z-[120] border border-white/10"
+                        className="fixed top-8 right-8 md:top-12 md:right-12 text-white/50 hover:text-white bg-black/30 hover:bg-black/80 rounded-full w-10 h-10 md:w-12 md:h-12 flex items-center justify-center transition-all z-[105] border border-white/10"
                         aria-label="Close modal"
                     >
                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                         </svg>
-                    </button>
+                    </motion.button>
 
                     {/* Modal Container */}
                     <motion.div

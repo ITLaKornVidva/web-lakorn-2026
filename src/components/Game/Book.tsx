@@ -255,7 +255,7 @@ export const Book = () => {
                 {/* Section 1: Story Background / Intro (Top) */}
                 <div className="flex-none h-[25%] min-h-[30px] w-full flex items-center justify-center text-center relative z-10">
                     <div className="max-w-4xl flex flex-col items-center px-12">
-                        <h2 className="text-[#2c1810] font-serif-bold leading-none animate-fade-in uppercase tracking-widest text-balance drop-shadow-sm" style={{ fontSize: 'clamp(0.65rem, 4vh, 1.5rem)' }}>
+                        <h2 className="text-[#2c1810] font-serif-bold leading-none animate-fade-in uppercase tracking-widest text-balance drop-shadow-sm SOV_YeeHor" style={{ fontSize: 'clamp(0.65rem, 4vh, 1.5rem)' }}>
                             {currentLevel.goal}
                         </h2>
                     </div>

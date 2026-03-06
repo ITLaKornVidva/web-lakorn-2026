@@ -62,7 +62,7 @@ export const CharacterSelectionPage = () => {
             <div className="relative z-10 w-full max-w-6xl flex flex-col items-center px-4 h-full py-2 md:py-4">
 
                 {/* Title - Fixed Height, doesn't shrink */}
-                <h1 className="text-2xl md:text-5xl font-serif-bold text-[#2c1810] mb-2 md:mb-8 uppercase tracking-widest text-center shrink-0">
+                <h1 className="text-2xl md:text-5xl font-serif-bold text-[#2c1810] mb-2 md:mb-8 uppercase tracking-widest text-center shrink-0 SOV_YeeHor">
                     Select Your Character
                 </h1>
 
@@ -185,8 +185,8 @@ export const CharacterSelectionPage = () => {
                             />
                         </div>
 
-                        <div className="text-center md:text-left text-[#5C4033] text-sm md:text-base font-serif italic opacity-80 mb-1">
-                            I am... <span className="font-serif-bold not-italic">{CHARACTERS[selectedIndex].name}</span>
+                        <div className="text-center md:text-left text-[#5C4033] text-sm md:text-base font-serif italic opacity-80 mb-1 SOV_YeeHor">
+                            I am... <span className="not-italic SOV_YeeHor">{CHARACTERS[selectedIndex].name}</span>
                         </div>
 
                         <button

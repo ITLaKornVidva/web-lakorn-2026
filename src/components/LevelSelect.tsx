@@ -57,14 +57,14 @@ export const LevelSelect = () => {
 
             {/* Header */}
             <div className="text-center mb-1 lg:mb-4 flex-none relative z-10">
-                <h1 className="text-xl lg:text-4xl xl:text-5xl font-serif-bold uppercase tracking-widest mb-0.5 leading-tight text-[#2c1810]">It's Lakorn Vidva</h1>
-                <p className="text-[10px] lg:text-lg italic opacity-80 text-[#5C4033]">Select a chapter to begin</p>
+                <h1 className="text-xl lg:text-4xl xl:text-5xl font-serif-bold uppercase tracking-widest mb-0.5 leading-tight text-[#2c1810] SOV_YeeHor">It's Lakorn Vidva</h1>
+                <p className="text-[10px] lg:text-lg italic opacity-80 text-[#5C4033] SOV_YeeHor">Select a chapter to begin</p>
             </div>
 
             <div className="flex-1 min-h-0 grid grid-cols-[0.8fr_1.2fr] lg:grid-cols-2 gap-3 lg:gap-8 max-w-7xl mx-auto w-full relative z-10 pb-2 px-2 lg:px-6">
                 {/* Left Column: Collection / Completed Scenes */}
                 <div className="flex flex-col gap-2 p-1 lg:p-4 border-r-2 border-[#2c1810]/10 overflow-hidden">
-                    <h2 className="text-sm lg:text-2xl font-serif-bold uppercase tracking-widest border-b-2 border-[#2c1810] pb-1 lg:pb-2 mb-1 lg:mb-2 inline-block self-start flex-none text-[#5C4033]">
+                    <h2 className="text-sm lg:text-2xl font-serif-bold uppercase tracking-widest border-b-2 border-[#2c1810] pb-1 lg:pb-2 mb-1 lg:mb-2 inline-block self-start flex-none text-[#5C4033] SOV_YeeHor">
                         Collection
                     </h2>
 
@@ -104,7 +104,7 @@ export const LevelSelect = () => {
 
                 {/* Right Column: Level List */}
                 <div className="flex flex-col gap-2 p-1 lg:p-4 overflow-hidden">
-                    <h2 className="text-sm lg:text-2xl font-serif-bold uppercase tracking-widest border-b-2 border-[#2c1810] pb-1 lg:pb-2 mb-1 lg:mb-2 inline-block self-end flex-none text-[#5C4033]">
+                    <h2 className="text-sm lg:text-2xl font-serif-bold uppercase tracking-widest border-b-2 border-[#2c1810] pb-1 lg:pb-2 mb-1 lg:mb-2 inline-block self-end flex-none text-[#5C4033] SOV_YeeHor">
                         Chapters
                     </h2>
 

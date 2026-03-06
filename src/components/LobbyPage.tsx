@@ -67,7 +67,7 @@ export const LobbyPage = () => {
                     transition={{ duration: 1.2, ease: "easeOut" }}
                     className="text-center"
                 >
-                    <h1 className="text-5xl md:text-7xl lg:text-9xl font-serif-bold text-black/90 tracking-widest drop-shadow-[0_4px_10px_rgba(0,0,0,0.5)]">
+                    <h1 className="text-5xl md:text-7xl lg:text-9xl font-serif-bold text-black/90 tracking-widest drop-shadow-[0_4px_10px_rgba(0,0,0,0.5)] SOV_YeeHor">
                         The Missing Scenes
                     </h1>
                 </motion.div>
@@ -75,7 +75,7 @@ export const LobbyPage = () => {
                 {/* Main Buttons */}
                 <div className="flex flex-col gap-3 md:gap-6 w-60 md:w-96 shrink-0">
                     <motion.button
-                        initial={{ opacity: 0, x: -100 }}
+                        initial={{ opacity: 0, x: 0 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.5, duration: 0.8, ease: "easeOut" }}
                         onClick={handlePlay}
@@ -93,7 +93,7 @@ export const LobbyPage = () => {
                     </motion.button>
 
                     <motion.button
-                        initial={{ opacity: 0, x: 100 }}
+                        initial={{ opacity: 0, x: 0 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.7, duration: 0.8, ease: "easeOut" }}
                         onClick={() => setIsSettingsOpen(true)}
