@@ -8,6 +8,12 @@
   ascent-override: 90%;
 }
 
+@font-face {
+  font-family: 'CHULALONGKORN';
+  src: url('/assets/fonts/CHULALONGKORNReg.otf') format('opentype');
+  font-display: swap;
+}
+
 :root {
   --primary-font: 'SOV_YeeHor', serif;
   --primary-letter-spacing: 0.03em;
@@ -61,6 +67,10 @@ body {
 
 .font-sketchy {
   font-family: var(--primary-font);
+}
+
+.font-chulalongkorn {
+  font-family: 'CHULALONGKORN', sans-serif;
 }
 
 /* Safari specific shifts for the custom font */
