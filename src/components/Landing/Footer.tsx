@@ -7,7 +7,9 @@ export function Footer() {
     ];
 
     return (
-        <footer className="w-full bg-[#0A0A0A] pt-12 pb-6 px-6 flex flex-col items-center border-t border-white/5 relative z-10">
+        <footer className="w-full bg-[#0A0A0A] pt-12 pb-6 px-6 flex flex-col items-center border-t border-white/5 relative z-10 overflow-hidden">
+            {/* Red Background Gradient */}
+            <div className="absolute inset-x-0 bottom-0 h-full w-full bg-gradient-to-t from-red-900/40 via-red-900/10 to-transparent z-[-1] pointer-events-none" />
 
             {/* Date & Venue */}
             <div className="text-center mb-10 max-w-2xl">
