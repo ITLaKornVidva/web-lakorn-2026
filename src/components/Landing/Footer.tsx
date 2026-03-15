@@ -1,9 +1,13 @@
 export function Footer() {
     const sponsors = [
-        { name: 'GIS', img: '/assets/images/sponsor-gis.png' },
-        { name: 'CP ALL', img: '/assets/images/sponsor-cp.png' },
-        { name: 'LANNA', img: '/assets/images/sponsor-3.png' },
-        { name: 'XXX', img: '/assets/images/sponsor-4.png' },
+        { name: 'Altemtech', img: '/assets/images/sponsor/altemtech.png' },
+        { name: 'Royal D', img: '/assets/images/sponsor/royald.png' },
+        { name: 'MTI', img: '/assets/images/sponsor/mti.png' },
+        { name: 'Dot Print Studio', img: '/assets/images/sponsor/dotprintstudio.png' },
+        { name: 'Open School', img: '/assets/images/sponsor/openschool.png' },
+        { name: 'CSG', img: '/assets/images/sponsor/csg.png' },
+        { name: 'Best Excellent', img: '/assets/images/sponsor/bestexcellent.png' },
+        { name: 'Nikon', img: '/assets/images/sponsor/nikon.png' },
     ];
 
     return (

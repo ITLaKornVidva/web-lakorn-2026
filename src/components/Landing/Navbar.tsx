@@ -16,7 +16,6 @@ export function Navbar() {
 
     const navLinks = [
         { name: 'LAKORN TELLER', href: '/game', external: false },
-        { name: 'PERSONALITEST', href: '#', external: true },
     ];
 
     const BUY_TICKETS_URL = "https://www.ticketmelon.com/th/lakornvidva_official/lakornvidva2026?utm_source=ig&utm_medium=social&utm_content=link_in_bio";
